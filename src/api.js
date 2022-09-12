@@ -1,8 +1,8 @@
 import { Account, Client, Databases } from "appwrite";
 
 
-const EMAIL = "zagirovaa@netcon.pro";
-const PASSWORD = "1111111111";
+const EMAIL = "test@netcon.pro";
+const PASSWORD = "11111111";
 
 const END_POINT = "http://localhost/v1";
 
@@ -20,9 +20,9 @@ client.setEndpoint(END_POINT).setProject(PROJECT_ID);
 
 const account = new Account(client);
 const auth = account.get();
-auth.then(function (user) {
+auth.then(user => {
     console.log(`User ${user.name} is logged in.`);
-}, function (error) {
+}, error => {
     const acct = account.createEmailSession(EMAIL, PASSWORD);
     acct.then(function (user) {
         console.log(`User ${user.name} is logged in.`);

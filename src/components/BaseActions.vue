@@ -10,10 +10,13 @@
         components: { BaseModal },
         computed: {
             collection() {
-                if (this.type == "jobs") {
-                    return JOBS_COL_ID;
-                } else if (this.type == "reasons") {
-                    return REASONS_COL_ID;
+                switch (this.type) {
+                    case "jobs":
+                        return JOBS_COL_ID;
+                        break;
+                    case "reasons":
+                        return REASONS_COL_ID;
+                        break;
                 }
             }
         },
@@ -26,7 +29,7 @@
         methods: {
             async applyChanges() {
                 if (this.currentCatalog.name !== "") {
-                    if (this.title == "Добавить") {
+                    if (this.title === "Добавить") {
                         await database.createDocument(
                             this.collection,
                             "unique()",
@@ -40,7 +43,7 @@
                                 type: "success"
                             }
                         )
-                    } else if (this.title == "Изменить") {
+                    } else if (this.title === "Изменить") {
                         await database.updateDocument(
                             this.collection,
                             this.currentCatalog.$id,
@@ -77,10 +80,17 @@
                         name: ""
                     }
                 },
+                required: true,
                 type: Object
             },
-            title: String,
-            type: String
+            title: {
+                required: true,
+                type: String
+            },
+            type: {
+                required: true,
+                type: String
+            }
         }
     }
 </script>

@@ -23,6 +23,8 @@
     const EMPLOYEES_COL_ID = "62d15adca365e871a654";
     const STATES_COL_ID = "630b4f6caf52194e911b";
     const SETS_COL_ID = "630880867803a0d3e7d3";
+    const JOBS_COL_ID = "62d15002f14d9b2accd0";
+    const REASONS_COL_ID = "62d151c1197064a173b1";
 
     export default {
         components: {
@@ -76,8 +78,18 @@
             }
         },
         methods: {
-            addEmployee() {
-                this.addModalVisible = true;
+            async addEmployee() {
+                const jobs = await database.listDocuments(
+                    JOBS_COL_ID, [], 100, 0, "", "after", ["name"], ["ASC"]
+                );
+                if (jobs.total === 0) {
+                    this.showNotify({
+                        text: "Справочник должностей пуст.",
+                        type: "warning"
+                    })
+                } else {
+                    this.addModalVisible = true;
+                }
             },
             async changeLimit(limit) {
                 const document_id = await getSettingID("limit");
@@ -133,7 +145,7 @@
                     EMPLOYEES_COL_ID,
                     employee_id
                 );
-                if (this.employees.length == 0) {
+                if (this.employees.length === 0) {
                     this.selectedRow = -1
                 }
                 const result = await database.listDocuments(
@@ -151,16 +163,48 @@
                     state_id
                 );
             },
-            dismissEmployee() {
+            async dismissEmployee() {
                 if (this.employees.length > 0) {
                     if (this.currentEmployee.status === "Работает") {
-                        this.dismissModalVisible = true;
+                        const reasons = await database.listDocuments(
+                            REASONS_COL_ID,
+                            [], 100, 0, "", "after", ["name"], ["ASC"]
+                        );
+                        if (reasons.total === 0) {
+                            this.showNotify({
+                                text: "Справочник причин увольнения пуст.",
+                                type: "warning"
+                            })
+                        } else {
+                            this.dismissModalVisible = true;
+                        }
                     }
                 }
             },
-            editEmployee() {
-                if (this.selectedRow >= 0) {
-                    this.editModalVisible = true;
+            async editEmployee() {
+                if (this.employees.length > 0) {
+                    const jobs = await database.listDocuments(
+                        JOBS_COL_ID, [], 100, 0, "", "after", ["name"], ["ASC"]
+                    );
+                    if (jobs.total === 0) {
+                        this.showNotify({
+                            text: "Справочник должностей пуст.",
+                            type: "warning"
+                        })
+                    } else if (this.currentEmployee.status !== "Работает") {
+                        const reasons = await database.listDocuments(
+                            REASONS_COL_ID,
+                            [], 100, 0, "", "after", ["name"], ["ASC"]
+                        );
+                        if (reasons.total === 0) {
+                            this.showNotify({
+                                text: "Справочник причин увольнения пуст.",
+                                type: "warning"
+                            })
+                        }
+                    } else {
+                        this.editModalVisible = true;
+                    }
                 }
             },
             editSchedule() {

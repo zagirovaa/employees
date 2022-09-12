@@ -1,8 +1,8 @@
 <script>
-    import { database } from "../api.js"
+    import { database } from "../api.js";
     
-    import BaseActions from "./BaseActions.vue"
-    import BaseModal from "./BaseModal.vue"
+    import BaseActions from "./BaseActions.vue";
+    import BaseModal from "./BaseModal.vue";
 
     const JOBS_COL_ID = "62d15002f14d9b2accd0";
     const REASONS_COL_ID = "62d151c1197064a173b1";
@@ -11,7 +11,6 @@
         components: { BaseActions, BaseModal },
         computed: {
             catalogs() {
-                this.getCatalogTitles();
                 this.updateData();
                 return this.catalogTitles;
             },
@@ -47,7 +46,8 @@
                 if (this.catalogTitles.length > 0) {
                     this.catalogTitles.forEach((title, index) => {
                         this.deleteCatalog(index);
-                    })
+                    });
+                    this.updateData();
                     this.$emit(
                         "show-notify",
                         {
@@ -62,6 +62,16 @@
                     this.collection, 
                     this.catalogTitles[index].$id
                 );
+            },
+            editCatalog() {
+                if (this.selectedRow >= 0) {
+                    this.catalog = this.catalogTitles[this.selectedRow];
+                    this.actionTitle = "Изменить";
+                    this.actionVisible = true;
+                }
+            },
+            async removeCatalog(index) {
+                await this.deleteCatalog(index);
                 this.updateData();
                 this.$emit(
                     "show-notify",
@@ -71,34 +81,23 @@
                     }
                 )
             },
-            editCatalog() {
-                if (this.selectedRow >= 0) {
-                    this.catalog = this.catalogTitles[this.selectedRow];
-                    this.actionTitle = "Изменить";
-                    this.actionVisible = true;
-                }
-            },
-            async getCatalogTitles() {
+            async updateData() {
                 const result = await database.listDocuments(
                     this.collection, [], 100, 0, "", "after", ["name"], ["ASC"]
                 );
-                if (result.total > 0) {
-                    this.catalogTitles = result.documents;
-                }
-            },
-            updateData() {
-                if (this.catalogTitles.length > 0 && this.selectedRow == -1) {
+                this.catalogTitles = result.documents;
+                if (this.catalogTitles.length > 0 && this.selectedRow === -1) {
                     this.selectedRow = 0;
                 }
                 if (this.selectedRow > this.catalogTitles.length - 1) {
                     this.selectedRow = this.catalogTitles.length - 1;
                 }
-                if (this.catalogTitles.length == 0) {
+                if (this.catalogTitles.length === 0) {
                     this.selectedRow = -1
                 }
             }
         },
-        mounted() {
+        updated() {
             this.updateData();
         },
         props: {
@@ -142,7 +141,7 @@
                     <p class="control">
                         <button
                             class="button is-light"
-                            @click="deleteCatalog(selectedRow)"
+                            @click="removeCatalog(selectedRow)"
                             @mouseover="currentButton = 3">
                             <span class="icon is-small is-left">
                                 <span class="material-icons">remove</span>
@@ -171,8 +170,8 @@
                     <a
                         class="panel-block is-radiusless"
                         :class="{
-                            'has-text-white': selectedRow == index,
-                            'has-background-link': selectedRow == index
+                            'has-text-white': selectedRow === index,
+                            'has-background-link': selectedRow === index
                         }"
                         :key="index"
                         @click="selectedRow = index"
