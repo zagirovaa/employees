@@ -70,16 +70,18 @@
                     this.actionVisible = true;
                 }
             },
-            async removeCatalog(index) {
-                await this.deleteCatalog(index);
-                this.updateData();
-                this.$emit(
-                    "show-notify",
-                    {
-                        text: "Элемент справочника удален.",
-                        type: "success"
-                    }
-                )
+            removeCatalog(index) {
+                if (this.selectedRow >= 0) {
+                    this.deleteCatalog(index);
+                    this.updateData();
+                    this.$emit(
+                        "show-notify",
+                        {
+                            text: "Элемент справочника удален.",
+                            type: "success"
+                        }
+                    )
+                }
             },
             async updateData() {
                 const result = await database.listDocuments(
@@ -96,9 +98,6 @@
                     this.selectedRow = -1
                 }
             }
-        },
-        updated() {
-            this.updateData();
         },
         props: {
             title: String,
