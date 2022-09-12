@@ -336,6 +336,7 @@
             :direction="sortDirection"
             :employees="getEmployees"
             :selected-row="selectedRow"
+            :sort-column="sortColumn"
             @row-click="selectedRow = $event"
             @sort-column="sortByColumnName"/>
         <HelpModal

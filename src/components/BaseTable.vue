@@ -2,21 +2,22 @@
     export default {
         data() {
             return {
-                columns: [
-                    "",
-                    "Дата приема",
-                    "ФИО",
-                    "Должность",
-                    "Оклад",
-                    "Статус"
-                ]
+                columns: {
+                    "": "",
+                    "Дата приема": "date_of_employment",
+                    "ФИО": "full_name",
+                    "Должность": "job_title",
+                    "Оклад": "salary",
+                    "Статус": "status"
+                }
             }
         },
         emits: ["row-click", "sort-column"],
         props: {
             direction: String,
             employees: Array,
-            selectedRow: [Number, String]
+            selectedRow: [Number, String],
+            sortColumn: String
         }
     }
 </script>
@@ -27,13 +28,14 @@
             <tr>
                 <th
                     class="has-text-centered"
-                    :key="index"
-                    v-for="(column, index) in columns"
-                    @click="$emit('sort-column', column)">
-                    <span>{{ column }}</span>
-                    <template v-if="column !== ''">
-                        <span class="ml-2" v-if="direction == 'ASC'">⮝</span>
-                        <span class="ml-2" v-else>⮟</span>
+                    :class="{ 'has-text-link': value == sortColumn }"
+                    :key="key"
+                    v-for="(value, key) in columns"
+                    @click="$emit('sort-column', key)">
+                    <span>{{ key }}</span>
+                    <template v-if="key !== '' && value === sortColumn">
+                        <span class="ml-2" v-if="direction == 'ASC'">⮟</span>
+                        <span class="ml-2" v-else>⮝</span>
                     </template>
                 </th>
             </tr>
