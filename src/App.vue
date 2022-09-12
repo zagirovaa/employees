@@ -7,6 +7,8 @@
     import { getLimit } from "./api.js";
     import { getSettingID } from "./api.js";
 
+    import { sortColumns } from "./helpers.js";
+
     import AddModal from "./components/AddModal.vue";
     import BaseNavbar from "./components/BaseNavbar.vue";
     import BaseNotify from "./components/BaseNotify.vue";
@@ -70,13 +72,6 @@
                 settingsModalVisible: false,
                 scheduleModalVisible: false,
                 sortColumn: "full_name",
-                sortColumns: {
-                    "Дата приема": "date_of_employment",
-                    "ФИО": "full_name",
-                    "Должность": "job_title",
-                    "Оклад": "salary",
-                    "Статус": "status"
-                },
                 sortDirection: "ASC"
             }
         },
@@ -235,7 +230,7 @@
                 }, this.notify.timeout);
             },
             sortByColumnName(columnName) {
-                if (this.sortColumn == this.sortColumns[columnName]) {
+                if (this.sortColumn === sortColumns[columnName]) {
                     this.invertSortDirection();
                 }
                 switch (columnName) {
