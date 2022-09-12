@@ -1,0 +1,80 @@
+html {
+    --border-color: rgb(240, 240, 240);
+    --group-select-width: 428px;
+    --modal-nav-height: 329px;
+    --nav-drop-margin: 10px;
+    --notify-width: 450px;
+    --notify-margin: 10px;
+    --shadow-color: rgba(32, 64, 80, 0.2);
+    --light-color: hsl(0, 0%, 96%);
+
+    scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+    display: none;
+}
+
+.md-18 { font-size: 18px; }
+.md-24 { font-size: 24px; }
+.md-36 { font-size: 36px; }
+.md-48 { font-size: 48px; }
+
+.navbar-dropdown hr {
+    margin-bottom: var(--nav-drop-margin) !important;
+    margin-top: var(--nav-drop-margin) !important;
+}
+
+table th, table td {
+    vertical-align: middle !important;
+}
+
+tr {
+    cursor: pointer;
+}
+
+.notification {
+    position: absolute !important;
+    right: var(--notify-margin);
+    top: var(--notify-margin);
+    width: var(--notify-width);
+    z-index: 100 !important;
+}
+
+.modal nav {
+    border: 1px solid var(--border-color);
+    max-height: var(--modal-nav-height);
+    min-height: var(--modal-nav-height);
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+.modal nav::-webkit-scrollbar {
+    display: none;
+}
+
+.modal-card {
+    border: 1px solid var(--border-color);
+    box-shadow: 0px 0px 15px 0px var(--shadow-color);
+    border-radius: 5px;
+}
+
+.modal-card table td:hover {
+    background-color: var(--light-color);
+}
+
+.control .tags .tag.border-light {
+    border: 2px solid hsl(0, 0%, 96%);
+}
+
+.control .tags .tag.border-info {
+    border: 2px solid hsl(206, 70%, 96%);
+}
+
+.control .tags .tag.border-warning {
+    border: 2px solid hsl(48, 100%, 96%);
+}
+
+.control .tags .tag.border-danger {
+    border: 2px solid hsl(347, 90%, 96%);
+}
