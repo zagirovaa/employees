@@ -6,6 +6,11 @@
     import { getEmployeesCount } from "./api.js";
     import { getLimit } from "./api.js";
     import { getSettingID } from "./api.js";
+    import { EMPLOYEES_COL_ID } from "./api.js";
+    import { STATES_COL_ID } from "./api.js";
+    import { SETS_COL_ID } from "./api.js";
+    import { JOBS_COL_ID } from "./api.js";
+    import { REASONS_COL_ID } from "./api.js";
 
     import { sortColumns } from "./helpers.js";
 
@@ -19,12 +24,6 @@
     import HelpModal from "./components/HelpModal.vue";
     import ScheduleModal from "./components/ScheduleModal.vue";
     import SettingsModal from "./components/SettingsModal.vue";
-
-    const EMPLOYEES_COL_ID = "62d15adca365e871a654";
-    const STATES_COL_ID = "630b4f6caf52194e911b";
-    const SETS_COL_ID = "630880867803a0d3e7d3";
-    const JOBS_COL_ID = "62d15002f14d9b2accd0";
-    const REASONS_COL_ID = "62d151c1197064a173b1";
 
     export default {
         components: {

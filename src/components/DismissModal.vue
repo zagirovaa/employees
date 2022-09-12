@@ -1,11 +1,11 @@
 <script>
     import { database } from "../api.js"
+    import { EMPLOYEES_COL_ID } from "../api.js";
+    import { REASONS_COL_ID } from "../api.js";
+
     import { getCurrentDate } from "../helpers.js"
 
     import BaseModal from "./BaseModal.vue"
-
-    const EMPLOYEES_COL_ID = "62d15adca365e871a654";
-    const REASONS_COL_ID = "62d151c1197064a173b1";
 
     export default {
         components: { BaseModal },

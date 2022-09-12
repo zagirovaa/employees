@@ -4,6 +4,7 @@
     import { database } from "../api.js";
     import { getAllEmployees } from "../api.js";
     import { getHolidays } from "../api.js";
+    import { STATES_COL_ID } from "../api.js";
 
     import { getCurrentMonthNumber } from "../helpers.js";
     import { getCurrentYear } from "../helpers.js";
@@ -17,8 +18,6 @@
     import { splitArray } from "../helpers.js";
 
     import BaseModal from "./BaseModal.vue";
-
-    const STATES_COL_ID = "630b4f6caf52194e911b";
 
     export default {
         components: { BaseModal },

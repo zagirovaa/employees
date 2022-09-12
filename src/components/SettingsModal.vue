@@ -2,10 +2,9 @@
     import { database } from "../api.js";
     import { getHolidays } from "../api.js";
     import { getSettingID } from "../api.js";
+    import { SETS_COL_ID } from "../api.js";
 
     import BaseModal from "./BaseModal.vue";
-
-    const SETS_COL_ID = "630880867803a0d3e7d3";
 
     export default {
         components: { BaseModal },
