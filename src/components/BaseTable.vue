@@ -1,23 +1,30 @@
 <script>
+    import { sortColumns } from "../helpers.js";
+
     export default {
-        data() {
-            return {
-                columns: {
-                    "": "",
-                    "Дата приема": "date_of_employment",
-                    "ФИО": "full_name",
-                    "Должность": "job_title",
-                    "Оклад": "salary",
-                    "Статус": "status"
-                }
+        computed: {
+            columns() {
+                return sortColumns;
             }
         },
         emits: ["row-click", "sort-column"],
         props: {
-            direction: String,
-            employees: Array,
-            selectedRow: [Number, String],
-            sortColumn: String
+            direction: {
+                required: true,
+                type: String
+            },
+            employees: {
+                required: true,
+                type: Array
+            },
+            selectedRow: {
+                required: true,
+                type: [Number, String]
+            },
+            sortColumn: {
+                required: true,
+                type: String
+            }
         }
     }
 </script>
@@ -28,13 +35,13 @@
             <tr>
                 <th
                     class="has-text-centered"
-                    :class="{ 'has-text-link': value == sortColumn }"
+                    :class="{ 'has-text-link': value === sortColumn }"
                     :key="key"
                     v-for="(value, key) in columns"
                     @click="$emit('sort-column', key)">
                     <span>{{ key }}</span>
                     <template v-if="key !== '' && value === sortColumn">
-                        <span class="ml-2" v-if="direction == 'ASC'">⮟</span>
+                        <span class="ml-2" v-if="direction === 'ASC'">⮟</span>
                         <span class="ml-2" v-else>⮝</span>
                     </template>
                 </th>
@@ -44,8 +51,8 @@
             <tr
                 class="has-text-centered"
                 :class="{
-                    'has-text-white': selectedRow == index,
-                    'has-background-link': selectedRow == index
+                    'has-text-white': selectedRow === index,
+                    'has-background-link': selectedRow === index
                 }"
                 :key="employee.$id"
                 v-for="(employee, index) in employees"
