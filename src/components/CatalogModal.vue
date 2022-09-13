@@ -1,5 +1,8 @@
 <script>
+    import { Query } from "appwrite";
+
     import { database } from "../api.js";
+    import { EMPLOYEES_COL_ID } from "../api.js";
     import { JOBS_COL_ID } from "../api.js";
     import { REASONS_COL_ID } from "../api.js";
     
@@ -12,6 +15,16 @@
             catalogs() {
                 this.updateData();
                 return this.catalogTitles;
+            },
+            catalogName() {
+                switch (this.type) {
+                    case "jobs":
+                        return "job_title";
+                        break;
+                    case "reasons":
+                        return "reason_for_dismissal";
+                        break;
+                }
             },
             collection() {
                 switch (this.type) {
@@ -41,6 +54,19 @@
                 this.actionTitle = "Добавить";
                 this.actionVisible = true;
             },
+            async catalogIsNotUsed(index) {
+                const query = [
+                    Query.equal(
+                        this.catalogName,
+                        this.catalogTitles[index].name
+                    )
+                ];
+                const result = await database.listDocuments(
+                    EMPLOYEES_COL_ID,
+                    query
+                );
+                return result.total === 0 ? true: false;
+            },
             deleteAllCatalogs() {
                 if (this.catalogTitles.length > 0) {
                     this.catalogTitles.forEach((title, index) => {
@@ -57,10 +83,14 @@
                 }
             },
             async deleteCatalog(index) {
-                await database.deleteDocument(
-                    this.collection, 
-                    this.catalogTitles[index].$id
-                );
+                if (await this.catalogIsNotUsed(index)) {
+                    await database.deleteDocument(
+                        this.collection, 
+                        this.catalogTitles[index].$id
+                    );
+                    return true;
+                }
+                return false;
             },
             editCatalog() {
                 if (this.selectedRow >= 0) {
@@ -69,17 +99,26 @@
                     this.actionVisible = true;
                 }
             },
-            removeCatalog(index) {
+            async removeCatalog(index) {
                 if (this.selectedRow >= 0) {
-                    this.deleteCatalog(index);
-                    this.updateData();
-                    this.$emit(
-                        "show-notify",
-                        {
-                            text: "Элемент справочника удален.",
-                            type: "success"
-                        }
-                    )
+                    if (await this.deleteCatalog(index)) {
+                        this.updateData();
+                        this.$emit(
+                            "show-notify",
+                            {
+                                text: "Элемент справочника удален.",
+                                type: "success"
+                            }
+                        )
+                    } else {
+                        this.$emit(
+                            "show-notify",
+                            {
+                                text: "Элемент справочника привязан к сотруднику.",
+                                type: "warning"
+                            }
+                        );
+                    }
                 }
             },
             async updateData() {

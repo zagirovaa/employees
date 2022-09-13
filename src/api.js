@@ -1,32 +1,27 @@
 import { Account, Client, Databases } from "appwrite";
 
+const DEFAULT_HOLIDAYS = ["Суббота", "Воскресение"];
 
 const EMAIL = "test@netcon.pro";
 const PASSWORD = "11111111";
-
 const END_POINT = "http://localhost/v1";
-
 const PROJECT_ID = "62d14f7a52973db50040";
 const DATABASE_ID ="62d14fe7da7ae3d3a437";
-
 export const EMPLOYEES_COL_ID = "62d15adca365e871a654";
 export const JOBS_COL_ID = "62d15002f14d9b2accd0";
 export const REASONS_COL_ID = "62d151c1197064a173b1";
 export const SETS_COL_ID = "630880867803a0d3e7d3";
 export const STATES_COL_ID = "630b4f6caf52194e911b";
 
-const DEFAULT_HOLIDAYS = ["Суббота", "Воскресение"];
-
 const client = new Client();
 client.setEndpoint(END_POINT).setProject(PROJECT_ID);
-
 const account = new Account(client);
 const auth = account.get();
 auth.then(user => {
     console.log(`User ${user.name} is logged in.`);
 }, error => {
-    const acct = account.createEmailSession(EMAIL, PASSWORD);
-    acct.then(function (user) {
+    const session = account.createEmailSession(EMAIL, PASSWORD);
+    session.then(user => {
         console.log(`User ${user.name} is logged in.`);
     }, function (error) {
         console.log(error);
