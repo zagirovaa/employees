@@ -73,13 +73,10 @@
                         this.deleteCatalog(index);
                     });
                     this.updateData();
-                    this.$emit(
-                        "show-notify",
-                        {
-                            text: "Все элементы справочника удалены.",
-                            type: "success"
-                        }
-                    )
+                    this.$emit("show-notify", {
+                        text: "Все элементы справочника удалены.",
+                        type: "success"
+                    })
                 }
             },
             async deleteCatalog(index) {
@@ -103,21 +100,15 @@
                 if (this.selectedRow >= 0) {
                     if (await this.deleteCatalog(index)) {
                         this.updateData();
-                        this.$emit(
-                            "show-notify",
-                            {
-                                text: "Элемент справочника удален.",
-                                type: "success"
-                            }
-                        )
+                        this.$emit("show-notify", {
+                            text: "Элемент справочника удален.",
+                            type: "success"
+                        });
                     } else {
-                        this.$emit(
-                            "show-notify",
-                            {
-                                text: "Элемент справочника привязан к сотруднику.",
-                                type: "warning"
-                            }
-                        );
+                        this.$emit("show-notify", {
+                            text: "Элемент справочника привязан к сотруднику.",
+                            type: "warning"
+                        });
                     }
                 }
             },
