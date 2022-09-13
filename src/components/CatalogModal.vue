@@ -76,7 +76,7 @@
                     this.$emit("show-notify", {
                         text: "Все элементы справочника удалены.",
                         type: "success"
-                    })
+                    });
                 }
             },
             async deleteCatalog(index) {

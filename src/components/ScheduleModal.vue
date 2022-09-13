@@ -93,9 +93,7 @@
                                     await database.updateDocument(
                                         STATES_COL_ID,
                                         currentState[0].$id,
-                                        JSON.stringify({
-                                            status: "Отпускной"
-                                        })
+                                        JSON.stringify({ status: "Отпускной" })
                                     );
                                     this.offDays--;
                                     this.vacationDays++;
@@ -104,9 +102,7 @@
                                     await database.updateDocument(
                                         STATES_COL_ID,
                                         currentState[0].$id,
-                                        JSON.stringify({
-                                            status: "Больничный"
-                                        })
+                                        JSON.stringify({ status: "Больничный" })
                                     );
                                     this.vacationDays--;
                                     this.sickDays++;

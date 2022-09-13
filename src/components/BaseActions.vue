@@ -41,7 +41,7 @@
                             this.$emit("show-notify", {
                                 text: "Добавлен элемент справочника.",
                                 type: "success"
-                            })
+                            });
                         } else if (this.title === "Изменить") {
                             await database.updateDocument(
                                 this.collection,
@@ -52,19 +52,19 @@
                             this.$emit("show-notify", {
                                 text: "Изменен элемент справочника.",
                                 type: "success"
-                            })
+                            });
                         }
                     } else {
                         this.$emit("show-notify", {
                             text: "Элемент с подобным именем уже существует.",
                             type: "warning"
-                        })
+                        });
                     }
                 } else {
                     this.$emit("show-notify", {
                         text: "Обязательное поле не заполнено.",
                         type: "warning"
-                    })
+                    });
                 }
             },
             async hasNoDublicateName() {

@@ -26,21 +26,15 @@
                         JSON.stringify(this.employee)
                     );
                     this.$emit("close-modal");
-                    this.$emit(
-                        "show-notify",
-                        {
-                            text: "Сотрудник уволен.",
-                            type: "success"
-                        }
-                    )
+                    this.$emit("show-notify", {
+                        text: "Сотрудник уволен.",
+                        type: "success"
+                    });
                 } else {
-                    this.$emit(
-                        "show-notify",
-                        {
-                            text: "Обязательное поле не заполнено.",
-                            type: "warning"
-                        }
-                    )
+                    this.$emit("show-notify", {
+                        text: "Обязательное поле не заполнено.",
+                        type: "warning"
+                    });
                 }
             },
             async getDismissReasons() {
@@ -53,13 +47,10 @@
                         this.employee.reason_for_dismissal = this.reasons[0].name;
                     }
                 } else {
-                    this.$emit(
-                        "show-notify",
-                        {
-                            text: "Не удалось загрузить справочник причин.",
-                            type: "warning"
-                        }
-                    )
+                    this.$emit("show-notify", {
+                        text: "Не удалось загрузить справочник причин.",
+                        type: "warning"
+                    });
                 }
             }
         },

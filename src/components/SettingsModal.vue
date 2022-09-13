@@ -29,13 +29,10 @@
             async applyChanges() {
                 await this.saveHolidays();
                 this.$emit("close-modal");
-                this.$emit(
-                    "show-notify",
-                    {
-                        text: "Настройки сохранены.",
-                        type: "success"
-                    }
-                )
+                this.$emit("show-notify",  {
+                    text: "Настройки сохранены.",
+                    type: "success"
+                });
             },
             changeHoliday(day) {
                 if (this.holidays.includes(day)) {

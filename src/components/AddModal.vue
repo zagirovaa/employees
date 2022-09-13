@@ -35,21 +35,15 @@
                         JSON.stringify(this.employee)
                     );
                     this.$emit("close-modal");
-                    this.$emit(
-                        "show-notify",
-                        {
-                            text: "Добавлен новый сотрудник.",
-                            type: "success"
-                        }
-                    )
+                    this.$emit("show-notify", {
+                        text: "Добавлен новый сотрудник.",
+                        type: "success"
+                    });
                 } else {
-                    this.$emit(
-                        "show-notify",
-                        {
-                            text: "Не все обязательные поля заполнены.",
-                            type: "warning"
-                        }
-                    )
+                    this.$emit("show-notify", {
+                        text: "Не все обязательные поля заполнены.",
+                        type: "warning"
+                    });
                 }
             },
             async getJobTitles() {
@@ -60,13 +54,10 @@
                     this.jobs = result.documents;
                     this.employee.job_title = this.jobs[0].name;
                 } else {
-                    this.$emit(
-                        "show-notify",
-                        {
-                            text: "Не удалось загрузить справочник должностей.",
-                            type: "warning"
-                        }
-                    )
+                    this.$emit("show-notify", {
+                        text: "Не удалось загрузить справочник должностей.",
+                        type: "warning"
+                    });
                 }
             }
         },

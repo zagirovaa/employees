@@ -37,21 +37,15 @@
                         JSON.stringify(this.employee)
                     );
                     this.$emit("close-modal");
-                    this.$emit(
-                        "show-notify",
-                        {
-                            text: "Данные сотрудника изменены.",
-                            type: "success"
-                        }
-                    )
+                    this.$emit("show-notify", {
+                        text: "Данные сотрудника изменены.",
+                        type: "success"
+                    });
                 } else {
-                    this.$emit(
-                        "show-notify",
-                        {
-                            text: "Не все обязательные поля заполнены.",
-                            type: "warning"
-                        }
-                    )
+                    this.$emit("show-notify", {
+                        text: "Не все обязательные поля заполнены.",
+                        type: "warning"
+                    });
                 }
             },
             async getJobTitles() {
@@ -61,13 +55,10 @@
                 if (result.total > 0) {
                     this.jobs = result.documents;
                 } else {
-                    this.$emit(
-                        "show-notify",
-                        {
-                            text: "Не удалось загрузить справочник должностей.",
-                            type: "warning"
-                        }
-                    )
+                    this.$emit("show-notify", {
+                        text: "Не удалось загрузить справочник должностей.",
+                        type: "warning"
+                    });
                 }
             },
             async getDismissReasons() {
@@ -77,13 +68,10 @@
                 if (result.total > 0) {
                     this.reasons = result.documents;
                 } else {
-                    this.$emit(
-                        "show-notify",
-                        {
-                            text: "Не удалось загрузить справочник причин.",
-                            type: "warning"
-                        }
-                    )
+                    this.$emit("show-notify", {
+                        text: "Не удалось загрузить справочник причин.",
+                        type: "warning"
+                    });
                 }
             }
         },

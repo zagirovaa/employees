@@ -24,12 +24,12 @@ const dayNames = [
 ]
 
 export const sortColumns = {
-    "": "",
-    "Дата приема": "date_of_employment",
-    "ФИО": "full_name",
-    "Должность": "job_title",
-    "Оклад": "salary",
-    "Статус": "status"
+    "":             "",
+    "Дата приема":  "date_of_employment",
+    "ФИО":          "full_name",
+    "Должность":    "job_title",
+    "Оклад":        "salary",
+    "Статус":       "status"
 }
 
 function yearsRange(start, stop) {
