@@ -149,7 +149,7 @@
                 }
             },
             async getEmployees() {
-                this.fetchedData = await getAllEmployees();
+                this.fetchedData = await getAllEmployees(true);
                 this.selectedName = this.fetchedData[0].full_name;
                 this.getYears();
             },

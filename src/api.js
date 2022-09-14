@@ -1,4 +1,4 @@
-import { Account, Client, Databases } from "appwrite";
+import { Account, Client, Databases, Query } from "appwrite";
 
 const DEFAULT_HOLIDAYS = ["Суббота", "Воскресение"];
 
@@ -30,9 +30,13 @@ auth.then(user => {
 
 export const database = new Databases(client, DATABASE_ID);
 
-export async function getAllEmployees() {
+export async function getAllEmployees(workingOnly) {
+    const query = [];
+    if (workingOnly) {
+        query.push(Query.equal("status", "Работает"));
+    }
     const result = await database.listDocuments(
-        EMPLOYEES_COL_ID, [], 100, 0, "", "after", ["full_name"], ["ASC"]
+        EMPLOYEES_COL_ID, query, 100, 0, "", "after", ["full_name"], ["ASC"]
     );
     return result.total > 0 ? result.documents : [];
 }
