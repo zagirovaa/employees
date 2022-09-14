@@ -1,18 +1,21 @@
 <script>
     export default {
+        computed: {
+            filterIcon() {
+                return this.filtered ? "filter_alt_off" : "filter_alt";
+            },
+            filterTooltip() {
+                return this.filtered ?
+                "Сбросить фильтрацию" :
+                "Задать фильтрацию";
+            }
+        },
         data() {
             return {
                 directoryMenu: {
                     "0": ["Должности сотрудников", "Alt + J"],
                     "1": ["Причины увольнения",    "Alt + R"]
                 },
-                filterItems: [
-                    "По дате",
-                    "По имени",
-                    "По должности",
-                    "По окладу",
-                    "По статусу"
-                ],
                 limitItems: [5, 10, 15, 20, 25, 50, 100],
                 operationsMenu: {
                     "0": ["Добавить",              "Alt + A"],
@@ -40,8 +43,14 @@
             "show-settings"
         ],
         props: {
-            currentFilter: String,
             currentPage: [Number, String],
+            filtered: {
+                default() {
+                    return false;
+                },
+                required: true,
+                type: Boolean
+            },
             pagesCount: [Number, String],
             rowsPerPage: [Number, String]
         }
@@ -154,32 +163,12 @@
                         </a>
                     </div>
                 </div>
-                <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link">
-                        <span
-                            class="material-icons mr-2 has-tooltip-left"
-                            data-tooltip="Фильтрация по столбцам">
-                            filter_alt
-                        </span>
-                    </a>
-                    <div class="navbar-dropdown">
-                        <a
-                            class="navbar-item"
-                            :class="{'is-active': currentFilter == 'Без фильтра'}"
-                            @click="$emit('change-filter', 'Без фильтра')">
-                            Без фильтра
-                        </a>
-                        <hr class="navbar-devider">
-                        <a
-                            class="navbar-item"
-                            :class="{'is-active': currentFilter == value}"
-                            :key="index"
-                            v-for="(value, index) in filterItems"
-                            @click="$emit('change-filter', value)">
-                            {{ value }}
-                        </a>
-                    </div>
-                </div>
+                <a
+                    class="navbar-item has-tooltip-left"
+                    :data-tooltip="filterTooltip"
+                    @click="$emit('change-filter')">
+                    <span class="material-icons">{{ filterIcon }}</span>
+                </a>
                 <a
                     class="navbar-item has-tooltip-left"
                     data-tooltip="Настройки программы"

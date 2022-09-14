@@ -55,11 +55,11 @@
                 catalogVisible: false,
                 catalogTitle: "",
                 catalogType: "",
-                currentFilter: "Без фильтра",
                 currentPage: 0,
                 dismissModalVisible: false,
                 editModalVisible: false,
                 employees: [],
+                filtered: false,
                 filterQuery: [],
                 helpModalVisible: false,
                 notify: {
@@ -92,28 +92,8 @@
                     this.addModalVisible = true;
                 }
             },
-            changeFilter(filter) {
-                switch (filter) {
-                    case "Без фильтра":
-                        this.resetFilter();
-                        break;
-                    case "По дате":
-                        this.filterByDate();
-                        break;
-                    case "По имени":
-                    this.filterByName();
-                        break;
-                    case "По должности":
-                        this.filterByJob();
-                        break;
-                    case "По окладу":
-                        this.filterBySalary();
-                        break;
-                    case "ПО статусу":
-                        this.filterByStatus();
-                        break;
-                }
-                this.currentFilter = filter;
+            changeFilter() {
+                this.filtered = !this.filtered;
             },
             async changeLimit(limit) {
                 const document_id = await getSettingID("limit");
@@ -235,21 +215,6 @@
                 if (this.employees.length > 0 && this.workingEmployeeExist()) {
                     this.scheduleModalVisible = true;
                 }
-            },
-            filterByDate() {
-
-            },
-            filterByName() {
-
-            },
-            filterByJob() {
-
-            },
-            filterBySalary() {
-
-            },
-            filterByStatus() {
-
             },
             invertSortDirection() {
                 this.sortDirection = (this.sortDirection == "ASC") ?
@@ -406,8 +371,8 @@
 <template>
     <div>
         <BaseNavbar
-            :current-filter="currentFilter"
             :current-page="currentPage"
+            :filtered="filtered"
             :pages-count="pagesCount"
             :rows-per-page="rowsPerPage"
             @change-filter="changeFilter"
