@@ -6,7 +6,14 @@
                     "0": ["Должности сотрудников", "Alt + J"],
                     "1": ["Причины увольнения",    "Alt + R"]
                 },
-                docsPerPage: [5, 10, 15, 20, 25, 50, 100],
+                filterItems: [
+                    "По дате",
+                    "По имени",
+                    "По должности",
+                    "По окладу",
+                    "По статусу"
+                ],
+                limitItems: [5, 10, 15, 20, 25, 50, 100],
                 operationsMenu: {
                     "0": ["Добавить",              "Alt + A"],
                     "1": ["Изменить",              "Alt + E"],
@@ -25,6 +32,7 @@
             }
         },
         emits: [
+            "change-filter",
             "change-limit",
             "change-page",
             "item-click",
@@ -32,6 +40,7 @@
             "show-settings"
         ],
         props: {
+            currentFilter: String,
             currentPage: [Number, String],
             pagesCount: [Number, String],
             rowsPerPage: [Number, String]
@@ -139,8 +148,34 @@
                             class="navbar-item"
                             :class="{'is-active': rowsPerPage == value}"
                             :key="index"
-                            v-for="(value, index) in docsPerPage"
+                            v-for="(value, index) in limitItems"
                             @click="$emit('change-limit', value)">
+                            {{ value }}
+                        </a>
+                    </div>
+                </div>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        <span
+                            class="material-icons mr-2 has-tooltip-left"
+                            data-tooltip="Фильтрация по столбцам">
+                            filter_alt
+                        </span>
+                    </a>
+                    <div class="navbar-dropdown">
+                        <a
+                            class="navbar-item"
+                            :class="{'is-active': currentFilter == 'Без фильтра'}"
+                            @click="$emit('change-filter', 'Без фильтра')">
+                            Без фильтра
+                        </a>
+                        <hr class="navbar-devider">
+                        <a
+                            class="navbar-item"
+                            :class="{'is-active': currentFilter == value}"
+                            :key="index"
+                            v-for="(value, index) in filterItems"
+                            @click="$emit('change-filter', value)">
                             {{ value }}
                         </a>
                     </div>

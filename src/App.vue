@@ -55,10 +55,12 @@
                 catalogVisible: false,
                 catalogTitle: "",
                 catalogType: "",
+                currentFilter: "Без фильтра",
                 currentPage: 0,
                 dismissModalVisible: false,
                 editModalVisible: false,
                 employees: [],
+                filterQuery: [],
                 helpModalVisible: false,
                 notify: {
                     text: "",
@@ -89,6 +91,29 @@
                 } else {
                     this.addModalVisible = true;
                 }
+            },
+            changeFilter(filter) {
+                switch (filter) {
+                    case "Без фильтра":
+                        this.resetFilter();
+                        break;
+                    case "По дате":
+                        this.filterByDate();
+                        break;
+                    case "По имени":
+                    this.filterByName();
+                        break;
+                    case "По должности":
+                        this.filterByJob();
+                        break;
+                    case "По окладу":
+                        this.filterBySalary();
+                        break;
+                    case "ПО статусу":
+                        this.filterByStatus();
+                        break;
+                }
+                this.currentFilter = filter;
             },
             async changeLimit(limit) {
                 const document_id = await getSettingID("limit");
@@ -211,8 +236,24 @@
                     this.scheduleModalVisible = true;
                 }
             },
+            filterByDate() {
+
+            },
+            filterByName() {
+
+            },
+            filterByJob() {
+
+            },
+            filterBySalary() {
+
+            },
+            filterByStatus() {
+
+            },
             invertSortDirection() {
-                this.sortDirection = (this.sortDirection == "ASC") ? "DESC" : "ASC";
+                this.sortDirection = (this.sortDirection == "ASC") ?
+                "DESC" : "ASC";
             },
             itemClick(shortcut) {
                 switch (shortcut) {
@@ -241,6 +282,9 @@
                         this.showReasonsCatalog();
                         break;
                 }
+            },
+            resetFilter() {
+                this.filterQuery = [];
             },
             removeEmployee() {
                 if (this.employees.length > 0) {
@@ -299,7 +343,7 @@
                 if (employeesCount > 0) {
                     const result = await database.listDocuments(
                         EMPLOYEES_COL_ID,
-                        [],
+                        this.filterQuery,
                         this.rowsPerPage,
                         this.offset,
                         "",
@@ -362,9 +406,11 @@
 <template>
     <div>
         <BaseNavbar
+            :current-filter="currentFilter"
             :current-page="currentPage"
             :pages-count="pagesCount"
             :rows-per-page="rowsPerPage"
+            @change-filter="changeFilter"
             @change-limit="changeLimit"
             @change-page="changePage"
             @item-click="itemClick"
