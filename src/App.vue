@@ -136,8 +136,8 @@
             async clearEmployees() {
                 if (this.employees.length > 0) {
                     const employees = await getAllEmployees();
-                    employees.forEach(employee => {
-                        this.deleteEmployee(employee.$id);
+                    employees.forEach(async employee => {
+                        await this.deleteEmployee(employee.$id);
                     });
                     this.showNotify({
                         text: "Все сотрудники удалены.",

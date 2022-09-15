@@ -16,8 +16,8 @@
         "Заканчивается",
         "Содержит",
         "Не содержит"
-    ]
-
+    ];
+    
     export default {
         components: { BaseModal },
         computed: {
