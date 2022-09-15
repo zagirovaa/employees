@@ -267,10 +267,10 @@
                 this.catalogType = "jobs";
                 this.catalogVisible = true;
             },
-            showReasonsCatalog() {
-                this.catalogTitle = "Причины увольнения";
-                this.catalogType = "reasons";
-                this.catalogVisible = true;
+            showFilter() {
+                if (this.employees.length > 0) {
+                    this.filterModalVisible = true;
+                }
             },
             showNotify(data) {
                 this.notify.text = data.text;
@@ -279,6 +279,11 @@
                 setTimeout(() => {
                     this.notify.visible = false;
                 }, this.notify.timeout);
+            },
+            showReasonsCatalog() {
+                this.catalogTitle = "Причины увольнения";
+                this.catalogType = "reasons";
+                this.catalogVisible = true;
             },
             sortByColumnName(columnName) {
                 if (this.sortColumn === sortColumns[columnName]) {
@@ -378,7 +383,7 @@
             @change-page="changePage"
             @item-click="itemClick"
             @show-help="helpModalVisible = true"
-            @show-filter="filterModalVisible = true"
+            @show-filter="showFilter"
             @show-settings="settingsModalVisible = true"/>
         <BaseTable
             :direction="sortDirection"
