@@ -29,7 +29,7 @@ table th, table td {
     vertical-align: middle !important;
 }
 
-tr {
+table:not(#filter) tr {
     cursor: pointer;
 }
 
@@ -59,7 +59,7 @@ tr {
     border-radius: 5px;
 }
 
-.modal-card table td:hover {
+.modal-card table#schedule td:hover {
     background-color: var(--light-color);
 }
 

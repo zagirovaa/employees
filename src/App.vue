@@ -21,6 +21,7 @@
     import CatalogModal from "./components/CatalogModal.vue";
     import DismissModal from "./components/DismissModal.vue";
     import EditModal from "./components/EditModal.vue";
+    import FilterModal from "./components/FilterModal.vue";
     import HelpModal from "./components/HelpModal.vue";
     import ScheduleModal from "./components/ScheduleModal.vue";
     import SettingsModal from "./components/SettingsModal.vue";
@@ -34,6 +35,7 @@
             CatalogModal,
             DismissModal,
             EditModal,
+            FilterModal,
             HelpModal,
             ScheduleModal,
             SettingsModal
@@ -59,7 +61,7 @@
                 dismissModalVisible: false,
                 editModalVisible: false,
                 employees: [],
-                filtered: false,
+                filterModalVisible: false,
                 filterQuery: [],
                 helpModalVisible: false,
                 notify: {
@@ -93,7 +95,7 @@
                 }
             },
             changeFilter() {
-                this.filtered = !this.filtered;
+                this.filterModalVisible = !this.filtered;
             },
             async changeLimit(limit) {
                 const document_id = await getSettingID("limit");
@@ -248,9 +250,6 @@
                         break;
                 }
             },
-            resetFilter() {
-                this.filterQuery = [];
-            },
             removeEmployee() {
                 if (this.employees.length > 0) {
                     this.deleteEmployee(this.currentEmployee.$id);
@@ -372,7 +371,6 @@
     <div>
         <BaseNavbar
             :current-page="currentPage"
-            :filtered="filtered"
             :pages-count="pagesCount"
             :rows-per-page="rowsPerPage"
             @change-filter="changeFilter"
@@ -380,6 +378,7 @@
             @change-page="changePage"
             @item-click="itemClick"
             @show-help="helpModalVisible = true"
+            @show-filter="filterModalVisible = true"
             @show-settings="settingsModalVisible = true"/>
         <BaseTable
             :direction="sortDirection"
@@ -414,6 +413,10 @@
         <ScheduleModal
             v-if="scheduleModalVisible"
             @close-modal="scheduleModalVisible = false"
+            @show-notify="showNotify"/>
+        <FilterModal
+            v-if="filterModalVisible"
+            @close-modal="filterModalVisible = false"
             @show-notify="showNotify"/>
         <SettingsModal
             v-if="settingsModalVisible"

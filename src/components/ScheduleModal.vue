@@ -369,14 +369,13 @@
                         </span>
                     </p>
                 </div>
-                <table class="table is-fullwidth is-bordered mt-5 mb-4">
+                <table
+                    class="table is-fullwidth is-bordered mt-5 mb-4"
+                    id="schedule">
                     <thead>
-                        <tr>
+                        <tr class="has-background-light">
                             <th
-                                class="
-                                    has-text-centered
-                                    has-background-light
-                                "
+                                class="has-text-centered"
                                 :key="index"
                                 v-for="(name, index) in columns">
                                 {{ name }}

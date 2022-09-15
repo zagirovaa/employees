@@ -1,15 +1,5 @@
 <script>
     export default {
-        computed: {
-            filterIcon() {
-                return this.filtered ? "filter_alt_off" : "filter_alt";
-            },
-            filterTooltip() {
-                return this.filtered ?
-                "Сбросить фильтрацию" :
-                "Задать фильтрацию";
-            }
-        },
         data() {
             return {
                 directoryMenu: {
@@ -35,22 +25,15 @@
             }
         },
         emits: [
-            "change-filter",
             "change-limit",
             "change-page",
             "item-click",
             "show-help",
+            "show-filter",
             "show-settings"
         ],
         props: {
             currentPage: [Number, String],
-            filtered: {
-                default() {
-                    return false;
-                },
-                required: true,
-                type: Boolean
-            },
             pagesCount: [Number, String],
             rowsPerPage: [Number, String]
         }
@@ -165,9 +148,9 @@
                 </div>
                 <a
                     class="navbar-item has-tooltip-left"
-                    :data-tooltip="filterTooltip"
-                    @click="$emit('change-filter')">
-                    <span class="material-icons">{{ filterIcon }}</span>
+                    data-tooltip="Найстройки фильтрации"
+                    @click="$emit('show-filter')">
+                    <span class="material-icons">filter_alt</span>
                 </a>
                 <a
                     class="navbar-item has-tooltip-left"
