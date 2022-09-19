@@ -1,6 +1,6 @@
 <script>
     import { Query } from "appwrite";
-    import { database } from "../api.js";
+    import * as api from "../api.js";
     import conf from "../config.js";
 
     import BaseModal from "./BaseModal.vue";
@@ -15,11 +15,13 @@
         "Содержит",
         "Не содержит"
     ];
+    const STATE_VALUES = ["Работает", "Уволен", "Уволился"];
 
     export default {
         components: { BaseModal },
         computed: {
             conditions() {
+                this.selectedValue = "";
                 switch (this.selectedField) {
                     case "Дата приема":
                         this.selectedCondition = DIGIT_CONDITIONS[0];
@@ -31,6 +33,8 @@
                         break;
                     case "Должность":
                         this.selectedCondition = BOOL_CONDITIONS[0];
+                        this.selectValues = this.jobTitles;
+                        this.selectedValue = this.selectValues[0];
                         return BOOL_CONDITIONS;
                         break;
                     case "Оклад":
@@ -39,7 +43,29 @@
                         break;
                     case "Статус":
                         this.selectedCondition = BOOL_CONDITIONS[0];
+                        this.selectValues = STATE_VALUES;
+                        this.selectedValue = this.selectValues[0];
                         return BOOL_CONDITIONS;
+                        break;
+                }
+            },
+            jobTitles() {
+                const titles = [];
+                for (let job of this.jobs) {
+                    titles.push(job.name);
+                }
+                return titles;
+            },
+            inputType() {
+                switch (this.selectedField) {
+                    case "Дата приема":
+                        return "date";
+                        break;
+                    case "ФИО":
+                        return "text";
+                        break;
+                    case "Оклад":
+                        return "number";
                         break;
                 }
             }
@@ -48,9 +74,11 @@
             return {
                 fields: ["Дата приема", "ФИО", "Должность", "Оклад", "Статус"],
                 filters: [],
+                jobs: [],
                 selectedField: "Дата приема",
                 selectedCondition: "",
                 selectedValue: "",
+                selectValues: [],
                 title: "Фильтрация"
             }
         },
@@ -78,9 +106,26 @@
             deleteFilter(index) {
 
             },
+            async getJobTitles() {
+                const result = await api.database.listDocuments(
+                    conf.collections.jobs,
+                    [], 100, 0, "", "after", ["name"], ["ASC"]
+                );
+                if (result.total > 0) {
+                    this.jobs = result.documents;
+                } else {
+                    this.$emit("show-notify", {
+                        text: "Не удалось загрузить справочник должностей.",
+                        type: "warning"
+                    });
+                }
+            },
             resetFilter() {
 
             }
+        },
+        mounted() {
+            this.getJobTitles();
         }
     }
 </script>
@@ -116,10 +161,27 @@
                             </select>
                         </span>
                     </p>
-                    <p class="control is-expanded">
+                    <p
+                        class="control is-expanded"
+                        v-if="this.selectedField === 'Должность' ||
+                              this.selectedField === 'Статус'">
+                        <span class="select is-fullwidth">
+                            <select
+                                v-model.trim="selectedValue">
+                                <option
+                                    :key="index"
+                                    v-for="(value, index) in selectValues">
+                                    {{ value }}
+                                </option>
+                            </select>
+                        </span>
+                    </p>
+                    <p
+                        class="control is-expanded"
+                        v-else>
                         <input
                             class="input is-fullwidth"
-                            type="text"
+                            :type="inputType"
                             v-model.trim="selectedValue">
                     </p>
                     <p class="control">
