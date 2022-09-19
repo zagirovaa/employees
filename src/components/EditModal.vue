@@ -1,9 +1,6 @@
 <script>
     import { database } from "../api.js";
-    import { EMPLOYEES_COL_ID } from "../api.js";
-    import { JOBS_COL_ID } from "../api.js";
-    import { REASONS_COL_ID } from "../api.js";
-
+    import conf from "../config.js";
     import { getCurrentDate } from "../helpers.js";
 
     import BaseModal from "./BaseModal.vue";
@@ -32,7 +29,7 @@
                     this.employee.salary > 0 &&
                     this.employee.job_title !== "") {
                     await database.updateDocument(
-                        EMPLOYEES_COL_ID,
+                        conf.collections.employees,
                         this.employee.$id,
                         JSON.stringify(this.employee)
                     );
@@ -50,7 +47,8 @@
             },
             async getJobTitles() {
                 const result = await database.listDocuments(
-                    JOBS_COL_ID, [], 100, 0, "", "after", ["name"], ["ASC"]
+                    conf.collections.jobs,
+                    [], 100, 0, "", "after", ["name"], ["ASC"]
                 );
                 if (result.total > 0) {
                     this.jobs = result.documents;
@@ -63,7 +61,8 @@
             },
             async getDismissReasons() {
                 const result = await database.listDocuments(
-                    REASONS_COL_ID, [], 100, 0, "", "after", ["name"], ["ASC"]
+                    conf.collections.reasons,
+                    [], 100, 0, "", "after", ["name"], ["ASC"]
                 );
                 if (result.total > 0) {
                     this.reasons = result.documents;

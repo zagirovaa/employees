@@ -1,9 +1,7 @@
 <script>
     import { Query } from "appwrite";
-
     import { database } from "../api.js";
-    import { JOBS_COL_ID } from "../api.js";
-    import { REASONS_COL_ID } from "../api.js";
+    import conf from "../config.js";
     
     import BaseModal from "./BaseModal.vue";
 
@@ -13,10 +11,10 @@
             collection() {
                 switch (this.type) {
                     case "jobs":
-                        return JOBS_COL_ID;
+                        return conf.collections.jobs;
                         break;
                     case "reasons":
-                        return REASONS_COL_ID;
+                        return conf.collections.reasons;
                         break;
                 }
             }

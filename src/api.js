@@ -1,26 +1,17 @@
 import { Account, Client, Databases, Query } from "appwrite";
-
-const DEFAULT_HOLIDAYS = ["Суббота", "Воскресение"];
-
-const EMAIL = "test@netcon.pro";
-const PASSWORD = "11111111";
-const END_POINT = "http://localhost/v1";
-const PROJECT_ID = "62d14f7a52973db50040";
-const DATABASE_ID ="62d14fe7da7ae3d3a437";
-export const EMPLOYEES_COL_ID = "62d15adca365e871a654";
-export const JOBS_COL_ID = "62d15002f14d9b2accd0";
-export const REASONS_COL_ID = "62d151c1197064a173b1";
-export const SETS_COL_ID = "630880867803a0d3e7d3";
-export const STATES_COL_ID = "630b4f6caf52194e911b";
+import conf from "./config.js";
 
 const client = new Client();
-client.setEndpoint(END_POINT).setProject(PROJECT_ID);
+client.setEndpoint(conf.global.endPoint).setProject(conf.global.projectID);
 const account = new Account(client);
 const auth = account.get();
 auth.then(user => {
     console.log(`User ${user.name} is logged in.`);
 }, error => {
-    const session = account.createEmailSession(EMAIL, PASSWORD);
+    const session = account.createEmailSession(
+        conf.auth.email,
+        conf.auth.password
+    );
     session.then(user => {
         console.log(`User ${user.name} is logged in.`);
     }, function (error) {
@@ -28,7 +19,7 @@ auth.then(user => {
     });
 });
 
-export const database = new Databases(client, DATABASE_ID);
+export const database = new Databases(client, conf.global.databaseID);
 
 export async function getAllEmployees(workingOnly) {
     const query = [];
@@ -36,19 +27,20 @@ export async function getAllEmployees(workingOnly) {
         query.push(Query.equal("status", "Работает"));
     }
     const result = await database.listDocuments(
-        EMPLOYEES_COL_ID, query, 100, 0, "", "after", ["full_name"], ["ASC"]
+        conf.collections.employees,
+        query, 100, 0, "", "after", ["full_name"], ["ASC"]
     );
     return result.total > 0 ? result.documents : [];
 }
 
 export async function getEmployeesCount() {
-    const result = await database.listDocuments(EMPLOYEES_COL_ID);
+    const result = await database.listDocuments(conf.collections.employees);
     return result.total;
 }
 
 export async function getSettings() {
     const settings = {};
-    const result = await database.listDocuments(SETS_COL_ID);
+    const result = await database.listDocuments(conf.collections.settings);
     if (result.total > 0) {
         for (let setting of result.documents) {
             settings[setting.key] = {};
@@ -63,7 +55,7 @@ export async function getHolidays() {
     const settings = await getSettings();
     return settings["holidays"] ? 
     settings["holidays"].value.split(",") : 
-    DEFAULT_HOLIDAYS;
+    conf.holidays;
 }
 
 export async function getSettingID(key) {

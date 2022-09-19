@@ -1,8 +1,6 @@
 <script>
-    import { database } from "../api.js";
-    import { getHolidays } from "../api.js";
-    import { getSettingID } from "../api.js";
-    import { SETS_COL_ID } from "../api.js";
+    import * as api from "../api.js";
+    import conf from "../config.js";
 
     import BaseModal from "./BaseModal.vue";
 
@@ -43,13 +41,13 @@
                 }
             },
             async getSettings() {
-                this.holidays = await getHolidays();
+                this.holidays = await api.getHolidays();
             },
             async saveHolidays() {
-                const document_id = await getSettingID("holidays");
+                const document_id = await api.getSettingID("holidays");
                 if (document_id) {
-                    await database.updateDocument(
-                        SETS_COL_ID,
+                    await api.database.updateDocument(
+                        conf.collections.settings,
                         document_id,
                         {
                             value: this.holidays.join(",")

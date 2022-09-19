@@ -1,9 +1,7 @@
 <script>
     import { Query } from "appwrite";
-
     import { database } from "../api.js";
-    import { EMPLOYEES_COL_ID } from "../api.js";
-    import { JOBS_COL_ID } from "../api.js";
+    import conf from "../config.js";
 
     import BaseModal from "./BaseModal.vue";
 
@@ -17,7 +15,7 @@
         "Содержит",
         "Не содержит"
     ];
-    
+
     export default {
         components: { BaseModal },
         computed: {
@@ -133,7 +131,7 @@
                     </p>
                 </div>
                 <table
-                    class="table is-bordered is-fullwidth mt-4"
+                    class="table is-bordered is-narrow is-fullwidth mt-4"
                     id="filter">
                     <thead>
                         <tr class="has-background-light">

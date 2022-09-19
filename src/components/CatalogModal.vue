@@ -1,10 +1,7 @@
 <script>
     import { Query } from "appwrite";
-
     import { database } from "../api.js";
-    import { EMPLOYEES_COL_ID } from "../api.js";
-    import { JOBS_COL_ID } from "../api.js";
-    import { REASONS_COL_ID } from "../api.js";
+    import conf from "../config.js";
     
     import BaseActions from "./BaseActions.vue";
     import BaseModal from "./BaseModal.vue";
@@ -29,10 +26,10 @@
             collection() {
                 switch (this.type) {
                     case "jobs":
-                        return JOBS_COL_ID;
+                        return conf.collections.jobs;
                         break;
                     case "reasons":
-                        return REASONS_COL_ID;
+                        return conf.collections.reasons;
                         break;
                 }
             }
@@ -62,7 +59,7 @@
                     )
                 ];
                 const result = await database.listDocuments(
-                    EMPLOYEES_COL_ID,
+                    conf.colletions.employees,
                     query
                 );
                 return result.total === 0 ? true: false;

@@ -1,18 +1,7 @@
 <script>
     import { Query } from "appwrite";
-
-    import { database } from "./api.js";
-    import { getAllEmployees } from "./api.js";
-    import { getEmployeesCount } from "./api.js";
-    import { getLimit } from "./api.js";
-    import { getSettingID } from "./api.js";
-    import { EMPLOYEES_COL_ID } from "./api.js";
-    import { STATES_COL_ID } from "./api.js";
-    import { SETS_COL_ID } from "./api.js";
-    import { JOBS_COL_ID } from "./api.js";
-    import { REASONS_COL_ID } from "./api.js";
-
-    import { sortColumns } from "./helpers.js";
+    import * as api from "./api.js";
+    import conf from "./config.js";
 
     import AddModal from "./components/AddModal.vue";
     import BaseNavbar from "./components/BaseNavbar.vue";
@@ -54,7 +43,7 @@
         data() {
             return {
                 addModalVisible: false,
-                catalogVisible: false,
+                catalogModalVisible: false,
                 catalogTitle: "",
                 catalogType: "",
                 currentPage: 0,
@@ -82,8 +71,9 @@
         },
         methods: {
             async addEmployee() {
-                const jobs = await database.listDocuments(
-                    JOBS_COL_ID, [], 100, 0, "", "after", ["name"], ["ASC"]
+                const jobs = await api.database.listDocuments(
+                    conf.collections.jobs,
+                    [], 100, 0, "", "after", ["name"], ["ASC"]
                 );
                 if (jobs.total === 0) {
                     this.showNotify({
@@ -98,10 +88,10 @@
                 this.filterModalVisible = !this.filtered;
             },
             async changeLimit(limit) {
-                const document_id = await getSettingID("limit");
+                const document_id = await api.getSettingID("limit");
                 if (document_id) {
-                    database.updateDocument(
-                        SETS_COL_ID,
+                    api.database.updateDocument(
+                        conf.collections.settings,
                         document_id,
                         {
                             value: String(limit)
@@ -135,7 +125,7 @@
             },
             async clearEmployees() {
                 if (this.employees.length > 0) {
-                    const employees = await getAllEmployees();
+                    const employees = await api.getAllEmployees();
                     employees.forEach(async employee => {
                         await this.deleteEmployee(employee.$id);
                     });
@@ -147,15 +137,15 @@
             },
             async deleteEmployee(employee_id) {
                 const query = [Query.equal("employee_id", employee_id)];
-                await database.deleteDocument(
-                    EMPLOYEES_COL_ID,
+                await api.database.deleteDocument(
+                    conf.collections.employees,
                     employee_id
                 );
                 if (this.employees.length === 0) {
                     this.selectedRow = -1
                 }
-                const result = await database.listDocuments(
-                    STATES_COL_ID,
+                const result = await api.database.listDocuments(
+                    conf.collections.states,
                     query
                 );
                 result.documents.forEach(document => {
@@ -164,16 +154,16 @@
                 
             },
             async deleteState(state_id) {
-                await database.deleteDocument(
-                    STATES_COL_ID,
+                await api.database.deleteDocument(
+                    conf.collections.states,
                     state_id
                 );
             },
             async dismissEmployee() {
                 if (this.employees.length > 0) {
                     if (this.currentEmployee.status === "Работает") {
-                        const reasons = await database.listDocuments(
-                            REASONS_COL_ID,
+                        const reasons = await api.database.listDocuments(
+                            conf.collections.reasons,
                             [], 100, 0, "", "after", ["name"], ["ASC"]
                         );
                         if (reasons.total === 0) {
@@ -189,24 +179,27 @@
             },
             async editEmployee() {
                 if (this.employees.length > 0) {
-                    const jobs = await database.listDocuments(
-                        JOBS_COL_ID, [], 100, 0, "", "after", ["name"], ["ASC"]
+                    const jobs = await api.database.listDocuments(
+                        conf.collections.jobs,
+                        [], 100, 0, "", "after", ["name"], ["ASC"]
                     );
                     if (jobs.total === 0) {
                         this.showNotify({
                             text: "Справочник должностей пуст.",
                             type: "warning"
-                        })
+                        });
                     } else if (this.currentEmployee.status !== "Работает") {
-                        const reasons = await database.listDocuments(
-                            REASONS_COL_ID,
+                        const reasons = await api.database.listDocuments(
+                            conf.collections.reasons,
                             [], 100, 0, "", "after", ["name"], ["ASC"]
                         );
                         if (reasons.total === 0) {
                             this.showNotify({
                                 text: "Справочник причин увольнения пуст.",
                                 type: "warning"
-                            })
+                            });
+                        } else {
+                            this.editModalVisible = true;
                         }
                     } else {
                         this.editModalVisible = true;
@@ -260,12 +253,12 @@
                 }
             },
             async setRowsPerPage() {
-                this.rowsPerPage = await getLimit();
+                this.rowsPerPage = await api.getLimit();
             },
             showJobsCatalog() {
                 this.catalogTitle = "Должности";
                 this.catalogType = "jobs";
-                this.catalogVisible = true;
+                this.catalogModalVisible = true;
             },
             showFilter() {
                 if (this.employees.length > 0) {
@@ -283,10 +276,10 @@
             showReasonsCatalog() {
                 this.catalogTitle = "Причины увольнения";
                 this.catalogType = "reasons";
-                this.catalogVisible = true;
+                this.catalogModalVisible = true;
             },
             sortByColumnName(columnName) {
-                if (this.sortColumn === sortColumns[columnName]) {
+                if (this.sortColumn === api.sortColumns[columnName]) {
                     this.invertSortDirection();
                 }
                 switch (columnName) {
@@ -308,10 +301,10 @@
                 }
             },
             async updateData() {
-                const employeesCount = await getEmployeesCount();
+                const employeesCount = await api.getEmployeesCount();
                 if (employeesCount > 0) {
-                    const result = await database.listDocuments(
-                        EMPLOYEES_COL_ID,
+                    const result = await api.database.listDocuments(
+                        conf.collections.employees,
                         this.filterQuery,
                         this.rowsPerPage,
                         this.offset,
@@ -412,8 +405,8 @@
         <CatalogModal
             :title="catalogTitle"
             :type="catalogType"
-            v-if="catalogVisible"
-            @close-modal="catalogVisible = false"
+            v-if="catalogModalVisible"
+            @close-modal="catalogModalVisible = false"
             @show-notify="showNotify"/>
         <ScheduleModal
             v-if="scheduleModalVisible"

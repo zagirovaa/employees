@@ -1,8 +1,6 @@
 <script>
-    import { database } from "../api.js"
-    import { EMPLOYEES_COL_ID } from "../api.js";
-    import { JOBS_COL_ID } from "../api.js";
-
+    import * as api from "../api.js";
+    import conf from "../config.js";
     import { getCurrentDate } from "../helpers.js"
     
     import BaseModal from "./BaseModal.vue"
@@ -29,8 +27,8 @@
                     this.employee.full_name !== "" &&
                     this.employee.salary > 0 &&
                     this.employee.job_title !== "") {
-                    const result = await database.createDocument(
-                        EMPLOYEES_COL_ID,
+                    const result = await api.database.createDocument(
+                        conf.collections.employees,
                         "unique()",
                         JSON.stringify(this.employee)
                     );
@@ -47,8 +45,9 @@
                 }
             },
             async getJobTitles() {
-                const result = await database.listDocuments(
-                    JOBS_COL_ID, [], 100, 0, "", "after", ["name"], ["ASC"]
+                const result = await api.database.listDocuments(
+                    conf.collections.jobs,
+                    [], 100, 0, "", "after", ["name"], ["ASC"]
                 );
                 if (result.total > 0) {
                     this.jobs = result.documents;

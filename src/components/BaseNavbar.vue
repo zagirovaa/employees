@@ -1,7 +1,10 @@
 <script>
+    import conf from "../config.js";
+    
     export default {
         data() {
             return {
+                conf: conf,
                 directoryMenu: {
                     "0": ["Должности сотрудников", "Alt + J"],
                     "1": ["Причины увольнения",    "Alt + R"]
@@ -16,11 +19,6 @@
                     "5": ["Уволить",               "Alt + F"],
                     "6": ["-",                     ""       ],
                     "7": ["Пропуски",              "Alt + M"]
-                },
-                organization: {
-                    name: "NETCON",
-                    url: "https://netcon.pro",
-                    tooltip: "Официальный сайт компании"
                 }
             }
         },
@@ -46,13 +44,13 @@
             <a
                 class="navbar-item has-tooltip-bottom"
                 target="_blank"
-                :data-tooltip="organization.tooltip"
-                :href="organization.url">
+                :data-tooltip="conf.organization.tooltip"
+                :href="conf.organization.url">
                 <span class="material-icons md-36 mr-3">
                     admin_panel_settings
                 </span>
                 <h5 class="has-text-white has-text-weight-medium is-size-5">
-                    {{ organization.name }} : Сотрудники
+                    {{ conf.organization.name }} : Сотрудники
                 </h5>
             </a>
         </div>
