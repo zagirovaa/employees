@@ -2,6 +2,7 @@
     import { Query } from "appwrite";
     import * as api from "./api.js";
     import conf from "./config.js";
+    import { sortColumns } from "./helpers.js";
 
     import AddModal from "./components/AddModal.vue";
     import BaseNavbar from "./components/BaseNavbar.vue";
@@ -73,7 +74,7 @@
             async addEmployee() {
                 const jobs = await api.database.listDocuments(
                     conf.collections.jobs,
-                    [], 100, 0, "", "after", ["name"], ["ASC"]
+                    [], 100, 0, undefined, "after", ["name"], ["ASC"]
                 );
                 if (jobs.total === 0) {
                     this.showNotify({
@@ -164,7 +165,7 @@
                     if (this.currentEmployee.status === "Работает") {
                         const reasons = await api.database.listDocuments(
                             conf.collections.reasons,
-                            [], 100, 0, "", "after", ["name"], ["ASC"]
+                            [], 100, 0, undefined, "after", ["name"], ["ASC"]
                         );
                         if (reasons.total === 0) {
                             this.showNotify({
@@ -181,7 +182,7 @@
                 if (this.employees.length > 0) {
                     const jobs = await api.database.listDocuments(
                         conf.collections.jobs,
-                        [], 100, 0, "", "after", ["name"], ["ASC"]
+                        [], 100, 0, undefined, "after", ["name"], ["ASC"]
                     );
                     if (jobs.total === 0) {
                         this.showNotify({
@@ -191,7 +192,7 @@
                     } else if (this.currentEmployee.status !== "Работает") {
                         const reasons = await api.database.listDocuments(
                             conf.collections.reasons,
-                            [], 100, 0, "", "after", ["name"], ["ASC"]
+                            [], 100, 0, undefined, "after", ["name"], ["ASC"]
                         );
                         if (reasons.total === 0) {
                             this.showNotify({
@@ -279,7 +280,7 @@
                 this.catalogModalVisible = true;
             },
             sortByColumnName(columnName) {
-                if (this.sortColumn === api.sortColumns[columnName]) {
+                if (this.sortColumn === sortColumns[columnName]) {
                     this.invertSortDirection();
                 }
                 switch (columnName) {
@@ -308,7 +309,7 @@
                         this.filterQuery,
                         this.rowsPerPage,
                         this.offset,
-                        "",
+                        undefined,
                         "after",
                         [this.sortColumn],
                         [this.sortDirection]
@@ -415,6 +416,7 @@
         <FilterModal
             v-if="filterModalVisible"
             @close-modal="filterModalVisible = false"
+            @filter="filterQuery = $event"
             @show-notify="showNotify"/>
         <SettingsModal
             v-if="settingsModalVisible"

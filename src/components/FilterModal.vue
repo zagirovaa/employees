@@ -82,7 +82,7 @@
                 title: "Фильтрация"
             }
         },
-        emits: ["close-modal", "show-notify"],
+        emits: ["close-modal", "filter", "show-notify"],
         methods: {
             addFilter() {
                 if (this.selectedValue !== "") {
@@ -101,15 +101,14 @@
                 }
             },
             applyChanges() {
+                const result = [];
+                this.$emit("filter", result);
                 this.$emit("close-modal");
-            },
-            deleteFilter(index) {
-
             },
             async getJobTitles() {
                 const result = await api.database.listDocuments(
                     conf.collections.jobs,
-                    [], 100, 0, "", "after", ["name"], ["ASC"]
+                    [], 100, 0, undefined, "after", ["name"], ["ASC"]
                 );
                 if (result.total > 0) {
                     this.jobs = result.documents;
@@ -121,7 +120,8 @@
                 }
             },
             resetFilter() {
-
+                this.filters = [];
+                this.applyChanges();
             }
         },
         mounted() {

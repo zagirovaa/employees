@@ -111,7 +111,8 @@
             },
             async updateData() {
                 const result = await database.listDocuments(
-                    this.collection, [], 100, 0, "", "after", ["name"], ["ASC"]
+                    this.collection,
+                    [], 100, 0, undefined, "after", ["name"], ["ASC"]
                 );
                 this.catalogTitles = result.documents;
                 if (this.catalogTitles.length > 0 && this.selectedRow === -1) {
