@@ -28,7 +28,7 @@ export async function getAllEmployees(workingOnly) {
     }
     const result = await database.listDocuments(
         conf.collections.employees,
-        query, 100, 0, "", "after", ["full_name"], ["ASC"]
+        query, 100, 0, undefined, "after", ["full_name"], ["ASC"]
     );
     return result.total > 0 ? result.documents : [];
 }
