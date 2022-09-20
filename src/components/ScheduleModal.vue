@@ -165,13 +165,17 @@
                 const monthName = helpers.getMonthNameByNumber(
                     this.currentMonth
                 );
-                if (this.selectedYear == this.currentYear) {
+                if (this.currentYear == this.employYear) {
                     this.months = helpers.getListOfMonths(
-                        0, this.currentMonth - 1
+                        this.employMonth - 1, this.currentMonth - 1
                     );
                 } else if (this.selectedYear == this.employYear) {
                     this.months = helpers.getListOfMonths(
                         this.employMonth - 1, 11
+                    );
+                } else if (this.selectedYear == this.currentYear) {
+                    this.months = helpers.getListOfMonths(
+                        0, this.currentMonth - 1
                     );
                 } else {
                     this.months = helpers.getListOfMonths(0, 11);
