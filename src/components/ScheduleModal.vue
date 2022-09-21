@@ -12,7 +12,7 @@
             employees() {
                 return this.fetchedData.filter((value, index) => {
                     return value.status == "Работает";
-                })
+                });
             }
         },
         data() {
@@ -43,7 +43,7 @@
         emits: ["close-modal", "show-notify"],
         methods: {
             changeCellColors(cellNumber) {
-                const cell = this.getCurrentCell(cellNumber);
+                const cell = this.getCellByDayNumber(cellNumber);
                 if (cell.classList.contains("has-background-info")) {
                     cell.classList.replace(
                         "has-background-info",
@@ -65,21 +65,22 @@
                 }
             },
             async changeDayStatus(row, column) {
-                const result = [];
-                const cellNumber = this.table[row][column];
+                const cellNumber = this.getCellNumber(row, column);
                 if (cellNumber != "") {
                     const holidays = await api.getHolidays();
                     const selectedDate = this.getSelectedDate(cellNumber);
                     const dayName = helpers.getDayNameByDate(selectedDate);
+                    const currentStates = await this.getStates();
                     if (!holidays.includes(dayName)) {
-                        const currentState = await this.getStates(cellNumber);
-                        if (currentState.length > 0) {
-                            const status = currentState[0].status;
-                            switch (status) {
+                        const state = currentStates.filter((state, index) => {
+                            return new Date(state.date).getDate() == cellNumber;
+                        });
+                        if (state.length > 0) {
+                            switch (state[0].status) {
                                 case "Выходной":
                                     await api.database.updateDocument(
                                         conf.collections.states,
-                                        currentState[0].$id,
+                                        state[0].$id,
                                         JSON.stringify({ status: "Отпускной" })
                                     );
                                     this.offDays--;
@@ -88,7 +89,7 @@
                                 case "Отпускной":
                                     await api.database.updateDocument(
                                         conf.collections.states,
-                                        currentState[0].$id,
+                                        state[0].$id,
                                         JSON.stringify({ status: "Больничный" })
                                     );
                                     this.vacationDays--;
@@ -97,7 +98,7 @@
                                 case "Больничный":
                                     await api.database.deleteDocument(
                                         conf.collections.states,
-                                        currentState[0].$id
+                                        state[0].$id
                                     );
                                     this.sickDays--;
                                     this.workingDays++;
@@ -120,13 +121,14 @@
                     }
                 }
             },
-            getCurrentCell(number) {
-                const cells = document.querySelectorAll(".modal-card table td");
-                for (let cell of cells) {
-                    if (cell.textContent == number) {
-                        return cell;
-                    }
-                }
+            getCellNumber(row, column) {
+                return this.table[row - 1][column - 1];
+            },
+            getCellByDayNumber(number) {
+                const cell = document.querySelector(
+                    `.modal-card table td[value="${number}"]`
+                );
+                return cell;
             },
             getCurrentEmployee() {
                 for (let item of this.fetchedData) {
@@ -192,14 +194,16 @@
                     ${this.selectedYear}-${helpers.padForDigits(
                         this.selectedMonthNumber
                     )}-${helpers.padForDigits(day)}
-                `;
+                `.trim();
             },
-            async getStates(day) {
+            async getStates() {
                 const employeeId = this.getCurrentEmployee().$id;
-                const selectedDate = this.getSelectedDate(day);
+                const startDate = this.getSelectedDate(1);
+                const endDate = this.getSelectedDate(this.maxDays);
                 const query = [
                     Query.equal("employee_id", employeeId),
-                    Query.equal("date", selectedDate)
+                    Query.greaterEqual("date", startDate),
+                    Query.lesserEqual("date", endDate)
                 ];
                 const result = await api.database.listDocuments(
                     conf.collections.states,
@@ -237,12 +241,13 @@
                 this.getMonths();
             },
             async initCellColors() {
+                this.resetCellsColors();
+                this.resetDaysCounts();
                 const holidays = await api.getHolidays();
-                this.resetCellColor();
-                this.resetDaysCounts()
+                const currentStates = await this.getStates();
+                // Set colors for holidays
                 for (let day = 1; day <= this.maxDays; day++) {
-                    const currentCell = this.getCurrentCell(day);
-                    // Set colors for holidays
+                    const currentCell = this.getCellByDayNumber(day);
                     const dayName = helpers.getDayNameByDate(
                         this.getSelectedDate(day)
                     );
@@ -251,41 +256,40 @@
                         currentCell.classList.add("has-text-white");
                         this.offDays++;
                     } else {
-                        // Get day status for selected employee
-                        // and paint cell accordingly
-                        const currentState = await this.getStates(day);
-                        if (currentState.length > 0) {
-                            const status = currentState[0].status;
-                            switch (status) {
-                                case "Выходной":
-                                    currentCell.classList.add(
-                                        "has-background-info"
-                                    );
-                                    currentCell.classList.add("has-text-white");
-                                    this.offDays++;
-                                    break;
-                                case "Отпускной":
-                                    currentCell.classList.add(
-                                        "has-background-warning"
-                                    );
-                                    currentCell.classList.add("has-text-dark");
-                                    this.vacationDays++;
-                                    break;
-                                case "Больничный":
-                                    currentCell.classList.add(
-                                        "has-background-danger"
-                                    );
-                                    currentCell.classList.add("has-text-white");
-                                    this.sickDays++;
-                                    break;
-                            }
-                        } else {
-                            this.workingDays++;
-                        }
+                        this.workingDays++;
                     }
                 }
+                // Get day status for selected employee
+                // and paint cell accordingly
+                currentStates.forEach(state => {
+                    const stateDay = new Date(state.date).getDate();
+                    const currentCell = this.getCellByDayNumber(stateDay);
+                    switch (state.status) {
+                        case "Выходной":
+                            currentCell.classList.add(
+                                "has-background-info"
+                            );
+                            currentCell.classList.add("has-text-white");
+                            this.offDays++;
+                            break;
+                        case "Отпускной":
+                            currentCell.classList.add(
+                                "has-background-warning"
+                            );
+                            currentCell.classList.add("has-text-dark");
+                            this.vacationDays++;
+                            break;
+                        case "Больничный":
+                            currentCell.classList.add(
+                                "has-background-danger"
+                            );
+                            currentCell.classList.add("has-text-white");
+                            this.sickDays++;
+                            break;
+                    }
+                });
             },
-            resetCellColor() {
+            resetCellsColors() {
                 const cells = document.querySelectorAll(".modal-card table td");
                 for (let cell of cells)  {
                     cell.className = "";
@@ -381,16 +385,17 @@
                     </thead>
                     <tbody>
                         <template
-                            :key="row_index"
-                            v-for="(row, row_index) in table.length">
+                            :key="row"
+                            v-for="row in table.length">
                             <tr
                                 class="has-text-centered"
                                 v-if="rowIsVisible(row - 1)">
                                 <td
-                                    :key="column_index"
-                                    v-for="(column, column_index) in 7"
-                                    @click="changeDayStatus(row - 1, column -1)">
-                                    {{ table[row - 1][column - 1] }}
+                                    :key="getCellNumber(row, column)"
+                                    :value="getCellNumber(row, column)"
+                                    v-for="column in 7"
+                                    @click="changeDayStatus(row, column)">
+                                    {{ getCellNumber(row, column) }}
                                 </td>
                             </tr>
                         </template>
