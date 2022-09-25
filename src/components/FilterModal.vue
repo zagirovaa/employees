@@ -6,15 +6,7 @@
     import BaseModal from "./BaseModal.vue";
 
     const DIGIT_CONDITIONS = ["=", "≠", ">", "<", "≥", "≤"];
-    const BOOL_CONDITIONS = ["Равно", "Не равно"];
-    const TEXT_CONDITIONS = [
-        "Равно",
-        "Не равно",
-        "Начинается",
-        "Заканчивается",
-        "Содержит",
-        "Не содержит"
-    ];
+    const BOOL_CONDITIONS = ["=", "≠"];
     const STATE_VALUES = ["Работает", "Уволен", "Уволился"];
 
     export default {
@@ -26,10 +18,6 @@
                     case "Дата приема":
                         this.selectedCondition = DIGIT_CONDITIONS[0];
                         return DIGIT_CONDITIONS;
-                        break;
-                    case "ФИО":
-                        this.selectedCondition = TEXT_CONDITIONS[0];
-                        return TEXT_CONDITIONS;
                         break;
                     case "Должность":
                         this.selectedCondition = BOOL_CONDITIONS[0];
@@ -50,29 +38,17 @@
                 }
             },
             jobTitles() {
-                const titles = [];
-                for (let job of this.jobs) {
-                    titles.push(job.name);
-                }
-                return titles;
+                return this.jobs.map(job => {
+                    return job.name;
+                });
             },
             inputType() {
-                switch (this.selectedField) {
-                    case "Дата приема":
-                        return "date";
-                        break;
-                    case "ФИО":
-                        return "text";
-                        break;
-                    case "Оклад":
-                        return "number";
-                        break;
-                }
+                return this.selectedField === "Дата приема" ? "date" : "number";
             }
         },
         data() {
             return {
-                fields: ["Дата приема", "ФИО", "Должность", "Оклад", "Статус"],
+                fields: ["Дата приема", "Должность", "Оклад", "Статус"],
                 filters: [],
                 jobs: [],
                 selectedField: "Дата приема",
@@ -82,28 +58,40 @@
                 title: "Фильтрация"
             }
         },
-        emits: ["close-modal", "filter", "show-notify"],
+        emits: ["close-modal", "reset-filter", "set-filter", "show-notify"],
         methods: {
             addFilter() {
-                if (this.selectedValue !== "") {
-                    const filter = {
-                        field: this.selectedField,
-                        condition: this.selectedCondition,
-                        value: this.selectedValue
-                    };
-                    this.filters.push(filter);
-                    this.selectedValue = "";
+                if (this.filters.length < conf.filters.count) {
+                    if (this.selectedValue !== "") {
+                        this.filters.push({
+                            field: this.selectedField,
+                            condition: this.selectedCondition,
+                            value: this.selectedValue
+                        });
+                        this.selectedValue = "";
+                    } else {
+                        this.$emit("show-notify", {
+                            text: "Обязательное поле не заполнено.",
+                            type: "warning"
+                        });
+                    }
                 } else {
                     this.$emit("show-notify", {
-                        text: "Обязательное поле не заполнено.",
+                        text: "Превышено максимальное количество фильтров.",
                         type: "warning"
-                    })
+                    });
                 }
             },
             applyChanges() {
-                const result = [];
-                this.$emit("filter", result);
-                this.$emit("close-modal");
+                if (this.filters.length > 0) {
+                    this.$emit("set-filter", this.filters);
+                    this.$emit("close-modal");
+                } else {
+                    this.$emit("show-notify", {
+                        text: "Не добавлены необходимые фильтры.",
+                        type: "warning"
+                    })
+                }
             },
             async getJobTitles() {
                 const result = await api.database.listDocuments(
@@ -120,12 +108,19 @@
                 }
             },
             resetFilter() {
-                this.filters = [];
-                this.applyChanges();
+                this.$emit("reset-filter");
+                this.$emit("close-modal");
             }
         },
         mounted() {
             this.getJobTitles();
+            this.filters = [...this.queries];
+        },
+        props: {
+            queries: {
+                required: true,
+                type: Array
+            }
         }
     }
 </script>
@@ -232,10 +227,16 @@
         </template>
         <template v-slot:footer>
             <footer class="modal-card-foot">
-                <button class="button" @click="resetFilter">
+                <button
+                    class="button"
+                    :disabled="queries.length === 0"
+                    @click="resetFilter">
                     Сбросить
                 </button>
-                <button class="button is-link" @click="applyChanges">
+                <button
+                    class="button is-link"
+                    :disabled="filters.length === 0"
+                    @click="applyChanges">
                     Применить
                 </button>
             </footer>

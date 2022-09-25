@@ -16,6 +16,13 @@
     import ScheduleModal from "./components/ScheduleModal.vue";
     import SettingsModal from "./components/SettingsModal.vue";
 
+    const FIELD_NAMES = {
+        "Дата приема": "date_of_employment",
+        "Должность": "job_title",
+        "Оклад": "salary",
+        "Статус": "status"
+    }
+
     export default {
         components: {
             AddModal,
@@ -36,7 +43,7 @@
                     return this.employees[this.selectedRow];
                 }
             },
-            getEmployees() {
+            allEmployees() {
                 this.updateData();
                 return this.employees;
             }
@@ -56,7 +63,7 @@
                 helpModalVisible: false,
                 notify: {
                     text: "",
-                    timeout: 3000,
+                    timeout: 2000,
                     type: "",
                     visible: false
                 },
@@ -84,9 +91,6 @@
                 } else {
                     this.addModalVisible = true;
                 }
-            },
-            changeFilter() {
-                this.filterModalVisible = !this.filtered;
             },
             async changeLimit(limit) {
                 const document_id = await api.getSettingID("limit");
@@ -135,6 +139,51 @@
                         type: "success"
                     });
                 }
+            },
+            convertToQueries(filters) {
+                return filters.map(filter => {;
+                    if (filter.field === "Оклад") {
+                        filter.value = Number(filter.value);
+                    }
+                    switch (filter.condition) {
+                        case "=":
+                            return Query.equal(
+                                FIELD_NAMES[filter.field],
+                                filter.value
+                            )
+                            break;
+                        case "≠":
+                            return Query.notEqual(
+                                FIELD_NAMES[filter.field],
+                                filter.value
+                            )
+                            break;
+                        case ">":
+                            return Query.greater(
+                                FIELD_NAMES[filter.field],
+                                filter.value
+                            )
+                            break;
+                        case "<":
+                            return Query.lesser(
+                                FIELD_NAMES[filter.field],
+                                filter.value
+                            )
+                            break;
+                        case "≥":
+                            return Query.greaterEqual(
+                                FIELD_NAMES[filter.field],
+                                filter.value
+                            )
+                            break;
+                        case "≤":
+                            return Query.lesserEqual(
+                                FIELD_NAMES[filter.field],
+                                filter.value
+                            )
+                            break;
+                    }
+                });
             },
             async deleteEmployee(employee_id) {
                 const query = [Query.equal("employee_id", employee_id)];
@@ -244,6 +293,9 @@
                         break;
                 }
             },
+            loadFilters(){
+                return JSON.parse(localStorage.getItem("filters")) || [];
+            },
             removeEmployee() {
                 if (this.employees.length > 0) {
                     this.deleteEmployee(this.currentEmployee.$id);
@@ -252,6 +304,20 @@
                         type: "success"
                     });
                 }
+            },
+            resetFilters() {
+                localStorage.removeItem("filters");
+                this.filterQuery.length = 0;
+                this.updateData();
+            },
+            setFilters(filters) {
+                localStorage.setItem("filters", JSON.stringify(filters));
+                if (filters.length === 0) {
+                    this.filterQuery.length = 0;
+                } else {
+                    this.filterQuery = this.convertToQueries(filters);
+                }
+                this.updateData();
             },
             async setRowsPerPage() {
                 this.rowsPerPage = await api.getLimit();
@@ -262,7 +328,11 @@
                 this.catalogModalVisible = true;
             },
             showFilter() {
-                if (this.employees.length > 0) {
+                if (this.employees.length === 0) {
+                    if (this.filterQuery.length > 0) {
+                        this.filterModalVisible = true;
+                    }
+                } else {
                     this.filterModalVisible = true;
                 }
             },
@@ -303,39 +373,37 @@
             },
             async updateData() {
                 const employeesCount = await api.getEmployeesCount();
-                if (employeesCount > 0) {
-                    const result = await api.database.listDocuments(
-                        conf.collections.employees,
-                        this.filterQuery,
-                        this.rowsPerPage,
-                        this.offset,
-                        undefined,
-                        "after",
-                        [this.sortColumn],
-                        [this.sortDirection]
+                const result = await api.database.listDocuments(
+                    conf.collections.employees,
+                    this.filterQuery,
+                    this.rowsPerPage,
+                    this.offset,
+                    undefined,
+                    "after",
+                    [this.sortColumn],
+                    [this.sortDirection]
+                );
+                if (result.total > 0) {
+                    this.employees = result.documents;
+                    if (this.currentPage == 0) {
+                        this.currentPage = 1;
+                    };
+                    // Make first added row selected
+                    if (this.selectedRow == -1) {
+                        this.selectedRow = 0;
+                    };
+                    // When rows per page value is changed and new value is
+                    // less than previous one, last row has to be selected
+                    if (this.selectedRow > this.employees.length - 1) {
+                        this.selectedRow = this.employees.length - 1;
+                    };
+                    this.pagesCount = parseInt(
+                        employeesCount / this.rowsPerPage
                     );
-                    if (result.total > 0) {
-                        this.employees = result.documents;
-                        if (this.currentPage == 0) {
-                            this.currentPage = 1;
-                        };
-                        // Make first added row selected
-                        if (this.selectedRow == -1) {
-                            this.selectedRow = 0;
-                        };
-                        // When rows per page value is changed and new value is
-                        // less than previous one, last row has to be selected
-                        if (this.selectedRow > this.employees.length - 1) {
-                            this.selectedRow = this.employees.length - 1;
-                        };
-                        this.pagesCount = parseInt(
-                            employeesCount / this.rowsPerPage
-                        );
-                        if (employeesCount % this.rowsPerPage > 0) {
-                            this.pagesCount++;
-                        };
-                        this.offset = (this.currentPage - 1) * this.rowsPerPage;
-                    }
+                    if (employeesCount % this.rowsPerPage > 0) {
+                        this.pagesCount++;
+                    };
+                    this.offset = (this.currentPage - 1) * this.rowsPerPage;
                 } else {
                     this.currentPage = 0;
                     this.pagesCount = 0;
@@ -361,7 +429,9 @@
                     this.itemClick(`Alt + ${e.key.toUpperCase()}`);
                 }
             });
+            this.filterQuery = this.convertToQueries(this.loadFilters());
             this.setRowsPerPage();
+            this.updateData();
         }
     }
 </script>
@@ -372,7 +442,6 @@
             :current-page="currentPage"
             :pages-count="pagesCount"
             :rows-per-page="rowsPerPage"
-            @change-filter="changeFilter"
             @change-limit="changeLimit"
             @change-page="changePage"
             @item-click="itemClick"
@@ -381,7 +450,7 @@
             @show-settings="settingsModalVisible = true"/>
         <BaseTable
             :direction="sortDirection"
-            :employees="getEmployees"
+            :employees="allEmployees"
             :selected-row="selectedRow"
             :sort-column="sortColumn"
             @row-click="selectedRow = $event"
@@ -415,8 +484,10 @@
             @show-notify="showNotify"/>
         <FilterModal
             v-if="filterModalVisible"
+            :queries="loadFilters()"
             @close-modal="filterModalVisible = false"
-            @filter="filterQuery = $event"
+            @reset-filter="resetFilters"
+            @set-filter="setFilters"
             @show-notify="showNotify"/>
         <SettingsModal
             v-if="settingsModalVisible"
