@@ -47,11 +47,10 @@
                 const document_id = await api.getSettingID("holidays");
                 if (document_id) {
                     await api.database.updateDocument(
+                        conf.global.databaseID,
                         conf.collections.settings,
                         document_id,
-                        {
-                            value: this.holidays.join(",")
-                        }
+                        {value: this.holidays.join(",")}
                     );
                 }
             }

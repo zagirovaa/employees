@@ -27,20 +27,27 @@ export async function getAllEmployees(workingOnly) {
         query.push(Query.equal("status", "Работает"));
     }
     const result = await database.listDocuments(
+        conf.global.databaseID,
         conf.collections.employees,
-        query, 100, 0, undefined, "after", ["full_name"], ["ASC"]
+        query
     );
     return result.total > 0 ? result.documents : [];
 }
 
 export async function getEmployeesCount() {
-    const result = await database.listDocuments(conf.collections.employees);
+    const result = await database.listDocuments(
+        conf.global.databaseID,
+        conf.collections.employees
+    )
     return result.total;
 }
 
 export async function getSettings() {
     const settings = {};
-    const result = await database.listDocuments(conf.collections.settings);
+    const result = await database.listDocuments(
+        conf.global.databaseID,
+        conf.collections.settings
+    );
     if (result.total > 0) {
         for (let setting of result.documents) {
             settings[setting.key] = {};

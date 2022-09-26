@@ -1,6 +1,6 @@
 <script>
     import { Query } from "appwrite";
-    import { database } from "../api.js";
+    import * as api from "../api.js";
     import conf from "../config.js";
     
     import BaseModal from "./BaseModal.vue";
@@ -30,10 +30,11 @@
                 if (this.currentCatalog.name !== "") {
                     if (await this.hasNoDublicateName()) {
                         if (this.title === "Добавить") {
-                            await database.createDocument(
+                            await api.database.createDocument(
+                                conf.global.databaseID,
                                 this.collection,
                                 "unique()",
-                                JSON.stringify(this.currentCatalog)
+                                {name: this.currentCatalog.name}
                             );
                             this.$emit("close-modal");
                             this.$emit("show-notify", {
@@ -41,10 +42,11 @@
                                 type: "success"
                             });
                         } else if (this.title === "Изменить") {
-                            await database.updateDocument(
+                            await api.database.updateDocument(
+                                conf.global.databaseID,
                                 this.collection,
                                 this.currentCatalog.$id,
-                                JSON.stringify(this.currentCatalog)
+                                {name: this.currentCatalog.name}
                             );
                             this.$emit("close-modal");
                             this.$emit("show-notify", {
@@ -69,7 +71,8 @@
                 const query = [
                     Query.equal("name", this.currentCatalog.name)
                 ];
-                const result = await database.listDocuments(
+                const result = await api.database.listDocuments(
+                    conf.global.databaseID,
                     this.collection,
                     query
                 );

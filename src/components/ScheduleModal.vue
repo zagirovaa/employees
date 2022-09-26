@@ -79,6 +79,7 @@
                             switch (state[0].status) {
                                 case "Выходной":
                                     await api.database.updateDocument(
+                                        conf.global.databaseID,
                                         conf.collections.states,
                                         state[0].$id,
                                         JSON.stringify({ status: "Отпускной" })
@@ -88,6 +89,7 @@
                                     break;
                                 case "Отпускной":
                                     await api.database.updateDocument(
+                                        conf.global.databaseID,
                                         conf.collections.states,
                                         state[0].$id,
                                         JSON.stringify({ status: "Больничный" })
@@ -97,6 +99,7 @@
                                     break;
                                 case "Больничный":
                                     await api.database.deleteDocument(
+                                        conf.global.databaseID,
                                         conf.collections.states,
                                         state[0].$id
                                     );
@@ -106,6 +109,7 @@
                             }
                         } else {
                             await api.database.createDocument(
+                                conf.global.databaseID,
                                 conf.collections.states,
                                 "unique()",
                                 JSON.stringify({
@@ -202,10 +206,11 @@
                 const endDate = this.getSelectedDate(this.maxDays);
                 const query = [
                     Query.equal("employee_id", employeeId),
-                    Query.greaterEqual("date", startDate),
-                    Query.lesserEqual("date", endDate)
+                    Query.greaterThanEqual("date", startDate),
+                    Query.lessThanEqual("date", endDate)
                 ];
                 const result = await api.database.listDocuments(
+                    conf.global.databaseID,
                     conf.collections.states,
                     query
                 );

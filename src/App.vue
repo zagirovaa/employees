@@ -2,7 +2,7 @@
     import { Query } from "appwrite";
     import * as api from "./api.js";
     import conf from "./config.js";
-    import { sortColumns } from "./helpers.js";
+    import * as helpers from "./helpers.js";
 
     import AddModal from "./components/AddModal.vue";
     import BaseNavbar from "./components/BaseNavbar.vue";
@@ -38,14 +38,25 @@
             SettingsModal
         },
         computed: {
+            allEmployees() {
+                this.updateData();
+                return this.employees;
+            },
             currentEmployee() {
                 if (this.selectedRow >= 0) {
                     return this.employees[this.selectedRow];
                 }
             },
-            allEmployees() {
-                this.updateData();
-                return this.employees;
+            currentFilter() {
+                const limit = Query.limit(this.rowsPerPage);
+                const offset = Query.offset(this.offset);
+                return [...this.filterQuery, this.order, limit, offset];
+            },
+            order() {
+                if (this.sortDirection === "ASC") {
+                    return Query.orderAsc(this.sortColumn);
+                }
+                return Query.orderDesc(this.sortColumn);
             }
         },
         data() {
@@ -80,8 +91,8 @@
         methods: {
             async addEmployee() {
                 const jobs = await api.database.listDocuments(
-                    conf.collections.jobs,
-                    [], 100, 0, undefined, "after", ["name"], ["ASC"]
+                    conf.global.databaseID,
+                    conf.collections.jobs
                 );
                 if (jobs.total === 0) {
                     this.showNotify({
@@ -96,11 +107,10 @@
                 const document_id = await api.getSettingID("limit");
                 if (document_id) {
                     api.database.updateDocument(
+                        conf.global.databaseID,
                         conf.collections.settings,
                         document_id,
-                        {
-                            value: String(limit)
-                        }
+                        JSON.stringify({value: limit.toString()})
                     );
                 }
                 this.rowsPerPage = limit;
@@ -159,25 +169,25 @@
                             )
                             break;
                         case ">":
-                            return Query.greater(
+                            return Query.greaterThan(
                                 FIELD_NAMES[filter.field],
                                 filter.value
                             )
                             break;
                         case "<":
-                            return Query.lesser(
+                            return Query.lessThan(
                                 FIELD_NAMES[filter.field],
                                 filter.value
                             )
                             break;
                         case "≥":
-                            return Query.greaterEqual(
+                            return Query.greaterThanEqual(
                                 FIELD_NAMES[filter.field],
                                 filter.value
                             )
                             break;
                         case "≤":
-                            return Query.lesserEqual(
+                            return Query.lessThanEqual(
                                 FIELD_NAMES[filter.field],
                                 filter.value
                             )
@@ -188,6 +198,7 @@
             async deleteEmployee(employee_id) {
                 const query = [Query.equal("employee_id", employee_id)];
                 await api.database.deleteDocument(
+                    conf.global.databaseID,
                     conf.collections.employees,
                     employee_id
                 );
@@ -195,6 +206,7 @@
                     this.selectedRow = -1
                 }
                 const result = await api.database.listDocuments(
+                    conf.global.databaseID,
                     conf.collections.states,
                     query
                 );
@@ -205,6 +217,7 @@
             },
             async deleteState(state_id) {
                 await api.database.deleteDocument(
+                    conf.global.databaseID,
                     conf.collections.states,
                     state_id
                 );
@@ -213,8 +226,8 @@
                 if (this.employees.length > 0) {
                     if (this.currentEmployee.status === "Работает") {
                         const reasons = await api.database.listDocuments(
-                            conf.collections.reasons,
-                            [], 100, 0, undefined, "after", ["name"], ["ASC"]
+                            conf.global.databaseID,
+                            conf.collections.reasons
                         );
                         if (reasons.total === 0) {
                             this.showNotify({
@@ -230,8 +243,8 @@
             async editEmployee() {
                 if (this.employees.length > 0) {
                     const jobs = await api.database.listDocuments(
-                        conf.collections.jobs,
-                        [], 100, 0, undefined, "after", ["name"], ["ASC"]
+                        conf.global.databaseID,
+                        conf.collections.jobs
                     );
                     if (jobs.total === 0) {
                         this.showNotify({
@@ -240,8 +253,8 @@
                         });
                     } else if (this.currentEmployee.status !== "Работает") {
                         const reasons = await api.database.listDocuments(
-                            conf.collections.reasons,
-                            [], 100, 0, undefined, "after", ["name"], ["ASC"]
+                            conf.global.databaseID,
+                            conf.collections.reasons
                         );
                         if (reasons.total === 0) {
                             this.showNotify({
@@ -350,7 +363,7 @@
                 this.catalogModalVisible = true;
             },
             sortByColumnName(columnName) {
-                if (this.sortColumn === sortColumns[columnName]) {
+                if (this.sortColumn === helpers.sortColumns[columnName]) {
                     this.invertSortDirection();
                 }
                 switch (columnName) {
@@ -374,14 +387,9 @@
             async updateData() {
                 const employeesCount = await api.getEmployeesCount();
                 const result = await api.database.listDocuments(
+                    conf.global.databaseID,
                     conf.collections.employees,
-                    this.filterQuery,
-                    this.rowsPerPage,
-                    this.offset,
-                    undefined,
-                    "after",
-                    [this.sortColumn],
-                    [this.sortDirection]
+                    this.currentFilter
                 );
                 if (result.total > 0) {
                     this.employees = result.documents;

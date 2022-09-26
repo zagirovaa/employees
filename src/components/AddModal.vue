@@ -1,7 +1,8 @@
 <script>
+    import { Query } from "appwrite";
     import * as api from "../api.js";
     import conf from "../config.js";
-    import { getCurrentDate } from "../helpers.js"
+    import * as helpers from "../helpers.js"
     
     import BaseModal from "./BaseModal.vue"
 
@@ -10,7 +11,7 @@
         data() {
             return {
                 employee: {
-                    date_of_employment: getCurrentDate(),
+                    date_of_employment: helpers.getCurrentDate(),
                     full_name: "",
                     job_title: "",
                     salary: 0,
@@ -23,14 +24,18 @@
         emits: ["close-modal", "show-notify"],
         methods: {
             async applyChanges() {
-                if (
-                    this.employee.full_name !== "" &&
-                    this.employee.salary > 0 &&
-                    this.employee.job_title !== "") {
+                if (this.employee.full_name !== "" && this.employee.salary > 0) {
                     const result = await api.database.createDocument(
+                        conf.global.databaseID,
                         conf.collections.employees,
                         "unique()",
-                        JSON.stringify(this.employee)
+                        JSON.stringify({
+                            date_of_employment: this.employee.date_of_employment,
+                            full_name: this.employee.full_name,
+                            job_title: this.employee.job_title,
+                            salary: this.employee.salary,
+                            status: "Работает"
+                        })
                     );
                     this.$emit("close-modal");
                     this.$emit("show-notify", {
@@ -46,8 +51,9 @@
             },
             async getJobTitles() {
                 const result = await api.database.listDocuments(
+                    conf.global.databaseID,
                     conf.collections.jobs,
-                    [], 100, 0, undefined, "after", ["name"], ["ASC"]
+                    [Query.orderAsc("name")]
                 );
                 if (result.total > 0) {
                     this.jobs = result.documents;

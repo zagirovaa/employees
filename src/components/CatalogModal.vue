@@ -1,6 +1,6 @@
 <script>
     import { Query } from "appwrite";
-    import { database } from "../api.js";
+    import * as api from "../api.js";
     import conf from "../config.js";
     
     import BaseActions from "./BaseActions.vue";
@@ -58,8 +58,9 @@
                         this.catalogTitles[index].name
                     )
                 ];
-                const result = await database.listDocuments(
-                    conf.colletions.employees,
+                const result = await api.database.listDocuments(
+                    conf.global.databaseID,
+                    conf.collections.employees,
                     query
                 );
                 return result.total === 0 ? true: false;
@@ -78,7 +79,8 @@
             },
             async deleteCatalog(index) {
                 if (await this.catalogIsNotUsed(index)) {
-                    await database.deleteDocument(
+                    await api.database.deleteDocument(
+                        conf.global.databaseID,
                         this.collection, 
                         this.catalogTitles[index].$id
                     );
@@ -110,9 +112,10 @@
                 }
             },
             async updateData() {
-                const result = await database.listDocuments(
+                const result = await api.database.listDocuments(
+                    conf.global.databaseID,
                     this.collection,
-                    [], 100, 0, undefined, "after", ["name"], ["ASC"]
+                    [Query.orderAsc("name")]
                 );
                 this.catalogTitles = result.documents;
                 if (this.catalogTitles.length > 0 && this.selectedRow === -1) {

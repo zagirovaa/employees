@@ -1,7 +1,8 @@
 <script>
-    import { database } from "../api.js"
+    import { Query } from "appwrite";
+    import * as api from "../api.js";
     import conf from "../config.js";
-    import { getCurrentDate } from "../helpers.js"
+    import * as helpers from "../helpers.js"
 
     import BaseModal from "./BaseModal.vue"
 
@@ -18,10 +19,15 @@
         methods: {
             async applyChanges() {
                 if (this.employee.reason_for_dismissal !== "") {
-                    await database.updateDocument(
+                    await api.database.updateDocument(
+                        conf.global.databaseID,
                         conf.collections.employees,
                         this.employee.$id,
-                        JSON.stringify(this.employee)
+                        JSON.stringify({
+                            status: this.employee.status,
+                            date_of_dismissal: this.employee.date_of_dismissal,
+                            reason_for_dismissal: this.employee.reason_for_dismissal
+                        })
                     );
                     this.$emit("close-modal");
                     this.$emit("show-notify", {
@@ -36,9 +42,10 @@
                 }
             },
             async getDismissReasons() {
-                const result = await database.listDocuments(
+                const result = await api.database.listDocuments(
+                    conf.global.databaseID,
                     conf.collections.reasons,
-                    [], 100, 0, undefined, "after", ["name"], ["ASC"]
+                    [Query.orderAsc("name")]
                 );
                 if (result.total > 0) {
                     this.reasons = result.documents;
@@ -55,7 +62,7 @@
         },
         mounted() {
             this.employee = this.document;
-            this.employee.date_of_dismissal = getCurrentDate();
+            this.employee.date_of_dismissal = helpers.getCurrentDate();
             this.employee.reason_for_dismissal = "";
             this.employee.status = "Уволился";
             this.getDismissReasons();

@@ -95,8 +95,9 @@
             },
             async getJobTitles() {
                 const result = await api.database.listDocuments(
+                    conf.global.databaseID,
                     conf.collections.jobs,
-                    [], 100, 0, undefined, "after", ["name"], ["ASC"]
+                    [Query.orderAsc("name")]
                 );
                 if (result.total > 0) {
                     this.jobs = result.documents;
