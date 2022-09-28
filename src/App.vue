@@ -449,6 +449,9 @@
                     if (employeesCount % this.rowsPerPage > 0) {
                         this.pagesCount++;
                     };
+                    if (this.currentPage > this.pagesCount) {
+                        this.currentPage = this.pagesCount;
+                    }
                     this.offset = (this.currentPage - 1) * this.rowsPerPage;
                 } else {
                     this.currentPage = 0;
