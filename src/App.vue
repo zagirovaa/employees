@@ -14,6 +14,7 @@
     import FilterModal from "./components/FilterModal.vue";
     import HelpModal from "./components/HelpModal.vue";
     import ScheduleModal from "./components/ScheduleModal.vue";
+    import SearchModal from "./components/SearchModal.vue";
     import SettingsModal from "./components/SettingsModal.vue";
 
     const FIELD_NAMES = {
@@ -35,6 +36,7 @@
             FilterModal,
             HelpModal,
             ScheduleModal,
+            SearchModal,
             SettingsModal
         },
         computed: {
@@ -50,7 +52,15 @@
             currentFilter() {
                 const limit = Query.limit(this.rowsPerPage);
                 const offset = Query.offset(this.offset);
-                return [...this.filterQuery, this.order, limit, offset];
+                if (this.searchedText !== "") {
+                    this.filterQuery.push(this.searchedText);
+                }
+                return [
+                    ...this.filterQuery,
+                    this.order,
+                    limit,
+                    offset
+                ];
             },
             order() {
                 if (this.sortDirection === "ASC") {
@@ -81,9 +91,11 @@
                 offset: 0,
                 pagesCount: 0,
                 rowsPerPage: 20,
+                scheduleModalVisible: false,
+                searchedText: "",
+                searchModalVisible: false,
                 selectedRow: -1,
                 settingsModalVisible: false,
-                scheduleModalVisible: false,
                 sortColumn: "full_name",
                 sortDirection: "ASC"
             }
@@ -306,8 +318,11 @@
                         break;
                 }
             },
-            loadFilters(){
-                return JSON.parse(localStorage.getItem("filters")) || [];
+            loadFilter(){
+                return JSON.parse(localStorage.getItem("filter")) || [];
+            },
+            loadSearch() {
+                return JSON.parse(localStorage.getItem("search")) || "";
             },
             removeEmployee() {
                 if (this.employees.length > 0) {
@@ -318,18 +333,32 @@
                     });
                 }
             },
-            resetFilters() {
-                localStorage.removeItem("filters");
+            resetFilter() {
+                localStorage.removeItem("filter");
                 this.filterQuery.length = 0;
                 this.updateData();
             },
-            setFilters(filters) {
-                localStorage.setItem("filters", JSON.stringify(filters));
+            resetSearch() {
+                localStorage.removeItem("search");
+                this.searchedText = "";
+                this.filterQuery.pop();
+                this.updateData();
+            },
+            setFilter(filters) {
+                localStorage.setItem("filter", JSON.stringify(filters));
                 if (filters.length === 0) {
                     this.filterQuery.length = 0;
                 } else {
                     this.filterQuery = this.convertToQueries(filters);
                 }
+                this.updateData();
+            },
+            setSearch(searchedText) {
+                localStorage.setItem("search", JSON.stringify(searchedText));
+                this.searchedText = Query.search(
+                    "full_name",
+                    searchedText.split(" ")
+                );
                 this.updateData();
             },
             async setRowsPerPage() {
@@ -361,6 +390,15 @@
                 this.catalogTitle = "Причины увольнения";
                 this.catalogType = "reasons";
                 this.catalogModalVisible = true;
+            },
+            showSearch() {
+                if (this.employees.length === 0) {
+                    if (this.filterQuery.length > 0) {
+                        this.searchModalVisible = true;
+                    }
+                } else {
+                    this.searchModalVisible = true;
+                }
             },
             sortByColumnName(columnName) {
                 if (this.sortColumn === helpers.sortColumns[columnName]) {
@@ -437,7 +475,13 @@
                     this.itemClick(`Alt + ${e.key.toUpperCase()}`);
                 }
             });
-            this.filterQuery = this.convertToQueries(this.loadFilters());
+            this.filterQuery = this.convertToQueries(this.loadFilter());
+            if (this.loadSearch() !== "") {
+                this.searchedText = Query.search(
+                    "full_name",
+                    this.loadSearch().split(" ")
+                );
+            }
             this.setRowsPerPage();
             this.updateData();
         }
@@ -455,6 +499,7 @@
             @item-click="itemClick"
             @show-help="helpModalVisible = true"
             @show-filter="showFilter"
+            @show-search="showSearch"
             @show-settings="settingsModalVisible = true"/>
         <BaseTable
             :direction="sortDirection"
@@ -490,12 +535,19 @@
             v-if="scheduleModalVisible"
             @close-modal="scheduleModalVisible = false"
             @show-notify="showNotify"/>
+        <SearchModal
+            v-if="searchModalVisible"
+            :text="loadSearch()"
+            @close-modal="searchModalVisible = false"
+            @reset-search="resetSearch"
+            @set-search="setSearch"
+            @show-notify="showNotify"/>
         <FilterModal
             v-if="filterModalVisible"
-            :queries="loadFilters()"
+            :queries="loadFilter()"
             @close-modal="filterModalVisible = false"
-            @reset-filter="resetFilters"
-            @set-filter="setFilters"
+            @reset-filter="resetFilter"
+            @set-filter="setFilter"
             @show-notify="showNotify"/>
         <SettingsModal
             v-if="settingsModalVisible"

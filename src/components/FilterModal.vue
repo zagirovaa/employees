@@ -90,7 +90,7 @@
                     this.$emit("show-notify", {
                         text: "Не добавлены необходимые фильтры.",
                         type: "warning"
-                    })
+                    });
                 }
             },
             async getJobTitles() {

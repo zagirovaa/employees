@@ -28,6 +28,7 @@
             "item-click",
             "show-help",
             "show-filter",
+            "show-search",
             "show-settings"
         ],
         props: {
@@ -146,7 +147,13 @@
                 </div>
                 <a
                     class="navbar-item has-tooltip-left"
-                    data-tooltip="Найстройки фильтрации"
+                    data-tooltip="Поиск"
+                    @click="$emit('show-search')">
+                    <span class="material-icons">person_search</span>
+                </a>
+                <a
+                    class="navbar-item has-tooltip-left"
+                    data-tooltip="Фильтрация"
                     @click="$emit('show-filter')">
                     <span class="material-icons">filter_alt</span>
                 </a>

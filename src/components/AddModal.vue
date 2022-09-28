@@ -2,9 +2,9 @@
     import { Query } from "appwrite";
     import * as api from "../api.js";
     import conf from "../config.js";
-    import * as helpers from "../helpers.js"
+    import * as helpers from "../helpers.js";
     
-    import BaseModal from "./BaseModal.vue"
+    import BaseModal from "./BaseModal.vue";
 
     export default {
         components: { BaseModal },
