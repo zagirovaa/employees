@@ -1,8 +1,8 @@
 <script>
     import { Query } from "appwrite";
-    import * as api from "../api.js";
+    import { database } from "../api.js";
     import conf from "../config.js";
-    import * as helpers from "../helpers.js";
+    import { getCurrentDate } from "../helpers.js";
     
     import BaseModal from "./BaseModal.vue";
 
@@ -11,7 +11,7 @@
         data() {
             return {
                 employee: {
-                    date_of_employment: helpers.getCurrentDate(),
+                    date_of_employment: getCurrentDate(),
                     full_name: "",
                     job_title: "",
                     salary: 0,
@@ -25,7 +25,7 @@
         methods: {
             async applyChanges() {
                 if (this.employee.full_name !== "" && this.employee.salary > 0) {
-                    const result = await api.database.createDocument(
+                    const result = await database.createDocument(
                         conf.global.databaseID,
                         conf.collections.employees,
                         "unique()",
@@ -50,7 +50,7 @@
                 }
             },
             async getJobTitles() {
-                const result = await api.database.listDocuments(
+                const result = await database.listDocuments(
                     conf.global.databaseID,
                     conf.collections.jobs,
                     [Query.orderAsc("name")]

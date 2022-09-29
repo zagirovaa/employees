@@ -1,8 +1,7 @@
 <script>
     import { Query } from "appwrite";
-    import * as api from "../api.js";
+    import { database } from "../api.js";
     import conf from "../config.js";
-    import * as helpers from "../helpers.js";
 
     import BaseModal from "./BaseModal.vue";
 
@@ -27,7 +26,7 @@
             async applyChanges() {
                 const { full_name, salary } = this.employee;
                 if (full_name !== "" && salary > 0 ) {
-                    await api.database.updateDocument(
+                    await database.updateDocument(
                         conf.global.databaseID,
                         conf.collections.employees,
                         this.employee.$id,
@@ -58,7 +57,7 @@
                 }
             },
             async getJobTitles() {
-                const result = await api.database.listDocuments(
+                const result = await database.listDocuments(
                     conf.global.databaseID,
                     conf.collections.jobs,
                     [Query.orderAsc("name")]
@@ -73,7 +72,7 @@
                 }
             },
             async getDismissReasons() {
-                const result = await api.database.listDocuments(
+                const result = await database.listDocuments(
                     conf.global.databaseID,
                     conf.collections.reasons,
                     [Query.orderAsc("name")]

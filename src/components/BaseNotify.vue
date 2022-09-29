@@ -11,9 +11,9 @@
     <div
         class="notification"
         :class="{
-            'is-success': type == 'success',
-            'is-warning': type == 'warning',
-            'is-danger': type == 'danger'
+            'is-success': type === 'success',
+            'is-warning': type === 'warning',
+            'is-danger': type === 'danger'
         }">
         <button
             class="delete"

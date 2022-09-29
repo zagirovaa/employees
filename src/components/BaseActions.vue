@@ -1,6 +1,6 @@
 <script>
     import { Query } from "appwrite";
-    import * as api from "../api.js";
+    import { database } from "../api.js";
     import conf from "../config.js";
     
     import BaseModal from "./BaseModal.vue";
@@ -30,7 +30,7 @@
                 if (this.currentCatalog.name !== "") {
                     if (await this.hasNoDublicateName()) {
                         if (this.title === "Добавить") {
-                            await api.database.createDocument(
+                            await database.createDocument(
                                 conf.global.databaseID,
                                 this.collection,
                                 "unique()",
@@ -42,7 +42,7 @@
                                 type: "success"
                             });
                         } else if (this.title === "Изменить") {
-                            await api.database.updateDocument(
+                            await database.updateDocument(
                                 conf.global.databaseID,
                                 this.collection,
                                 this.currentCatalog.$id,
@@ -71,7 +71,7 @@
                 const query = [
                     Query.equal("name", this.currentCatalog.name)
                 ];
-                const result = await api.database.listDocuments(
+                const result = await database.listDocuments(
                     conf.global.databaseID,
                     this.collection,
                     query

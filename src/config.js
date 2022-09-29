@@ -11,6 +11,7 @@ export default {
         states: "630b4f6caf52194e911b"
     },
     filters: {
+        // Maximum number of allowed filters
         count: 5
     },
     global: {

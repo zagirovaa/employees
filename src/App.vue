@@ -1,8 +1,10 @@
 <script>
     import { Query } from "appwrite";
-    import * as api from "./api.js";
+    import {
+        database, getAllEmployees, getEmployeesCount, getLimit, getSettingID
+    } from "./api.js";
     import conf from "./config.js";
-    import * as helpers from "./helpers.js";
+    import { sortColumns } from "./helpers.js";
 
     import AddModal from "./components/AddModal.vue";
     import BaseNavbar from "./components/BaseNavbar.vue";
@@ -102,7 +104,7 @@
         },
         methods: {
             async addEmployee() {
-                const jobs = await api.database.listDocuments(
+                const jobs = await database.listDocuments(
                     conf.global.databaseID,
                     conf.collections.jobs
                 );
@@ -116,9 +118,9 @@
                 }
             },
             async changeLimit(limit) {
-                const document_id = await api.getSettingID("limit");
+                const document_id = await getSettingID("limit");
                 if (document_id) {
-                    api.database.updateDocument(
+                    database.updateDocument(
                         conf.global.databaseID,
                         conf.collections.settings,
                         document_id,
@@ -152,7 +154,7 @@
             },
             async clearEmployees() {
                 if (this.employees.length > 0) {
-                    const employees = await api.getAllEmployees();
+                    const employees = await getAllEmployees();
                     employees.forEach(async employee => {
                         await this.deleteEmployee(employee.$id);
                     });
@@ -209,7 +211,7 @@
             },
             async deleteEmployee(employee_id) {
                 const query = [Query.equal("employee_id", employee_id)];
-                await api.database.deleteDocument(
+                await database.deleteDocument(
                     conf.global.databaseID,
                     conf.collections.employees,
                     employee_id
@@ -217,7 +219,7 @@
                 if (this.employees.length === 0) {
                     this.selectedRow = -1
                 }
-                const result = await api.database.listDocuments(
+                const result = await database.listDocuments(
                     conf.global.databaseID,
                     conf.collections.states,
                     query
@@ -228,7 +230,7 @@
                 
             },
             async deleteState(state_id) {
-                await api.database.deleteDocument(
+                await database.deleteDocument(
                     conf.global.databaseID,
                     conf.collections.states,
                     state_id
@@ -237,7 +239,7 @@
             async dismissEmployee() {
                 if (this.employees.length > 0) {
                     if (this.currentEmployee.status === "Работает") {
-                        const reasons = await api.database.listDocuments(
+                        const reasons = await database.listDocuments(
                             conf.global.databaseID,
                             conf.collections.reasons
                         );
@@ -254,7 +256,7 @@
             },
             async editEmployee() {
                 if (this.employees.length > 0) {
-                    const jobs = await api.database.listDocuments(
+                    const jobs = await database.listDocuments(
                         conf.global.databaseID,
                         conf.collections.jobs
                     );
@@ -264,7 +266,7 @@
                             type: "warning"
                         });
                     } else if (this.currentEmployee.status !== "Работает") {
-                        const reasons = await api.database.listDocuments(
+                        const reasons = await database.listDocuments(
                             conf.global.databaseID,
                             conf.collections.reasons
                         );
@@ -362,7 +364,7 @@
                 this.updateData();
             },
             async setRowsPerPage() {
-                this.rowsPerPage = await api.getLimit();
+                this.rowsPerPage = await getLimit();
             },
             showJobsCatalog() {
                 this.catalogTitle = "Должности";
@@ -401,7 +403,7 @@
                 }
             },
             sortByColumnName(columnName) {
-                if (this.sortColumn === helpers.sortColumns[columnName]) {
+                if (this.sortColumn === sortColumns[columnName]) {
                     this.invertSortDirection();
                 }
                 switch (columnName) {
@@ -423,8 +425,8 @@
                 }
             },
             async updateData() {
-                const employeesCount = await api.getEmployeesCount();
-                const result = await api.database.listDocuments(
+                const employeesCount = await getEmployeesCount();
+                const result = await database.listDocuments(
                     conf.global.databaseID,
                     conf.collections.employees,
                     this.currentFilter

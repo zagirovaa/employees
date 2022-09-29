@@ -123,10 +123,10 @@ export function getDayNumberByName(dayName) {
 }
 
 export function splitArray(array, size) {
-    let newArray = [];
+    let splittedArray = [];
     for (let i = 0; i < array.length; i += size) {
         const chunk = array.slice(i, i + size);
-        newArray.push(chunk);
+        splittedArray.push(chunk);
     }
-    return newArray;
+    return splittedArray;
 }

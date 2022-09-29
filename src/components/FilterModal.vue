@@ -1,6 +1,6 @@
 <script>
     import { Query } from "appwrite";
-    import * as api from "../api.js";
+    import { database } from "../api.js";
     import conf from "../config.js";
 
     import BaseModal from "./BaseModal.vue";
@@ -94,7 +94,7 @@
                 }
             },
             async getJobTitles() {
-                const result = await api.database.listDocuments(
+                const result = await database.listDocuments(
                     conf.global.databaseID,
                     conf.collections.jobs,
                     [Query.orderAsc("name")]

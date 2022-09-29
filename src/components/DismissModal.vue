@@ -1,8 +1,8 @@
 <script>
     import { Query } from "appwrite";
-    import * as api from "../api.js";
+    import { database } from "../api.js";
     import conf from "../config.js";
-    import * as helpers from "../helpers.js"
+    import { getCurrentDate } from "../helpers.js"
 
     import BaseModal from "./BaseModal.vue"
 
@@ -19,7 +19,7 @@
         methods: {
             async applyChanges() {
                 if (this.employee.reason_for_dismissal !== "") {
-                    await api.database.updateDocument(
+                    await database.updateDocument(
                         conf.global.databaseID,
                         conf.collections.employees,
                         this.employee.$id,
@@ -42,7 +42,7 @@
                 }
             },
             async getDismissReasons() {
-                const result = await api.database.listDocuments(
+                const result = await database.listDocuments(
                     conf.global.databaseID,
                     conf.collections.reasons,
                     [Query.orderAsc("name")]
@@ -62,7 +62,7 @@
         },
         mounted() {
             this.employee = this.document;
-            this.employee.date_of_dismissal = helpers.getCurrentDate();
+            this.employee.date_of_dismissal = getCurrentDate();
             this.employee.reason_for_dismissal = "";
             this.employee.status = "Уволился";
             this.getDismissReasons();

@@ -1,8 +1,12 @@
 <script>
     import { Query } from "appwrite";
-    import * as api from "../api.js";
+    import { database, getAllEmployees, getHolidays } from "../api.js";
     import conf from "../config.js";
-    import * as helpers from "../helpers.js";
+    import {
+        getCurrentYear, getCurrentMonthNumber, getDayNameByDate, getDaysCount,
+        getDayNameByDate, getListOfMonths, getListOfYears, getMonthNameByNumber,
+        getMonthNumberByName, padForDigits, splitArray
+    } from "../helpers.js";
 
     import BaseModal from "./BaseModal.vue";
 
@@ -67,9 +71,9 @@
             async changeDayStatus(row, column) {
                 const cellNumber = this.getCellNumber(row, column);
                 if (cellNumber != "") {
-                    const holidays = await api.getHolidays();
+                    const holidays = await getHolidays();
                     const selectedDate = this.getSelectedDate(cellNumber);
-                    const dayName = helpers.getDayNameByDate(selectedDate);
+                    const dayName = getDayNameByDate(selectedDate);
                     const currentStates = await this.getStates();
                     if (!holidays.includes(dayName)) {
                         const state = currentStates.filter((state, index) => {
@@ -78,7 +82,7 @@
                         if (state.length > 0) {
                             switch (state[0].status) {
                                 case "Выходной":
-                                    await api.database.updateDocument(
+                                    await database.updateDocument(
                                         conf.global.databaseID,
                                         conf.collections.states,
                                         state[0].$id,
@@ -88,7 +92,7 @@
                                     this.vacationDays++;
                                     break;
                                 case "Отпускной":
-                                    await api.database.updateDocument(
+                                    await database.updateDocument(
                                         conf.global.databaseID,
                                         conf.collections.states,
                                         state[0].$id,
@@ -98,7 +102,7 @@
                                     this.sickDays++;
                                     break;
                                 case "Больничный":
-                                    await api.database.deleteDocument(
+                                    await database.deleteDocument(
                                         conf.global.databaseID,
                                         conf.collections.states,
                                         state[0].$id
@@ -108,7 +112,7 @@
                                     break;
                             }
                         } else {
-                            await api.database.createDocument(
+                            await database.createDocument(
                                 conf.global.databaseID,
                                 conf.collections.states,
                                 "unique()",
@@ -142,7 +146,7 @@
                 }
             },
             async getEmployees() {
-                this.fetchedData = await api.getAllEmployees(true);
+                this.fetchedData = await getAllEmployees(true);
                 this.selectedName = this.fetchedData[0].full_name;
                 this.getYears();
             },
@@ -157,10 +161,10 @@
                 ).getFullYear();
             },
             getDays() {
-                this.selectedMonthNumber = helpers.getMonthNumberByName(
+                this.selectedMonthNumber = getMonthNumberByName(
                     this.selectedMonthName
                 );
-                this.maxDays = helpers.getDaysCount(
+                this.maxDays = getDaysCount(
                     this.selectedYear,
                     this.selectedMonthNumber
                 );
@@ -168,23 +172,23 @@
                 this.initCellColors();
             },
             getMonths() {
-                const monthName = helpers.getMonthNameByNumber(
+                const monthName = getMonthNameByNumber(
                     this.currentMonth
                 );
                 if (this.currentYear == this.employYear) {
-                    this.months = helpers.getListOfMonths(
+                    this.months = getListOfMonths(
                         this.employMonth - 1, this.currentMonth - 1
                     );
                 } else if (this.selectedYear == this.employYear) {
-                    this.months = helpers.getListOfMonths(
+                    this.months = getListOfMonths(
                         this.employMonth - 1, 11
                     );
                 } else if (this.selectedYear == this.currentYear) {
-                    this.months = helpers.getListOfMonths(
+                    this.months = getListOfMonths(
                         0, this.currentMonth - 1
                     );
                 } else {
-                    this.months = helpers.getListOfMonths(0, 11);
+                    this.months = getListOfMonths(0, 11);
                 }
                 if (this.months.includes(monthName)) {
                     this.selectedMonthName = monthName;
@@ -195,9 +199,9 @@
             },
             getSelectedDate(day) {
                 return `
-                    ${this.selectedYear}-${helpers.padForDigits(
+                    ${this.selectedYear}-${padForDigits(
                         this.selectedMonthNumber
-                    )}-${helpers.padForDigits(day)}
+                    )}-${padForDigits(day)}
                 `.trim();
             },
             async getStates() {
@@ -209,7 +213,7 @@
                     Query.greaterThanEqual("date", startDate),
                     Query.lessThanEqual("date", endDate)
                 ];
-                const result = await api.database.listDocuments(
+                const result = await database.listDocuments(
                     conf.global.databaseID,
                     conf.collections.states,
                     query
@@ -236,24 +240,24 @@
                 for (let i = this.maxDays + dayNumber - 1; i < 42; i++) {
                     tempTable.push("");
                 }
-                this.table = helpers.splitArray(tempTable, 7);
+                this.table = splitArray(tempTable, 7);
             },
             getYears() {
                 this.employYear = this.getEmployYear();
                 this.employMonth = this.getEmployMonth();
-                this.years = helpers.getListOfYears(this.employYear);
+                this.years = getListOfYears(this.employYear);
                 this.selectedYear = this.currentYear;
                 this.getMonths();
             },
             async initCellColors() {
                 this.resetCellsColors();
                 this.resetDaysCounts();
-                const holidays = await api.getHolidays();
+                const holidays = await getHolidays();
                 const currentStates = await this.getStates();
                 // Set colors for holidays
                 for (let day = 1; day <= this.maxDays; day++) {
                     const currentCell = this.getCellByDayNumber(day);
-                    const dayName = helpers.getDayNameByDate(
+                    const dayName = getDayNameByDate(
                         this.getSelectedDate(day)
                     );
                     if (holidays.includes(dayName)) {
@@ -319,8 +323,8 @@
         },
         mounted() {
             this.getEmployees();
-            this.currentYear = helpers.getCurrentYear();
-            this.currentMonth = helpers.getCurrentMonthNumber();
+            this.currentYear = getCurrentYear();
+            this.currentMonth = getCurrentMonthNumber();
         }
     }
 </script>

@@ -1,6 +1,6 @@
 <script>
     import { Query } from "appwrite";
-    import * as api from "../api.js";
+    import { database } from "../api.js";
     import conf from "../config.js";
     
     import BaseActions from "./BaseActions.vue";
@@ -58,7 +58,7 @@
                         this.catalogTitles[index].name
                     )
                 ];
-                const result = await api.database.listDocuments(
+                const result = await database.listDocuments(
                     conf.global.databaseID,
                     conf.collections.employees,
                     query
@@ -79,7 +79,7 @@
             },
             async deleteCatalog(index) {
                 if (await this.catalogIsNotUsed(index)) {
-                    await api.database.deleteDocument(
+                    await database.deleteDocument(
                         conf.global.databaseID,
                         this.collection, 
                         this.catalogTitles[index].$id
@@ -112,7 +112,7 @@
                 }
             },
             async updateData() {
-                const result = await api.database.listDocuments(
+                const result = await database.listDocuments(
                     conf.global.databaseID,
                     this.collection,
                     [Query.orderAsc("name")]

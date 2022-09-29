@@ -1,5 +1,5 @@
 <script>
-    import * as api from "../api.js";
+    import { database, getHolidays, getSettingID } from "../api.js";
     import conf from "../config.js";
 
     import BaseModal from "./BaseModal.vue";
@@ -41,12 +41,12 @@
                 }
             },
             async getSettings() {
-                this.holidays = await api.getHolidays();
+                this.holidays = await getHolidays();
             },
             async saveHolidays() {
-                const document_id = await api.getSettingID("holidays");
+                const document_id = await getSettingID("holidays");
                 if (document_id) {
-                    await api.database.updateDocument(
+                    await database.updateDocument(
                         conf.global.databaseID,
                         conf.collections.settings,
                         document_id,
