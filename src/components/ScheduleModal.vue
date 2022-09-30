@@ -4,7 +4,7 @@
     import conf from "../config.js";
     import {
         getCurrentYear, getCurrentMonthNumber, getDayNameByDate, getDaysCount,
-        getDayNameByDate, getListOfMonths, getListOfYears, getMonthNameByNumber,
+        getListOfMonths, getListOfYears, getMonthNameByNumber,
         getMonthNumberByName, padForDigits, splitArray
     } from "../helpers.js";
 

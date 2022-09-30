@@ -180,7 +180,9 @@
                             v-model="employee.phone">
                     </p>
                 </div>
-                <div class="field is-grouped">
+                <div
+                    class="field is-grouped"
+                    :class="{ 'mb-0': !isDismissed }">
                     <p class="control" v-if="isDismissed">
                         <label class="label">Дата увольнения:</label>
                         <input
