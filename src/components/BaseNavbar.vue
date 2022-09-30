@@ -8,10 +8,16 @@
                 if (this.searched) return true;
                 if (this.pagesCount === 0) return true;
             },
+            filterIconName() {
+                return this.filtered ? "filter_alt_off" : "filter_alt";
+            },
             searchDisabled() {
                 if (this.searched) return false;
                 if (this.filtered) return true;
                 if (this.pagesCount === 0) return true;
+            },
+            searchIconName() {
+                return this.searched ? "search_off" : "search";
             }
         },
         data() {
@@ -155,14 +161,18 @@
                     data-tooltip="Поиск"
                     :class="{ 'is-disable': searchDisabled }"
                     @click="$emit('show-search')">
-                    <span class="material-icons">person_search</span>
+                    <span class="material-icons">
+                        {{ searchIconName }}
+                    </span>
                 </a>
                 <a
                     class="navbar-item has-tooltip-left"
                     data-tooltip="Фильтрация"
                     :class="{ 'is-disable': filterDisabled }"
                     @click="$emit('show-filter')">
-                    <span class="material-icons">filter_alt</span>
+                    <span class="material-icons">
+                        {{ filterIconName }}
+                    </span>
                 </a>
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link">
