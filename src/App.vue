@@ -64,11 +64,17 @@
                     offset
                 ];
             },
+            filtered() {
+                return this.filterQuery.length > 0;
+            },
             order() {
                 if (this.sortDirection === "ASC") {
                     return Query.orderAsc(this.sortColumn);
                 }
                 return Query.orderDesc(this.sortColumn);
+            },
+            searched() {
+                return this.searchedText !== "";
             }
         },
         data() {
@@ -131,38 +137,34 @@
                 this.updateData();
             },
             changePage(page) {
-                if (this.pagesCount > 0) {
-                    switch (page) {
-                        case "first":
-                            this.currentPage = 1;
-                            break;
-                        case "previous":
-                            if (this.currentPage > 1) {
-                                this.currentPage--;
-                            };
-                            break;
-                        case "next":
-                            if (this.currentPage < this.pagesCount) {
-                                this.currentPage++;
-                            };
-                            break;
-                        case "last":
-                            this.currentPage = this.pagesCount;
-                            break;
-                    }
+                switch (page) {
+                    case "first":
+                        this.currentPage = 1;
+                        break;
+                    case "previous":
+                        if (this.currentPage > 1) {
+                            this.currentPage--;
+                        };
+                        break;
+                    case "next":
+                        if (this.currentPage < this.pagesCount) {
+                            this.currentPage++;
+                        };
+                        break;
+                    case "last":
+                        this.currentPage = this.pagesCount;
+                        break;
                 }
             },
             async clearEmployees() {
-                if (this.employees.length > 0) {
-                    const employees = await getAllEmployees();
-                    employees.forEach(async employee => {
-                        await this.deleteEmployee(employee.$id);
-                    });
-                    this.showNotify({
-                        text: "Все сотрудники удалены.",
-                        type: "success"
-                    });
-                }
+                const employees = await getAllEmployees();
+                employees.forEach(async employee => {
+                    await this.deleteEmployee(employee.$id);
+                });
+                this.showNotify({
+                    text: "Все сотрудники удалены.",
+                    type: "success"
+                });
             },
             convertToQueries(filters) {
                 return filters.map(filter => {;
@@ -237,55 +239,61 @@
                 );
             },
             async dismissEmployee() {
-                if (this.employees.length > 0) {
-                    if (this.currentEmployee.status === "Работает") {
-                        const reasons = await database.listDocuments(
-                            conf.global.databaseID,
-                            conf.collections.reasons
-                        );
-                        if (reasons.total === 0) {
-                            this.showNotify({
-                                text: "Справочник причин увольнения пуст.",
-                                type: "warning"
-                            })
-                        } else {
-                            this.dismissModalVisible = true;
-                        }
+                if (this.currentEmployee.status === "Работает") {
+                    const reasons = await database.listDocuments(
+                        conf.global.databaseID,
+                        conf.collections.reasons
+                    );
+                    if (reasons.total === 0) {
+                        this.showNotify({
+                            text: "Справочник причин увольнения пуст.",
+                            type: "warning"
+                        })
+                    } else {
+                        this.dismissModalVisible = true;
                     }
+                } else {
+                    this.showNotify({
+                        text: "Сотрудник уже уволен или уволился.",
+                        type: "warning"
+                    });
                 }
             },
             async editEmployee() {
-                if (this.employees.length > 0) {
-                    const jobs = await database.listDocuments(
+                const jobs = await database.listDocuments(
+                    conf.global.databaseID,
+                    conf.collections.jobs
+                );
+                if (jobs.total === 0) {
+                    this.showNotify({
+                        text: "Справочник должностей пуст.",
+                        type: "warning"
+                    });
+                } else if (this.currentEmployee.status !== "Работает") {
+                    const reasons = await database.listDocuments(
                         conf.global.databaseID,
-                        conf.collections.jobs
+                        conf.collections.reasons
                     );
-                    if (jobs.total === 0) {
+                    if (reasons.total === 0) {
                         this.showNotify({
-                            text: "Справочник должностей пуст.",
+                            text: "Справочник причин увольнения пуст.",
                             type: "warning"
                         });
-                    } else if (this.currentEmployee.status !== "Работает") {
-                        const reasons = await database.listDocuments(
-                            conf.global.databaseID,
-                            conf.collections.reasons
-                        );
-                        if (reasons.total === 0) {
-                            this.showNotify({
-                                text: "Справочник причин увольнения пуст.",
-                                type: "warning"
-                            });
-                        } else {
-                            this.editModalVisible = true;
-                        }
                     } else {
                         this.editModalVisible = true;
                     }
+                } else {
+                    this.editModalVisible = true;
                 }
             },
             editSchedule() {
-                if (this.employees.length > 0 && this.workingEmployeeExist()) {
+                if (this.workingEmployeeExist()) {
                     this.scheduleModalVisible = true;
+                } else {
+                    this.showNotify({
+                        text: "Работающие сотрудники не обнаружены.",
+                        type: "warning"
+                    });
                 }
             },
             invertSortDirection() {
@@ -327,13 +335,11 @@
                 return JSON.parse(localStorage.getItem("search")) || "";
             },
             removeEmployee() {
-                if (this.employees.length > 0) {
-                    this.deleteEmployee(this.currentEmployee.$id);
-                    this.showNotify({
-                        text: "Сотрудник удален.",
-                        type: "success"
-                    });
-                }
+                this.deleteEmployee(this.currentEmployee.$id);
+                this.showNotify({
+                    text: "Сотрудник удален.",
+                    type: "success"
+                });
             },
             resetFilter() {
                 localStorage.removeItem("filter");
@@ -462,11 +468,9 @@
                 }
             },
             workingEmployeeExist() {
-                if (this.employees.length > 0) {
-                    for (let employee of this.employees) {
-                        if (employee.status === "Работает") {
-                            return true;
-                        }
+                for (let employee of this.employees) {
+                    if (employee.status === "Работает") {
+                        return true;
                     }
                 }
                 return false;
@@ -497,8 +501,10 @@
     <div>
         <BaseNavbar
             :current-page="currentPage"
+            :filtered="filtered"
             :pages-count="pagesCount"
             :rows-per-page="rowsPerPage"
+            :searched="searched"
             @change-limit="changeLimit"
             @change-page="changePage"
             @item-click="itemClick"

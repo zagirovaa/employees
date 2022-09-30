@@ -78,3 +78,8 @@ table:not(#filter) tr {
 .control .tags .tag.border-danger {
     border: 2px solid hsl(347, 90%, 96%);
 }
+
+.is-disable {
+    pointer-events: none;
+    opacity: .65;
+}

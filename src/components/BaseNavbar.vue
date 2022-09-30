@@ -33,8 +33,10 @@
         ],
         props: {
             currentPage: [Number, String],
+            filtered: Boolean,
             pagesCount: [Number, String],
-            rowsPerPage: [Number, String]
+            rowsPerPage: [Number, String],
+            searched: Boolean
         }
     }
 </script>
@@ -69,6 +71,10 @@
                             <hr class="navbar-devider" v-if="value[0] == '-'">
                             <a
                                 class="navbar-item"
+                                :class="{
+                                    'is-disable': pagesCount === 0 &&
+                                    value[0] !== 'Добавить'
+                                }"
                                 v-else
                                 @click="$emit('item-click', value[1])">
                                 <span class="tag mr-4">{{ value[1] }}</span>
@@ -102,29 +108,55 @@
                 <a
                     class="navbar-item has-tooltip-left"
                     data-tooltip="Первая страница"
+                    :class="{ 'is-disable': pagesCount === 0 }"
                     @click="$emit('change-page', 'first')">
                     <span class="material-icons">first_page</span>
                 </a>
                 <a
                     class="navbar-item has-tooltip-left"
                     data-tooltip="Предыдущая страница"
+                    :class="{ 'is-disable': pagesCount === 0 }"
                     @click="$emit('change-page', 'previous')">
                     <span class="material-icons">navigate_before</span>
                 </a>
-                <a class="navbar-item">
+                <a
+                    class="navbar-item"
+                    :class="{ 'is-disable': pagesCount === 0 }">
                     {{ currentPage }} из {{ pagesCount }}
                 </a>
                 <a
                     class="navbar-item has-tooltip-left"
                     data-tooltip="Следующая страница"
+                    :class="{ 'is-disable': pagesCount === 0 }"
                     @click="$emit('change-page', 'next')">
                     <span class="material-icons">navigate_next</span>
                 </a>
                 <a
                     class="navbar-item has-tooltip-left"
                     data-tooltip="Последняя страница"
+                    :class="{ 'is-disable': pagesCount === 0 }"
                     @click="$emit('change-page', 'last')">
                     <span class="material-icons">last_page</span>
+                </a>
+                <a
+                    class="navbar-item has-tooltip-left"
+                    data-tooltip="Поиск"
+                    :class="{
+                        'is-disable': pagesCount === 0 &&
+                        filtered
+                    }"
+                    @click="$emit('show-search')">
+                    <span class="material-icons">person_search</span>
+                </a>
+                <a
+                    class="navbar-item has-tooltip-left"
+                    data-tooltip="Фильтрация"
+                    :class="{
+                        'is-disable': pagesCount === 0 &&
+                        searched
+                    }"
+                    @click="$emit('show-filter')">
+                    <span class="material-icons">filter_alt</span>
                 </a>
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link">
@@ -145,18 +177,6 @@
                         </a>
                     </div>
                 </div>
-                <a
-                    class="navbar-item has-tooltip-left"
-                    data-tooltip="Поиск"
-                    @click="$emit('show-search')">
-                    <span class="material-icons">person_search</span>
-                </a>
-                <a
-                    class="navbar-item has-tooltip-left"
-                    data-tooltip="Фильтрация"
-                    @click="$emit('show-filter')">
-                    <span class="material-icons">filter_alt</span>
-                </a>
                 <a
                     class="navbar-item has-tooltip-left"
                     data-tooltip="Настройки программы"
