@@ -65,7 +65,7 @@
                 ];
             },
             filtered() {
-                return this.filterQuery.length > 0;
+                return this.filterQuery.length > 0 && this.searchedText === "";
             },
             order() {
                 if (this.sortDirection === "ASC") {
@@ -354,11 +354,7 @@
             },
             setFilter(filters) {
                 localStorage.setItem("filter", JSON.stringify(filters));
-                if (filters.length === 0) {
-                    this.filterQuery.length = 0;
-                } else {
-                    this.filterQuery = this.convertToQueries(filters);
-                }
+                this.filterQuery = this.convertToQueries(filters);
                 this.updateData();
             },
             setSearch(searchedText) {

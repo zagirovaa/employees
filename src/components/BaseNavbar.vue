@@ -2,6 +2,18 @@
     import conf from "../config.js";
     
     export default {
+        computed: {
+            filterDisabled() {
+                if (this.filtered) return false;
+                if (this.searched) return true;
+                if (this.pagesCount === 0) return true;
+            },
+            searchDisabled() {
+                if (this.searched) return false;
+                if (this.filtered) return true;
+                if (this.pagesCount === 0) return true;
+            }
+        },
         data() {
             return {
                 conf: conf,
@@ -141,20 +153,14 @@
                 <a
                     class="navbar-item has-tooltip-left"
                     data-tooltip="Поиск"
-                    :class="{
-                        'is-disable': pagesCount === 0 &&
-                        filtered
-                    }"
+                    :class="{ 'is-disable': searchDisabled }"
                     @click="$emit('show-search')">
                     <span class="material-icons">person_search</span>
                 </a>
                 <a
                     class="navbar-item has-tooltip-left"
                     data-tooltip="Фильтрация"
-                    :class="{
-                        'is-disable': pagesCount === 0 &&
-                        searched
-                    }"
+                    :class="{ 'is-disable': filterDisabled }"
                     @click="$emit('show-filter')">
                     <span class="material-icons">filter_alt</span>
                 </a>
