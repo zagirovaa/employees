@@ -52,17 +52,19 @@
                 }
             },
             currentFilter() {
+                let query = [];
                 const limit = Query.limit(this.rowsPerPage);
                 const offset = Query.offset(this.offset);
-                if (this.searchedText !== "") {
-                    this.filterQuery.push(this.searchedText);
-                }
-                return [
+                query = [
                     ...this.filterQuery,
                     this.order,
                     limit,
                     offset
                 ];
+                if (this.searchedText !== "") {
+                    query.push(this.searchedText);
+                }
+                return query;
             },
             filtered() {
                 return this.filterQuery.length > 0 && this.searchedText === "";
