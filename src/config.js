@@ -15,7 +15,7 @@ export default {
         count: 5
     },
     global: {
-        endPoint: "http://employees.netcon.pro:8888/v1",
+        endPoint: "https://employees.netcon.pro:4443/v1",
         projectID: "6349834486380ff2f88e",
         databaseID: "634a8a604f05137b9b52"
     },
