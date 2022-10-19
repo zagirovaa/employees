@@ -22,12 +22,12 @@
                 title: "Настройки"
             }
         },
-        emits: ["close-modal", "show-notify"],
+        emits: ["close-modal"],
         methods: {
             async applyChanges() {
                 await this.saveHolidays();
                 this.$emit("close-modal");
-                this.$emit("show-notify",  {
+                this.$root.showNotify({
                     text: "Настройки сохранены.",
                     type: "success"
                 });

@@ -58,7 +58,7 @@
                 title: "Фильтрация"
             }
         },
-        emits: ["close-modal", "reset-filter", "set-filter", "show-notify"],
+        emits: ["close-modal", "reset-filter", "set-filter"],
         methods: {
             addFilter() {
                 if (this.filters.length < conf.filters.count) {
@@ -70,13 +70,13 @@
                         });
                         this.selectedValue = "";
                     } else {
-                        this.$emit("show-notify", {
+                        this.$root.showNotify({
                             text: "Обязательное поле не заполнено.",
                             type: "warning"
                         });
                     }
                 } else {
-                    this.$emit("show-notify", {
+                    this.$root.showNotify({
                         text: "Превышено максимальное количество фильтров.",
                         type: "warning"
                     });
@@ -87,7 +87,7 @@
                     this.$emit("set-filter", this.filters);
                     this.$emit("close-modal");
                 } else {
-                    this.$emit("show-notify", {
+                    this.$root.showNotify({
                         text: "Не добавлены необходимые фильтры.",
                         type: "warning"
                     });
@@ -102,7 +102,7 @@
                 if (result.total > 0) {
                     this.jobs = result.documents;
                 } else {
-                    this.$emit("show-notify", {
+                    this.$root.showNotify({
                         text: "Не удалось загрузить справочник должностей.",
                         type: "warning"
                     });

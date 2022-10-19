@@ -92,12 +92,6 @@
                 filterModalVisible: false,
                 filterQuery: [],
                 helpModalVisible: false,
-                notify: {
-                    text: "",
-                    timeout: 2000,
-                    type: "",
-                    visible: false
-                },
                 offset: 0,
                 pagesCount: 0,
                 rowsPerPage: 20,
@@ -117,7 +111,7 @@
                     conf.collections.jobs
                 );
                 if (jobs.total === 0) {
-                    this.showNotify({
+                    this.$root.showNotify({
                         text: "Справочник должностей пуст.",
                         type: "warning"
                     })
@@ -163,7 +157,7 @@
                 employees.forEach(async employee => {
                     await this.deleteEmployee(employee.$id);
                 });
-                this.showNotify({
+                this.$root.showNotify({
                     text: "Все сотрудники удалены.",
                     type: "success"
                 });
@@ -247,7 +241,7 @@
                         conf.collections.reasons
                     );
                     if (reasons.total === 0) {
-                        this.showNotify({
+                        this.$root.showNotify({
                             text: "Справочник причин увольнения пуст.",
                             type: "warning"
                         })
@@ -255,7 +249,7 @@
                         this.dismissModalVisible = true;
                     }
                 } else {
-                    this.showNotify({
+                    this.$root.showNotify({
                         text: "Сотрудник уже уволен или уволился.",
                         type: "warning"
                     });
@@ -267,7 +261,7 @@
                     conf.collections.jobs
                 );
                 if (jobs.total === 0) {
-                    this.showNotify({
+                    this.$root.showNotify({
                         text: "Справочник должностей пуст.",
                         type: "warning"
                     });
@@ -277,7 +271,7 @@
                         conf.collections.reasons
                     );
                     if (reasons.total === 0) {
-                        this.showNotify({
+                        this.$root.showNotify({
                             text: "Справочник причин увольнения пуст.",
                             type: "warning"
                         });
@@ -292,7 +286,7 @@
                 if (this.workingEmployeeExist()) {
                     this.scheduleModalVisible = true;
                 } else {
-                    this.showNotify({
+                    this.$root.showNotify({
                         text: "Работающие сотрудники не обнаружены.",
                         type: "warning"
                     });
@@ -338,7 +332,7 @@
             },
             removeEmployee() {
                 this.deleteEmployee(this.currentEmployee.$id);
-                this.showNotify({
+                this.$root.showNotify({
                     text: "Сотрудник удален.",
                     type: "success"
                 });
@@ -383,14 +377,6 @@
                 } else {
                     this.filterModalVisible = true;
                 }
-            },
-            showNotify(data) {
-                this.notify.text = data.text;
-                this.notify.type = data.type;
-                this.notify.visible = true;
-                setTimeout(() => {
-                    this.notify.visible = false;
-                }, this.notify.timeout);
             },
             showReasonsCatalog() {
                 this.catalogTitle = "Причины увольнения";
@@ -522,51 +508,43 @@
             @close-modal="helpModalVisible = false"/>
         <AddModal
             v-if="addModalVisible"
-            @close-modal="addModalVisible = false"
-            @show-notify="showNotify"/>
+            @close-modal="addModalVisible = false"/>
         <EditModal
             :document="employees[selectedRow]"
             v-if="editModalVisible"
-            @close-modal="editModalVisible = false"
-            @show-notify="showNotify"/>
+            @close-modal="editModalVisible = false"/>
         <DismissModal
             :document="employees[selectedRow]"
             v-if="dismissModalVisible"
-            @close-modal="dismissModalVisible = false"
-            @show-notify="showNotify"/>
+            @close-modal="dismissModalVisible = false"/>
         <CatalogModal
             :title="catalogTitle"
             :type="catalogType"
             v-if="catalogModalVisible"
-            @close-modal="catalogModalVisible = false"
-            @show-notify="showNotify"/>
+            @close-modal="catalogModalVisible = false"/>
         <ScheduleModal
             v-if="scheduleModalVisible"
-            @close-modal="scheduleModalVisible = false"
-            @show-notify="showNotify"/>
+            @close-modal="scheduleModalVisible = false"/>
         <SearchModal
             v-if="searchModalVisible"
             :text="loadSearch()"
             @close-modal="searchModalVisible = false"
             @reset-search="resetSearch"
-            @set-search="setSearch"
-            @show-notify="showNotify"/>
+            @set-search="setSearch"/>
         <FilterModal
             v-if="filterModalVisible"
             :queries="loadFilter()"
             @close-modal="filterModalVisible = false"
             @reset-filter="resetFilter"
-            @set-filter="setFilter"
-            @show-notify="showNotify"/>
+            @set-filter="setFilter"/>
         <SettingsModal
             v-if="settingsModalVisible"
-            @close-modal="settingsModalVisible = false"
-            @show-notify="showNotify"/>
+            @close-modal="settingsModalVisible = false"/>
         <BaseNotify
-            :type="notify.type"
-            v-if="notify.visible"
-            @close-notify="notify.visible = false">
-            {{ notify.text }}
+            :type="$root.notify.type"
+            v-if="$root.notify.visible"
+            @close-notify="$root.notify.visible = false">
+            {{ $root.notify.text }}
         </BaseNotify>
     </div>
 </template>

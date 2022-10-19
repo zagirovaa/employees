@@ -21,7 +21,7 @@
                 title: "Изменить",
             }
         },
-        emits: ["close-modal", "show-notify"],
+        emits: ["close-modal"],
         methods: {
             async applyChanges() {
                 const { full_name, salary } = this.employee;
@@ -45,12 +45,12 @@
                         })
                     );
                     this.$emit("close-modal");
-                    this.$emit("show-notify", {
+                    this.$root.showNotify({
                         text: "Данные сотрудника изменены.",
                         type: "success"
                     });
                 } else {
-                    this.$emit("show-notify", {
+                    this.$root.showNotify({
                         text: "Не все обязательные поля заполнены.",
                         type: "warning"
                     });
@@ -65,7 +65,7 @@
                 if (result.total > 0) {
                     this.jobs = result.documents;
                 } else {
-                    this.$emit("show-notify", {
+                    this.$root.showNotify({
                         text: "Не удалось загрузить справочник должностей.",
                         type: "warning"
                     });
@@ -80,7 +80,7 @@
                 if (result.total > 0) {
                     this.reasons = result.documents;
                 } else {
-                    this.$emit("show-notify", {
+                    this.$root.showNotify({
                         text: "Не удалось загрузить справочник причин.",
                         type: "warning"
                     });

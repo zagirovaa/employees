@@ -1,4 +1,5 @@
 <script>
+    import { account } from "../api.js";
     import conf from "../config.js";
     
     export default {
@@ -49,6 +50,17 @@
             "show-search",
             "show-settings"
         ],
+        methods: {
+            logout() {
+                const self = this;
+                const session = account.deleteSession("current");
+                session.then(function () {
+                    self.$root.userIsAuthorised = false;
+                    self.$root.currentRoute = "/auth";
+                    history.pushState(null, "", self.$root.currentRoute);
+                });
+            }
+        },
         props: {
             currentPage: [Number, String],
             filtered: Boolean,
@@ -204,6 +216,12 @@
                     data-tooltip="Краткая справка о программе"
                     @click="$emit('show-help')">
                     <span class="material-icons">help</span>
+                </a>
+                <a
+                    class="navbar-item has-tooltip-left"
+                    data-tooltip="Выйти"
+                    @click="logout">
+                    <span class="material-icons">meeting_room</span>
                 </a>
             </div>
         </div>

@@ -2,9 +2,6 @@
     "name": "employees",
     "description": "Employee Database Application",
     "version": "1.0.0",
-    "engines": {
-        "node": "16.x"
-    },
     "main": "server.js",
     "scripts": {
         "dev": "vite",

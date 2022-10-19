@@ -2,22 +2,8 @@ import { Account, Client, Databases, Query } from "appwrite";
 import conf from "./config.js";
 
 const client = new Client();
+export const account = new Account(client);
 client.setEndpoint(conf.global.endPoint).setProject(conf.global.projectID);
-const account = new Account(client);
-const auth = account.get();
-auth.then(user => {
-    console.log(`User ${user.name} is logged in.`);
-}, error => {
-    const session = account.createEmailSession(
-        conf.auth.email,
-        conf.auth.password
-    );
-    session.then(user => {
-        console.log(`User ${user.name} is logged in.`);
-    }, function (error) {
-        console.log(error);
-    });
-});
 
 export const database = new Databases(client, conf.global.databaseID);
 

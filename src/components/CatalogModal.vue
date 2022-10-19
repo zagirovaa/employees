@@ -44,7 +44,7 @@
                 selectedRow: -1
             }
         },
-        emits: ["close-modal", "show-notify"],
+        emits: ["close-modal"],
         methods: {
             addCatalog() {
                 this.catalog = { name: "" };
@@ -71,7 +71,7 @@
                         this.deleteCatalog(index);
                     });
                     this.updateData();
-                    this.$emit("show-notify", {
+                    this.$root.showNotify({
                         text: "Все элементы справочника удалены.",
                         type: "success"
                     });
@@ -99,12 +99,12 @@
                 if (this.selectedRow >= 0) {
                     if (await this.deleteCatalog(index)) {
                         this.updateData();
-                        this.$emit("show-notify", {
+                        this.$root.showNotify({
                             text: "Элемент справочника удален.",
                             type: "success"
                         });
                     } else {
-                        this.$emit("show-notify", {
+                        this.$root.showNotify({
                             text: "Элемент справочника привязан к сотруднику.",
                             type: "warning"
                         });
@@ -219,6 +219,5 @@
         :title="actionTitle"
         :type="type"
         v-if="actionVisible"
-        @close-modal="actionVisible = false"
-        @show-notify="this.$emit('show-notify', $event)"/>
+        @close-modal="actionVisible = false"/>
 </template>

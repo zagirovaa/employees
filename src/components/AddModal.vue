@@ -21,7 +21,7 @@
                 title: "Добавить"
             }
         },
-        emits: ["close-modal", "show-notify"],
+        emits: ["close-modal"],
         methods: {
             async applyChanges() {
                 if (this.employee.full_name !== "" && this.employee.salary > 0) {
@@ -38,12 +38,12 @@
                         })
                     );
                     this.$emit("close-modal");
-                    this.$emit("show-notify", {
+                    this.$root.showNotify({
                         text: "Добавлен новый сотрудник.",
                         type: "success"
                     });
                 } else {
-                    this.$emit("show-notify", {
+                    this.$root.showNotify({
                         text: "Не все обязательные поля заполнены.",
                         type: "warning"
                     });
@@ -59,7 +59,7 @@
                     this.jobs = result.documents;
                     this.employee.job_title = this.jobs[0].name;
                 } else {
-                    this.$emit("show-notify", {
+                    this.$root.showNotify({
                         text: "Не удалось загрузить справочник должностей.",
                         type: "warning"
                     });

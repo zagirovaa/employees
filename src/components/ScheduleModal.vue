@@ -44,7 +44,7 @@
                 workingDays: 0
             }
         },
-        emits: ["close-modal", "show-notify"],
+        emits: ["close-modal"],
         methods: {
             changeCellColors(cellNumber) {
                 const cell = this.getCellByDayNumber(cellNumber);

@@ -24,7 +24,7 @@
                 currentCatalog: {}
             }
         },
-        emits: ["close-modal", "show-notify"],
+        emits: ["close-modal"],
         methods: {
             async applyChanges() {
                 if (this.currentCatalog.name !== "") {
@@ -37,7 +37,7 @@
                                 {name: this.currentCatalog.name}
                             );
                             this.$emit("close-modal");
-                            this.$emit("show-notify", {
+                            this.$root.showNotify({
                                 text: "Добавлен элемент справочника.",
                                 type: "success"
                             });
@@ -49,19 +49,19 @@
                                 {name: this.currentCatalog.name}
                             );
                             this.$emit("close-modal");
-                            this.$emit("show-notify", {
+                            this.$root.showNotify({
                                 text: "Изменен элемент справочника.",
                                 type: "success"
                             });
                         }
                     } else {
-                        this.$emit("show-notify", {
+                        this.$root.showNotify({
                             text: "Элемент с подобным именем уже существует.",
                             type: "warning"
                         });
                     }
                 } else {
-                    this.$emit("show-notify", {
+                    this.$root.showNotify({
                         text: "Обязательное поле не заполнено.",
                         type: "warning"
                     });

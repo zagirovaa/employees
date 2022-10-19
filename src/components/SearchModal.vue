@@ -9,14 +9,14 @@
                 title: "Поиск"
             }
         },
-        emits: ["close-modal", "reset-search", "set-search", "show-notify"],
+        emits: ["close-modal", "reset-search", "set-search"],
         methods: {
             applyChanges() {
                 if (this.searchedText !== "") {
                     this.$emit("set-search", this.searchedText);
                     this.$emit("close-modal");
                 } else {
-                    this.$emit("show-notify", {
+                    this.$root.showNotify({
                         text: "Не задана искомая строка.",
                         type: "warning"
                     });

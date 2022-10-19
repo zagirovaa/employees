@@ -15,10 +15,7 @@
             'is-warning': type === 'warning',
             'is-danger': type === 'danger'
         }">
-        <button
-            class="delete"
-            @click="$emit('close-notify')">
-        </button>
+        <button class="delete" @click="$emit('close-notify')"></button>
         <slot></slot>
     </div>
 </template>
