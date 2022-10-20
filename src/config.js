@@ -4,20 +4,20 @@ export default {
         password: "11111111"
     },
     collections: {
-        employees: "634a8c24711c2e757dc0",
-        jobs: "634a8a684d155f5e4076",
-        reasons: "634a8ae0b01e59c08567",
-        settings: "634a8b18c990c3193402",
-        states: "634a8b57c5a5aedcf5c0"
+        employees: "63514aab6fe6753bfab9",
+        jobs: "63514961a47624ada135",
+        reasons: "63514998a1ee772476bd",
+        settings: "635149c8088d3c3402ae",
+        states: "635149fc02f2ddc312d9"
     },
     filters: {
         // Maximum number of allowed filters
         count: 5
     },
     global: {
-        endPoint: "https://employees.netcon.pro:4443/v1",
-        projectID: "6349834486380ff2f88e",
-        databaseID: "634a8a604f05137b9b52"
+        endPoint: "https://employees.netcon.pro/v1",
+        projectID: "635132eba7add9571dee",
+        databaseID: "635149531aa81ce560a0"
     },
     holidays: ["Суббота", "Воскресение"],
     organization: {
