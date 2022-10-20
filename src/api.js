@@ -2,9 +2,12 @@ import { Account, Client, Databases, Query } from "appwrite";
 import conf from "./config.js";
 
 const client = new Client();
-export const account = new Account(client);
-client.setEndpoint(conf.global.endPoint).setProject(conf.global.projectID);
+client
+    .setEndpoint(conf.global.endPoint)
+    .setProject(conf.global.projectID)
+    .setSelfSigned();
 
+export const account = new Account(client);
 export const database = new Databases(client, conf.global.databaseID);
 
 export async function getAllEmployees(workingOnly) {
