@@ -2,10 +2,7 @@ import { Account, Client, Databases, Query } from "appwrite";
 import conf from "./config.js";
 
 const client = new Client();
-client
-    .setEndpoint(conf.global.endPoint)
-    .setProject(conf.global.projectID)
-    .setSelfSigned();
+client.setEndpoint(conf.global.endPoint).setProject(conf.global.projectID);
 
 export const account = new Account(client);
 export const database = new Databases(client, conf.global.databaseID);
