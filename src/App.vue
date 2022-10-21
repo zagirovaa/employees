@@ -106,11 +106,11 @@
         },
         methods: {
             async addEmployee() {
-                const jobs = await database.listDocuments(
+                const result = await database.listDocuments(
                     conf.global.databaseID,
                     conf.collections.jobs
                 );
-                if (jobs.total === 0) {
+                if (result.total === 0) {
                     this.$root.showNotify({
                         text: "Справочник должностей пуст.",
                         type: "warning"

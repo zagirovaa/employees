@@ -118,12 +118,18 @@
                     [Query.orderAsc("name")]
                 );
                 this.catalogTitles = result.documents;
+                console.log(this.catalogTitles);
+                // When adding first item it must be set active
+                // cause it is the only one in the list
                 if (this.catalogTitles.length > 0 && this.selectedRow === -1) {
                     this.selectedRow = 0;
                 }
+                // When item is deleted previous one
+                // has to become active if there is any
                 if (this.selectedRow > this.catalogTitles.length - 1) {
                     this.selectedRow = this.catalogTitles.length - 1;
                 }
+                // When the last item is removed none is active
                 if (this.catalogTitles.length === 0) {
                     this.selectedRow = -1
                 }
