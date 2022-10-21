@@ -118,7 +118,6 @@
                     [Query.orderAsc("name")]
                 );
                 this.catalogTitles = result.documents;
-                console.log(this.catalogTitles);
                 // When adding first item it must be set active
                 // cause it is the only one in the list
                 if (this.catalogTitles.length > 0 && this.selectedRow === -1) {
