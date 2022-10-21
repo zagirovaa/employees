@@ -8,7 +8,7 @@ export default {
         jobs: "63514961a47624ada135",
         reasons: "63514998a1ee772476bd",
         settings: "635149c8088d3c3402ae",
-        states: "635149fc02f2ddc312d9"
+        states: "635282497e5b6c244a4c"
     },
     filters: {
         // Maximum number of allowed filters
