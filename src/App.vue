@@ -345,6 +345,7 @@
             resetSearch() {
                 localStorage.removeItem("search");
                 this.searchedText = "";
+                // ??????????
                 this.filterQuery.pop();
                 this.updateData();
             },
@@ -370,6 +371,9 @@
                 this.catalogModalVisible = true;
             },
             showFilter() {
+                // Even if the list of employees is empty we have to check
+                // whether filter is set. Perhaps list is empty because of
+                // the filter.
                 if (this.employees.length === 0) {
                     if (this.filterQuery.length > 0) {
                         this.filterModalVisible = true;
@@ -384,6 +388,9 @@
                 this.catalogModalVisible = true;
             },
             showSearch() {
+                // Even if the list of employees is empty we have to check
+                // whether filter is set. Perhaps list is empty because of
+                // the filter.
                 if (this.employees.length === 0) {
                     if (this.filterQuery.length > 0) {
                         this.searchModalVisible = true;
@@ -415,7 +422,6 @@
                 }
             },
             async updateData() {
-                const employeesCount = await getEmployeesCount();
                 const result = await database.listDocuments(
                     conf.global.databaseID,
                     conf.collections.employees,
@@ -436,9 +442,9 @@
                         this.selectedRow = this.employees.length - 1;
                     };
                     this.pagesCount = parseInt(
-                        employeesCount / this.rowsPerPage
+                        this.employees.length / this.rowsPerPage
                     );
-                    if (employeesCount % this.rowsPerPage > 0) {
+                    if (this.employees.length % this.rowsPerPage > 0) {
                         this.pagesCount++;
                     };
                     if (this.currentPage > this.pagesCount) {
@@ -447,7 +453,9 @@
                     this.offset = (this.currentPage - 1) * this.rowsPerPage;
                 } else {
                     this.currentPage = 0;
+                    this.selectedRow = -1;
                     this.pagesCount = 0;
+                    this.offset = 0;
                     this.employees = [];
                 }
             },
