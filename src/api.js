@@ -27,36 +27,3 @@ export async function getEmployeesCount() {
     )
     return result.total;
 }
-
-export async function getSettings() {
-    const settings = {};
-    const result = await database.listDocuments(
-        conf.global.databaseID,
-        conf.collections.settings
-    );
-    if (result.total > 0) {
-        for (let setting of result.documents) {
-            settings[setting.key] = {};
-            settings[setting.key].id = setting.$id;
-            settings[setting.key].value = setting.value;
-        }
-    }
-    return settings;
-}
-
-export async function getHolidays() {
-    const settings = await getSettings();
-    return settings["holidays"] ? 
-    settings["holidays"].value.split(",") : 
-    conf.holidays;
-}
-
-export async function getSettingID(key) {
-    const settings = await getSettings();
-    return settings[key] ? settings[key].id : undefined;
-}
-
-export async function getLimit() {
-    const settings = await getSettings();
-    return settings["limit"] ? Number(settings["limit"].value) : 20;
-}

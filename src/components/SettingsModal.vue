@@ -1,7 +1,5 @@
 <script>
-    import { database, getHolidays, getSettingID } from "../api.js";
     import conf from "../config.js";
-
     import BaseModal from "./BaseModal.vue";
 
     export default {
@@ -18,14 +16,13 @@
                     "Воскресение"
                 ],
                 holidays: [],
-                settings: {},
                 title: "Настройки"
             }
         },
         emits: ["close-modal"],
         methods: {
             async applyChanges() {
-                await this.saveHolidays();
+                localStorage.setItem("holidays", JSON.stringify(this.holidays));
                 this.$emit("close-modal");
                 this.$root.showNotify({
                     text: "Настройки сохранены.",
@@ -40,23 +37,14 @@
                     this.holidays.push(day);
                 }
             },
-            async getSettings() {
-                this.holidays = await getHolidays();
-            },
-            async saveHolidays() {
-                const document_id = await getSettingID("holidays");
-                if (document_id) {
-                    await database.updateDocument(
-                        conf.global.databaseID,
-                        conf.collections.settings,
-                        document_id,
-                        {value: this.holidays.join(",")}
-                    );
-                }
+            getHolidays() {
+                return JSON.parse(
+                    localStorage.getItem("holidays")
+                ) || conf.settings.holidays || [];
             }
         },
         mounted() {
-            this.getSettings();
+            this.holidays = this.getHolidays();
         }
     }
 </script>

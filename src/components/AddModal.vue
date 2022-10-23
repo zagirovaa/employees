@@ -3,7 +3,6 @@
     import { database } from "../api.js";
     import conf from "../config.js";
     import { getCurrentDate } from "../helpers.js";
-    
     import BaseModal from "./BaseModal.vue";
 
     export default {

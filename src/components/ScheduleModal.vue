@@ -1,13 +1,12 @@
 <script>
     import { Query } from "appwrite";
-    import { database, getAllEmployees, getHolidays } from "../api.js";
+    import { database, getAllEmployees } from "../api.js";
     import conf from "../config.js";
     import {
         getCurrentYear, getCurrentMonthNumber, getDayNameByDate, getDaysCount,
         getListOfMonths, getListOfYears, getMonthNameByNumber,
         getMonthNumberByName, padForDigits, splitArray
     } from "../helpers.js";
-
     import BaseModal from "./BaseModal.vue";
 
     export default {
@@ -71,7 +70,7 @@
             async changeDayStatus(row, column) {
                 const cellNumber = this.getCellNumber(row, column);
                 if (cellNumber != "") {
-                    const holidays = await getHolidays();
+                    const holidays = this.getHolidays();
                     const selectedDate = this.getSelectedDate(cellNumber);
                     const dayName = getDayNameByDate(selectedDate);
                     const currentStates = await this.getStates();
@@ -171,6 +170,11 @@
                 this.getTable();
                 this.initCellColors();
             },
+            getHolidays() {
+                return JSON.parse(
+                    localStorage.getItem("holidays")
+                ) || conf.settings.holidays || [];
+            },
             getMonths() {
                 const monthName = getMonthNameByNumber(
                     this.currentMonth
@@ -252,7 +256,7 @@
             async initCellColors() {
                 this.resetCellsColors();
                 this.resetDaysCounts();
-                const holidays = await getHolidays();
+                const holidays = this.getHolidays();
                 const currentStates = await this.getStates();
                 // Set colors for holidays
                 for (let day = 1; day <= this.maxDays; day++) {

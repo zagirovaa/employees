@@ -7,7 +7,6 @@ export default {
         employees: "63514aab6fe6753bfab9",
         jobs: "63514961a47624ada135",
         reasons: "63514998a1ee772476bd",
-        settings: "635149c8088d3c3402ae",
         states: "635282497e5b6c244a4c"
     },
     filters: {
@@ -19,10 +18,14 @@ export default {
         projectID: "635132eba7add9571dee",
         databaseID: "635149531aa81ce560a0"
     },
-    holidays: ["Суббота", "Воскресение"],
     organization: {
         name: "NETCON",
         url: "https://netcon.pro",
         tooltip: "Официальный сайт компании"
+    },
+    settings: {
+        // Number of records per page
+        limit: 20,
+        holidays: ["Суббота", "Воскресение"]
     }
 }

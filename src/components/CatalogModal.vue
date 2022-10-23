@@ -2,7 +2,6 @@
     import { Query } from "appwrite";
     import { database } from "../api.js";
     import conf from "../config.js";
-    
     import BaseActions from "./BaseActions.vue";
     import BaseModal from "./BaseModal.vue";
 

@@ -1,11 +1,8 @@
 <script>
     import { Query } from "appwrite";
-    import {
-        database, getAllEmployees, getEmployeesCount, getLimit, getSettingID
-    } from "./api.js";
+    import { database, getAllEmployees, getEmployeesCount } from "./api.js";
     import conf from "./config.js";
     import { sortColumns } from "./helpers.js";
-
     import AddModal from "./components/AddModal.vue";
     import BaseNavbar from "./components/BaseNavbar.vue";
     import BaseNotify from "./components/BaseNotify.vue";
@@ -120,15 +117,7 @@
                 }
             },
             async changeLimit(limit) {
-                const document_id = await getSettingID("limit");
-                if (document_id) {
-                    database.updateDocument(
-                        conf.global.databaseID,
-                        conf.collections.settings,
-                        document_id,
-                        JSON.stringify({value: limit.toString()})
-                    );
-                }
+                localStorage.setItem("limit", JSON.stringify(limit));
                 this.rowsPerPage = limit;
                 this.updateData();
             },
@@ -363,7 +352,9 @@
                 this.updateData();
             },
             async setRowsPerPage() {
-                this.rowsPerPage = await getLimit();
+                this.rowsPerPage = JSON.parse(
+                    localStorage.getItem("limit")
+                ) || conf.settings.limit || 20;
             },
             showJobsCatalog() {
                 this.catalogTitle = "Должности";
