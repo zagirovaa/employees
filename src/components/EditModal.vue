@@ -61,14 +61,7 @@
                     conf.collections.jobs,
                     [Query.orderAsc("name")]
                 );
-                if (result.total > 0) {
-                    this.jobs = result.documents;
-                } else {
-                    this.$root.showNotify({
-                        text: "Не удалось загрузить справочник должностей.",
-                        type: "warning"
-                    });
-                }
+                this.jobs = result.documents;
             },
             async getDismissReasons() {
                 const result = await database.listDocuments(
@@ -76,14 +69,7 @@
                     conf.collections.reasons,
                     [Query.orderAsc("name")]
                 );
-                if (result.total > 0) {
-                    this.reasons = result.documents;
-                } else {
-                    this.$root.showNotify({
-                        text: "Не удалось загрузить справочник причин.",
-                        type: "warning"
-                    });
-                }
+                this.reasons = result.documents;
             }
         },
         mounted() {

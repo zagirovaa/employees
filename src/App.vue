@@ -68,9 +68,9 @@
             },
             order() {
                 if (this.sortDirection === "ASC") {
-                    return Query.orderAsc(this.sortColumn);
+                    return Query.orderAsc(this.sortedColumn);
                 }
-                return Query.orderDesc(this.sortColumn);
+                return Query.orderDesc(this.sortedColumn);
             },
             searched() {
                 return this.searchedText !== "";
@@ -97,7 +97,7 @@
                 searchModalVisible: false,
                 selectedRow: -1,
                 settingsModalVisible: false,
-                sortColumn: "full_name",
+                sortedColumn: "full_name",
                 sortDirection: "ASC"
             }
         },
@@ -282,7 +282,7 @@
                 }
             },
             invertSortDirection() {
-                this.sortDirection = (this.sortDirection == "ASC") ?
+                this.sortDirection = (this.sortDirection === "ASC") ?
                 "DESC" : "ASC";
             },
             itemClick(shortcut) {
@@ -391,26 +391,10 @@
                 }
             },
             sortByColumnName(columnName) {
-                if (this.sortColumn === sortColumns[columnName]) {
+                if (this.sortedColumn === sortColumns[columnName]) {
                     this.invertSortDirection();
                 }
-                switch (columnName) {
-                    case "Дата приема":
-                        this.sortColumn = "date_of_employment";
-                        break;
-                    case "ФИО":
-                        this.sortColumn = "full_name";
-                        break;
-                    case "Должность":
-                        this.sortColumn = "job_title";
-                        break;
-                    case "Оклад":
-                        this.sortColumn = "salary";
-                        break;
-                    case "Статус":
-                        this.sortColumn = "status";
-                        break;
-                }
+                this.sortedColumn = sortColumns[columnName];
             },
             async updateData() {
                 const result = await database.listDocuments(
@@ -499,7 +483,7 @@
             :direction="sortDirection"
             :employees="allEmployees"
             :selected-row="selectedRow"
-            :sort-column="sortColumn"
+            :sorted-column="sortedColumn"
             @row-click="selectedRow = $event"
             @sort-column="sortByColumnName"/>
         <HelpModal

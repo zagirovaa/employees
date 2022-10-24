@@ -21,7 +21,7 @@
                 required: true,
                 type: [Number, String]
             },
-            sortColumn: {
+            sortedColumn: {
                 required: true,
                 type: String
             }
@@ -35,12 +35,12 @@
             <tr>
                 <th
                     class="has-text-centered"
-                    :class="{ 'has-text-link': value === sortColumn }"
+                    :class="{ 'has-text-link': value === sortedColumn }"
                     :key="key"
                     v-for="(value, key) in columns"
                     @click="$emit('sort-column', key)">
                     <span>{{ key }}</span>
-                    <template v-if="key !== '' && value === sortColumn">
+                    <template v-if="key !== '' && value === sortedColumn">
                         <span class="ml-2" v-if="direction === 'ASC'">⮟</span>
                         <span class="ml-2" v-else>⮝</span>
                     </template>
