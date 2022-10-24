@@ -3,7 +3,6 @@ import { account } from "./api.js";
 import conf from "./config.js";
 import "bulma";
 import "bulma-tooltip";
-
 import App from "./App.vue";
 import LoginModal from "./components/LoginModal.vue";
 import PageNotFound from "./components/PageNotFound.vue";
@@ -68,3 +67,5 @@ const Router = {
 const app = createApp(Router);
 app.config.unwrapInjectedRef = true;
 const vm = app.mount("#app");
+
+document.title = `${conf.organization.name} : Сотрудники`;

@@ -79,9 +79,7 @@
                 target="_blank"
                 :data-tooltip="conf.organization.tooltip"
                 :href="conf.organization.url">
-                <span class="material-icons md-36 mr-3">
-                    admin_panel_settings
-                </span>
+                <span class="material-icons md-36 mr-3">hive</span>
                 <h5 class="has-text-white has-text-weight-medium is-size-5">
                     {{ conf.organization.name }} : Сотрудники
                 </h5>
