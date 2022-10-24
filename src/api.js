@@ -12,6 +12,7 @@ export async function getAllEmployees(workingOnly) {
     if (workingOnly) {
         query.push(Query.equal("status", "Работает"));
     }
+    query.push(Query.orderAsc("full_name"));
     const result = await database.listDocuments(
         conf.global.databaseID,
         conf.collections.employees,

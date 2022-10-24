@@ -44,13 +44,6 @@ export function padForDigits(num) {
     return num.toString().padStart(2, "0");
 }
 
-export function sortEmployees(employees) {
-    return employees.sort(
-        (a, b) => a.full_name < b.full_name ? -1 :
-        (a.full_name > b.full_name ? 1 : 0)
-    );
-}
-
 export function getCurrentDate() {
     const date = new Date();
     return [

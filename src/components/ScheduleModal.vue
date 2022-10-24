@@ -11,13 +11,6 @@
 
     export default {
         components: { BaseModal },
-        computed: {
-            employees() {
-                return this.fetchedData.filter((value, index) => {
-                    return value.status == "Работает";
-                });
-            }
-        },
         data() {
             return {
                 columns: ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"],
@@ -26,7 +19,7 @@
                 currentYear: 0,
                 employMonth: 0,
                 employYear: 0,
-                fetchedData: [],
+                employees: [],
                 maxDays: 0,
                 months: [],
                 offDays: 0,
@@ -138,15 +131,15 @@
                 return cell;
             },
             getCurrentEmployee() {
-                for (let item of this.fetchedData) {
+                for (let item of this.employees) {
                     if (item.full_name.includes(this.selectedName)) {
                         return item;
                     }
                 }
             },
             async getEmployees() {
-                this.fetchedData = await getAllEmployees(true);
-                this.selectedName = this.fetchedData[0].full_name;
+                this.employees = await getAllEmployees(true);
+                this.selectedName = this.employees[0].full_name;
                 this.getYears();
             },
             getEmployMonth() {
