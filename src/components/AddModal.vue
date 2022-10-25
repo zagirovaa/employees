@@ -56,10 +56,6 @@
                 );
                 this.jobs = result.documents;
                 this.employee.job_title = this.jobs[0].name;
-                // this.$root.showNotify({
-                //     text: "Не удалось загрузить справочник должностей.",
-                //     type: "warning"
-                // });
             }
         },
         mounted() {

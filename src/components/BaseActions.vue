@@ -26,47 +26,50 @@
         emits: ["close-modal"],
         methods: {
             async applyChanges() {
-                if (this.currentCatalog.name !== "") {
-                    if (await this.hasNoDublicateName()) {
-                        if (this.title === "Добавить") {
-                            await database.createDocument(
-                                conf.global.databaseID,
-                                this.collection,
-                                "unique()",
-                                {name: this.currentCatalog.name}
-                            );
-                            this.$emit("close-modal");
-                            this.$root.showNotify({
-                                text: "Добавлен элемент справочника.",
-                                type: "success"
-                            });
-                        } else if (this.title === "Изменить") {
-                            await database.updateDocument(
-                                conf.global.databaseID,
-                                this.collection,
-                                this.currentCatalog.$id,
-                                {name: this.currentCatalog.name}
-                            );
-                            this.$emit("close-modal");
-                            this.$root.showNotify({
-                                text: "Изменен элемент справочника.",
-                                type: "success"
-                            });
-                        }
-                    } else {
-                        this.$root.showNotify({
-                            text: "Элемент с подобным именем уже существует.",
-                            type: "warning"
-                        });
-                    }
-                } else {
+                if (this.currentCatalog.name === "") {
                     this.$root.showNotify({
                         text: "Обязательное поле не заполнено.",
                         type: "warning"
                     });
+                    return;
+                }
+                if (await this.hasDublicateName()) {
+                    this.$root.showNotify({
+                        text: "Элемент с подобным именем уже существует.",
+                        type: "warning"
+                    });
+                    return;
+                }
+                if (this.title === "Добавить") {
+                    await database.createDocument(
+                        conf.global.databaseID,
+                        this.collection,
+                        "unique()",
+                        {name: this.currentCatalog.name}
+                    );
+                    this.$emit("close-modal");
+                    this.$root.showNotify({
+                        text: "Добавлен элемент справочника.",
+                        type: "success"
+                    });
+                    return;
+                }
+                if (this.title === "Изменить") {
+                    await database.updateDocument(
+                        conf.global.databaseID,
+                        this.collection,
+                        this.currentCatalog.$id,
+                        {name: this.currentCatalog.name}
+                    );
+                    this.$emit("close-modal");
+                    this.$root.showNotify({
+                        text: "Изменен элемент справочника.",
+                        type: "success"
+                    });
+                    return;
                 }
             },
-            async hasNoDublicateName() {
+            async hasDublicateName() {
                 const query = [
                     Query.equal("name", this.currentCatalog.name)
                 ];
@@ -75,10 +78,10 @@
                     this.collection,
                     query
                 );
-                return result.total === 0 ? true: false;
+                return result.total > 0 ? true: false;
             }
         },
-        mounted() {       
+        mounted() {
             this.currentCatalog = this.catalog;
             this.$refs.name.focus();
         },

@@ -1,3 +1,13 @@
+const dayNames = [
+    "Воскресение",
+    "Понедельник",
+    "Вторник",
+    "Среда",
+    "Четверг",
+    "Пятница",
+    "Суббота"
+];
+
 const monthNames = [
     "Январь",
     "Февраль",
@@ -11,36 +21,18 @@ const monthNames = [
     "Октябрь",
     "Ноябрь",
     "Декабрь"
-]
+];
 
-const dayNames = [
-    "Воскресение",
-    "Понедельник",
-    "Вторник",
-    "Среда",
-    "Четверг",
-    "Пятница",
-    "Суббота"
-]
-
-export const sortColumns = {
+export const columnNames = {
     "":             "",
     "Дата приема":  "date_of_employment",
     "ФИО":          "full_name",
     "Должность":    "job_title",
     "Оклад":        "salary",
     "Статус":       "status"
-}
+};
 
-function yearsRange(start, stop) {
-    const listOfNumbers = [];
-    for (let val = start; val <= stop; val++) {
-        listOfNumbers.push(val);
-    }
-    return listOfNumbers;
-}
-
-export function padForDigits(num) {
+export function addPadForDigits(num) {
     return num.toString().padStart(2, "0");
 }
 
@@ -48,14 +40,13 @@ export function getCurrentDate() {
     const date = new Date();
     return [
         date.getFullYear(),
-        padForDigits(date.getMonth() + 1),
-        padForDigits(date.getDate()),
+        addPadForDigits(date.getMonth() + 1),
+        addPadForDigits(date.getDate()),
     ].join("-");
 }
 
-export function getCurrentYear() {
-    const currDate = new Date();
-    return currDate.getFullYear();
+export function getCurrentMonthName() {
+    return getMonthNameByNumber(getCurrentMonthNumber());
 }
 
 export function getCurrentMonthNumber() {
@@ -63,43 +54,9 @@ export function getCurrentMonthNumber() {
     return currDate.getMonth() + 1;
 }
 
-export function getMonthNameByNumber(monthNumber) {
-    return monthNames[monthNumber - 1];
-}
-
-export function getMonthNumberByName(monthName) {
-    for (let item = 0; 11; item++) {
-        if (monthNames[item] === monthName ) {
-            return item + 1;
-        }
-    }
-}
-
-export function getCurrentMonthName() {
-    return getMonthNameByNumber(getCurrentMonthNumber());
-}
-
-export function getListOfYears(year) {
-    const listOfYears = [];
-    const currentYear = getCurrentYear();
-    if (currentYear === year) {
-        listOfYears.push(currentYear) ;
-    } else if (currentYear > year) {
-        listOfYears.push(...yearsRange(year, currentYear));
-    }
-    return listOfYears;
-}
-
-export function getListOfMonths(start, stop) {
-    const listOfMonths = [];
-    for (let value = start; value <= stop; value++) {
-        listOfMonths.push(monthNames[value]);
-    }
-    return listOfMonths;
-}
-
-export function getDaysCount(year, month) {
-    return new Date(year, month, 0).getDate();
+export function getCurrentYear() {
+    const currDate = new Date();
+    return currDate.getFullYear();
 }
 
 export function getDayNameByDate(date) {
@@ -108,18 +65,46 @@ export function getDayNameByDate(date) {
 }
 
 export function getDayNumberByName(dayName) {
-    for (let dayNumber in dayNames) {
-        if (dayNames[dayNumber] == dayName) {
-            return dayNumber;
-        }
+    return dayNames.indexOf(dayName);
+}
+
+export function getDaysCount(year, month) {
+    return new Date(year, month, 0).getDate();
+}
+
+export function getListOfMonths(start, stop) {
+    return monthNames.filter((element, index) => {
+        return index >= start && index <= stop;
+    }) 
+}
+
+export function getListOfYears(year) {
+    const currentYear = getCurrentYear();
+    if (currentYear > year) return [...getRangeOfYears(year, currentYear)];
+    return currentYear;
+}
+
+export function getMonthNameByNumber(monthNumber) {
+    return monthNames[monthNumber - 1];
+}
+
+export function getMonthNumberByName(monthName) {
+    return monthNames.indexOf(monthName) + 1;
+}
+
+function getRangeOfYears(start, stop) {
+    const listOfNumbers = [];
+    for (let val = start; val <= stop; val++) {
+        listOfNumbers.push(val);
     }
+    return listOfNumbers;
 }
 
 export function splitArray(array, size) {
     let splittedArray = [];
     for (let i = 0; i < array.length; i += size) {
-        const chunk = array.slice(i, i + size);
-        splittedArray.push(chunk);
+        const arrayChunk = array.slice(i, i + size);
+        splittedArray.push(arrayChunk);
     }
     return splittedArray;
 }

@@ -1,10 +1,10 @@
 <script>
-    import { sortColumns } from "../helpers.js";
+    import { columnNames } from "../helpers.js";
 
     export default {
         computed: {
             columns() {
-                return sortColumns;
+                return columnNames;
             }
         },
         emits: ["row-click", "sort-column"],

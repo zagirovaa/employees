@@ -5,7 +5,7 @@
     import {
         getCurrentYear, getCurrentMonthNumber, getDayNameByDate, getDaysCount,
         getListOfMonths, getListOfYears, getMonthNameByNumber,
-        getMonthNumberByName, padForDigits, splitArray
+        getMonthNumberByName, addPadForDigits, splitArray
     } from "../helpers.js";
     import BaseModal from "./BaseModal.vue";
 
@@ -196,9 +196,9 @@
             },
             getSelectedDate(day) {
                 return `
-                    ${this.selectedYear}-${padForDigits(
+                    ${this.selectedYear}-${addPadForDigits(
                         this.selectedMonthNumber
-                    )}-${padForDigits(day)}
+                    )}-${addPadForDigits(day)}
                 `.trim();
             },
             async getStates() {

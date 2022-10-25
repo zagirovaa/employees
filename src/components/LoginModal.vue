@@ -12,18 +12,18 @@
                 title: "Авторизация"
             }
         },
-        emits: ["click", "close-modal", "login", "show-notify"],
+        emits: ["close-modal"],
         methods: {
             signIn() {
                 const self = this;
-                if (this.email == "") {
+                if (this.email === "") {
                     this.$root.showNotify({
                         text: "Укажите адрес почтового ящика.",
                         type: "warning"
                     });
                     return;
                 }
-                if (this.password == "") {
+                if (this.password === "") {
                     this.$root.showNotify({
                         text: "Укажите пароль к учетной записи.",
                         type: "warning"
@@ -34,7 +34,7 @@
                     this.email,
                     this.password
                 );
-                session.then(user => {
+                session.then((user) => {
                     self.$root.userIsAuthorised = true;
                     self.$root.currentRoute = "/";
                     history.pushState(null, "", self.$root.currentRoute);
@@ -42,7 +42,7 @@
                         text: "Авторизация прошла успешно.",
                         type: "success"
                     });
-                }, function (error) {
+                }, (error) => {
                     self.$root.showNotify({
                         text: "Неверные учетные данные.",
                         type: "danger"

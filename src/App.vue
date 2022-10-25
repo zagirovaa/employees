@@ -1,8 +1,14 @@
 <script>
     import { Query } from "appwrite";
-    import { database, getAllEmployees, getEmployeesCount } from "./api.js";
+    import {
+        database,
+        dismissReasonsExist,
+        getAllEmployees,
+        getEmployeesCount,
+        jobTitlesExist
+    } from "./api.js";
     import conf from "./config.js";
-    import { sortColumns } from "./helpers.js";
+    import { columnNames } from "./helpers.js";
     import AddModal from "./components/AddModal.vue";
     import BaseNavbar from "./components/BaseNavbar.vue";
     import BaseNotify from "./components/BaseNotify.vue";
@@ -15,13 +21,6 @@
     import ScheduleModal from "./components/ScheduleModal.vue";
     import SearchModal from "./components/SearchModal.vue";
     import SettingsModal from "./components/SettingsModal.vue";
-
-    const FIELD_NAMES = {
-        "Дата приема": "date_of_employment",
-        "Должность": "job_title",
-        "Оклад": "salary",
-        "Статус": "status"
-    }
 
     export default {
         components: {
@@ -53,7 +52,7 @@
                 const limit = Query.limit(this.rowsPerPage);
                 const offset = Query.offset(this.offset);
                 query = [
-                    ...this.filterQuery,
+                    ...this.filterQueries,
                     this.order,
                     limit,
                     offset
@@ -64,13 +63,12 @@
                 return query;
             },
             filtered() {
-                return this.filterQuery.length > 0 && this.searchedText === "";
+                return this.filterQueries.length > 0 && this.searchedText === "";
             },
             order() {
-                if (this.sortDirection === "ASC") {
-                    return Query.orderAsc(this.sortedColumn);
-                }
-                return Query.orderDesc(this.sortedColumn);
+                return (this.sortDirection === "ASC")
+                ? Query.orderAsc(this.sortedColumn)
+                : Query.orderDesc(this.sortedColumn);
             },
             searched() {
                 return this.searchedText !== "";
@@ -87,7 +85,7 @@
                 editModalVisible: false,
                 employees: [],
                 filterModalVisible: false,
-                filterQuery: [],
+                filterQueries: [],
                 helpModalVisible: false,
                 offset: 0,
                 pagesCount: 0,
@@ -103,17 +101,13 @@
         },
         methods: {
             async addEmployee() {
-                const result = await database.listDocuments(
-                    conf.global.databaseID,
-                    conf.collections.jobs
-                );
-                if (result.total === 0) {
+                if (await jobTitlesExist()) {
+                    this.addModalVisible = true;
+                } else {
                     this.$root.showNotify({
                         text: "Справочник должностей пуст.",
                         type: "warning"
                     })
-                } else {
-                    this.addModalVisible = true;
                 }
             },
             async changeLimit(limit) {
@@ -142,6 +136,8 @@
                 }
             },
             async clearEmployees() {
+                this.resetSearch();
+                this.resetFilter();
                 const employees = await getAllEmployees();
                 employees.forEach(async employee => {
                     await this.deleteEmployee(employee.$id);
@@ -159,37 +155,37 @@
                     switch (filter.condition) {
                         case "=":
                             return Query.equal(
-                                FIELD_NAMES[filter.field],
+                                columnNames[filter.field],
                                 filter.value
                             )
                             break;
                         case "≠":
                             return Query.notEqual(
-                                FIELD_NAMES[filter.field],
+                                columnNames[filter.field],
                                 filter.value
                             )
                             break;
                         case ">":
                             return Query.greaterThan(
-                                FIELD_NAMES[filter.field],
+                                columnNames[filter.field],
                                 filter.value
                             )
                             break;
                         case "<":
                             return Query.lessThan(
-                                FIELD_NAMES[filter.field],
+                                columnNames[filter.field],
                                 filter.value
                             )
                             break;
                         case "≥":
                             return Query.greaterThanEqual(
-                                FIELD_NAMES[filter.field],
+                                columnNames[filter.field],
                                 filter.value
                             )
                             break;
                         case "≤":
                             return Query.lessThanEqual(
-                                FIELD_NAMES[filter.field],
+                                columnNames[filter.field],
                                 filter.value
                             )
                             break;
@@ -198,14 +194,6 @@
             },
             async deleteEmployee(employee_id) {
                 const query = [Query.equal("employee_id", employee_id)];
-                await database.deleteDocument(
-                    conf.global.databaseID,
-                    conf.collections.employees,
-                    employee_id
-                );
-                if (this.employees.length === 0) {
-                    this.selectedRow = -1
-                }
                 const result = await database.listDocuments(
                     conf.global.databaseID,
                     conf.collections.states,
@@ -214,7 +202,14 @@
                 result.documents.forEach(document => {
                     this.deleteState(document.$id);
                 })
-                
+                await database.deleteDocument(
+                    conf.global.databaseID,
+                    conf.collections.employees,
+                    employee_id
+                );
+                if (this.employees.length === 0) {
+                    this.selectedRow = -1
+                }
             },
             async deleteState(state_id) {
                 await database.deleteDocument(
@@ -224,55 +219,27 @@
                 );
             },
             async dismissEmployee() {
-                if (this.currentEmployee.status === "Работает") {
-                    const reasons = await database.listDocuments(
-                        conf.global.databaseID,
-                        conf.collections.reasons
-                    );
-                    if (reasons.total === 0) {
-                        this.$root.showNotify({
-                            text: "Справочник причин увольнения пуст.",
-                            type: "warning"
-                        })
-                    } else {
-                        this.dismissModalVisible = true;
-                    }
-                } else {
+                if (this.currentEmployee.status !== "Работает") {
                     this.$root.showNotify({
                         text: "Сотрудник уже уволен или уволился.",
                         type: "warning"
                     });
+                    return;
                 }
-            },
-            async editEmployee() {
-                const jobs = await database.listDocuments(
-                    conf.global.databaseID,
-                    conf.collections.jobs
-                );
-                if (jobs.total === 0) {
+                if (!await dismissReasonsExist()) {
                     this.$root.showNotify({
-                        text: "Справочник должностей пуст.",
+                        text: "Справочник причин увольнения пуст.",
                         type: "warning"
                     });
-                } else if (this.currentEmployee.status !== "Работает") {
-                    const reasons = await database.listDocuments(
-                        conf.global.databaseID,
-                        conf.collections.reasons
-                    );
-                    if (reasons.total === 0) {
-                        this.$root.showNotify({
-                            text: "Справочник причин увольнения пуст.",
-                            type: "warning"
-                        });
-                    } else {
-                        this.editModalVisible = true;
-                    }
-                } else {
-                    this.editModalVisible = true;
+                    return;   
                 }
+                this.dismissModalVisible = true;
+            },
+            async editEmployee() {
+                this.editModalVisible = true;
             },
             editSchedule() {
-                if (this.workingEmployeeExist()) {
+                if (this.workingEmployeeExists()) {
                     this.scheduleModalVisible = true;
                 } else {
                     this.$root.showNotify({
@@ -328,19 +295,19 @@
             },
             resetFilter() {
                 localStorage.removeItem("filter");
-                this.filterQuery.length = 0;
+                this.filterQueries.length = 0;
                 this.updateData();
             },
             resetSearch() {
                 localStorage.removeItem("search");
                 this.searchedText = "";
-                // ??????????
-                this.filterQuery.pop();
+                // Full text search query is the last one
+                this.filterQueries.pop();
                 this.updateData();
             },
             setFilter(filters) {
                 localStorage.setItem("filter", JSON.stringify(filters));
-                this.filterQuery = this.convertToQueries(filters);
+                this.filterQueries = this.convertToQueries(filters);
                 this.updateData();
             },
             setSearch(searchedText) {
@@ -351,7 +318,7 @@
                 );
                 this.updateData();
             },
-            async setRowsPerPage() {
+            setRowsPerPage() {
                 this.rowsPerPage = JSON.parse(
                     localStorage.getItem("limit")
                 ) || conf.settings.limit || 20;
@@ -365,8 +332,9 @@
                 // Even if the list of employees is empty we have to check
                 // whether filter is set. Perhaps list is empty because of
                 // the filter.
+                // TODO: Have to refactor this function
                 if (this.employees.length === 0) {
-                    if (this.filterQuery.length > 0) {
+                    if (this.filterQueries.length > 0) {
                         this.filterModalVisible = true;
                     }
                 } else {
@@ -382,8 +350,9 @@
                 // Even if the list of employees is empty we have to check
                 // whether filter is set. Perhaps list is empty because of
                 // the filter.
+                // TODO: Have to refactor this function
                 if (this.employees.length === 0) {
-                    if (this.filterQuery.length > 0) {
+                    if (this.filterQueries.length > 0) {
                         this.searchModalVisible = true;
                     }
                 } else {
@@ -391,10 +360,11 @@
                 }
             },
             sortByColumnName(columnName) {
-                if (this.sortedColumn === sortColumns[columnName]) {
+                // TODO: Have to refactor this function
+                if (this.sortedColumn === columnNames[columnName]) {
                     this.invertSortDirection();
                 }
-                this.sortedColumn = sortColumns[columnName];
+                this.sortedColumn = columnNames[columnName];
             },
             async updateData() {
                 const result = await database.listDocuments(
@@ -402,45 +372,42 @@
                     conf.collections.employees,
                     this.currentFilter
                 );
-                if (result.total > 0) {
-                    this.employees = result.documents;
-                    if (this.currentPage == 0) {
-                        this.currentPage = 1;
-                    };
-                    // Make first added row selected
-                    if (this.selectedRow == -1) {
-                        this.selectedRow = 0;
-                    };
-                    // When rows per page value is changed and new value is
-                    // less than previous one, last row has to be selected
-                    if (this.selectedRow > this.employees.length - 1) {
-                        this.selectedRow = this.employees.length - 1;
-                    };
-                    this.pagesCount = parseInt(
-                        this.employees.length / this.rowsPerPage
-                    );
-                    if (this.employees.length % this.rowsPerPage > 0) {
-                        this.pagesCount++;
-                    };
-                    if (this.currentPage > this.pagesCount) {
-                        this.currentPage = this.pagesCount;
-                    }
-                    this.offset = (this.currentPage - 1) * this.rowsPerPage;
-                } else {
+                if (result.total === 0) {
                     this.currentPage = 0;
                     this.selectedRow = -1;
                     this.pagesCount = 0;
                     this.offset = 0;
                     this.employees = [];
+                    return;  
                 }
+                this.employees = result.documents;
+                if (this.currentPage == 0) {
+                    this.currentPage = 1;
+                };
+                // Make first added row selected
+                if (this.selectedRow == -1) {
+                    this.selectedRow = 0;
+                };
+                // When rows per page value is changed and new value is
+                // less than previous one, last row has to be selected
+                if (this.selectedRow > this.employees.length - 1) {
+                    this.selectedRow = this.employees.length - 1;
+                };
+                this.pagesCount = parseInt(
+                    this.employees.length / this.rowsPerPage
+                );
+                if (this.employees.length % this.rowsPerPage > 0) {
+                    this.pagesCount++;
+                };
+                if (this.currentPage > this.pagesCount) {
+                    this.currentPage = this.pagesCount;
+                }
+                this.offset = (this.currentPage - 1) * this.rowsPerPage;
             },
-            workingEmployeeExist() {
-                for (let employee of this.employees) {
-                    if (employee.status === "Работает") {
-                        return true;
-                    }
-                }
-                return false;
+            workingEmployeeExists() {
+                return this.employees.filter((employee) => {
+                    return employee.status === "Работает";
+                }).length > 0;
             }
         },
         mounted() {
@@ -451,7 +418,7 @@
                     this.itemClick(`Alt + ${e.key.toUpperCase()}`);
                 }
             });
-            this.filterQuery = this.convertToQueries(this.loadFilter());
+            this.filterQueries = this.convertToQueries(this.loadFilter());
             if (this.loadSearch() !== "") {
                 this.searchedText = Query.search(
                     "full_name",
