@@ -65,13 +65,14 @@
                 return result.total === 0 ? true: false;
             },
             deleteAllCatalogs() {
+                const self = this;
                 if (this.catalogTitles.length > 0) {
-                    this.catalogTitles.forEach((title, index) => {
-                        this.deleteCatalog(index);
+                    this.catalogTitles.forEach(async (title, index) => {
+                        await self.deleteCatalog(index);
                     });
                     this.updateData();
                     this.$root.showNotify({
-                        text: "Все элементы справочника удалены.",
+                        text: "Все элементы справочника удалены",
                         type: "success"
                     });
                 }
@@ -97,14 +98,14 @@
             async removeCatalog(index) {
                 if (this.selectedRow >= 0) {
                     if (await this.deleteCatalog(index)) {
-                        this.updateData();
+                        this.updateData;
                         this.$root.showNotify({
-                            text: "Элемент справочника удален.",
+                            text: "Элемент справочника удален",
                             type: "success"
                         });
                     } else {
                         this.$root.showNotify({
-                            text: "Элемент справочника привязан к сотруднику.",
+                            text: "Элемент справочника привязан к сотруднику",
                             type: "warning"
                         });
                     }

@@ -45,12 +45,12 @@
                     );
                     this.$emit("close-modal");
                     this.$root.showNotify({
-                        text: "Данные сотрудника изменены.",
+                        text: "Данные сотрудника изменены",
                         type: "success"
                     });
                 } else {
                     this.$root.showNotify({
-                        text: "Не все обязательные поля заполнены.",
+                        text: "Не все обязательные поля заполнены",
                         type: "warning"
                     });
                 }

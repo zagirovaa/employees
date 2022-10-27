@@ -14,7 +14,7 @@ export async function dismissReasonsExist() {
     return result.total > 0 ? true : false;
 }
 
-export async function getAllEmployees(workingOnly) {
+export async function getEmployees(workingOnly = false) {
     const query = [];
     if (workingOnly) {
         query.push(Query.equal("status", "Работает"));

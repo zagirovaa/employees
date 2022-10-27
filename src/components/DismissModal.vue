@@ -30,12 +30,12 @@
                     );
                     this.$emit("close-modal");
                     this.$root.showNotify({
-                        text: "Сотрудник уволен.",
+                        text: "Сотрудник уволен",
                         type: "success"
                     });
                 } else {
                     this.$root.showNotify({
-                        text: "Обязательное поле не заполнено.",
+                        text: "Обязательное поле не заполнено",
                         type: "warning"
                     });
                 }
@@ -53,7 +53,7 @@
                     }
                 } else {
                     this.$root.showNotify({
-                        text: "Не удалось загрузить справочник причин.",
+                        text: "Не удалось загрузить справочник причин",
                         type: "warning"
                     });
                 }

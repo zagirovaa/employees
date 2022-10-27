@@ -3,8 +3,6 @@
     import {
         database,
         dismissReasonsExist,
-        getAllEmployees,
-        getEmployeesCount,
         jobTitlesExist
     } from "./api.js";
     import conf from "./config.js";
@@ -38,20 +36,15 @@
             SettingsModal
         },
         computed: {
-            allEmployees() {
-                this.updateData();
-                return this.employees;
-            },
             currentEmployee() {
                 if (this.selectedRow >= 0) {
-                    return this.employees[this.selectedRow];
+                    return this.allEmployees[this.selectedRow];
                 }
             },
             currentFilter() {
-                let query = [];
                 const limit = Query.limit(this.rowsPerPage);
-                const offset = Query.offset(this.offset);
-                query = [
+                const offset = 	Query.offset(this.offset);
+                let query = [
                     ...this.filterQueries,
                     this.order,
                     limit,
@@ -62,11 +55,16 @@
                 }
                 return query;
             },
+            employees() {
+                this.updateData();
+                return this.allEmployees;
+            },
             filtered() {
-                return this.filterQueries.length > 0 && this.searchedText === "";
+                return this.filterQueries.length > 0 &&
+                       this.searchedText === "";
             },
             order() {
-                return (this.sortDirection === "ASC")
+                return this.sortDirection === "ASC"
                 ? Query.orderAsc(this.sortedColumn)
                 : Query.orderDesc(this.sortedColumn);
             },
@@ -77,19 +75,19 @@
         data() {
             return {
                 addModalVisible: false,
+                allEmployees: [],
                 catalogModalVisible: false,
                 catalogTitle: "",
                 catalogType: "",
                 currentPage: 0,
                 dismissModalVisible: false,
                 editModalVisible: false,
-                employees: [],
                 filterModalVisible: false,
                 filterQueries: [],
                 helpModalVisible: false,
                 offset: 0,
                 pagesCount: 0,
-                rowsPerPage: 20,
+                rowsPerPage: 0,
                 scheduleModalVisible: false,
                 searchedText: "",
                 searchModalVisible: false,
@@ -105,7 +103,7 @@
                     this.addModalVisible = true;
                 } else {
                     this.$root.showNotify({
-                        text: "Справочник должностей пуст.",
+                        text: "Справочник должностей пуст",
                         type: "warning"
                     })
                 }
@@ -113,7 +111,6 @@
             async changeLimit(limit) {
                 localStorage.setItem("limit", JSON.stringify(limit));
                 this.rowsPerPage = limit;
-                this.updateData();
             },
             changePage(page) {
                 switch (page) {
@@ -136,14 +133,22 @@
                 }
             },
             async clearEmployees() {
+                const self = this;
+                const result = await database.listDocuments(
+                    conf.global.databaseID,
+                    conf.collections.employees
+                );
+                const employees = result.documents;
+                employees.forEach(employee => {
+                    self.deleteEmployee(employee.$id);
+                });
+                if (this.allEmployees.length === 0) {
+                    this.selectedRow = -1
+                }
                 this.resetSearch();
                 this.resetFilter();
-                const employees = await getAllEmployees();
-                employees.forEach(async employee => {
-                    await this.deleteEmployee(employee.$id);
-                });
                 this.$root.showNotify({
-                    text: "Все сотрудники удалены.",
+                    text: "Все сотрудники удалены",
                     type: "success"
                 });
             },
@@ -193,23 +198,23 @@
                 });
             },
             async deleteEmployee(employee_id) {
+                const self = this;
                 const query = [Query.equal("employee_id", employee_id)];
                 const result = await database.listDocuments(
                     conf.global.databaseID,
                     conf.collections.states,
                     query
                 );
-                result.documents.forEach(document => {
-                    this.deleteState(document.$id);
-                })
+                if (result.total > 0) {
+                    result.documents.forEach(document => {
+                        self.deleteState(document.$id);
+                    })
+                }
                 await database.deleteDocument(
                     conf.global.databaseID,
                     conf.collections.employees,
                     employee_id
                 );
-                if (this.employees.length === 0) {
-                    this.selectedRow = -1
-                }
             },
             async deleteState(state_id) {
                 await database.deleteDocument(
@@ -221,14 +226,14 @@
             async dismissEmployee() {
                 if (this.currentEmployee.status !== "Работает") {
                     this.$root.showNotify({
-                        text: "Сотрудник уже уволен или уволился.",
+                        text: "Сотрудник уже уволен или уволился",
                         type: "warning"
                     });
                     return;
                 }
                 if (!await dismissReasonsExist()) {
                     this.$root.showNotify({
-                        text: "Справочник причин увольнения пуст.",
+                        text: "Справочник причин увольнения пуст",
                         type: "warning"
                     });
                     return;   
@@ -243,13 +248,13 @@
                     this.scheduleModalVisible = true;
                 } else {
                     this.$root.showNotify({
-                        text: "Работающие сотрудники не обнаружены.",
+                        text: "Работающие сотрудники не обнаружены",
                         type: "warning"
                     });
                 }
             },
             invertSortDirection() {
-                this.sortDirection = (this.sortDirection === "ASC") ?
+                this.sortDirection = this.sortDirection === "ASC" ?
                 "DESC" : "ASC";
             },
             itemClick(shortcut) {
@@ -286,29 +291,29 @@
             loadSearch() {
                 return JSON.parse(localStorage.getItem("search")) || "";
             },
-            removeEmployee() {
-                this.deleteEmployee(this.currentEmployee.$id);
+            async removeEmployee() {
+                await this.deleteEmployee(this.currentEmployee.$id);
+                if (this.allEmployees.length === 0) {
+                    this.selectedRow = -1
+                }
                 this.$root.showNotify({
-                    text: "Сотрудник удален.",
+                    text: "Сотрудник удален",
                     type: "success"
                 });
             },
             resetFilter() {
                 localStorage.removeItem("filter");
                 this.filterQueries.length = 0;
-                this.updateData();
             },
             resetSearch() {
                 localStorage.removeItem("search");
                 this.searchedText = "";
                 // Full text search query is the last one
                 this.filterQueries.pop();
-                this.updateData();
             },
             setFilter(filters) {
                 localStorage.setItem("filter", JSON.stringify(filters));
                 this.filterQueries = this.convertToQueries(filters);
-                this.updateData();
             },
             setSearch(searchedText) {
                 localStorage.setItem("search", JSON.stringify(searchedText));
@@ -316,12 +321,6 @@
                     "full_name",
                     searchedText.split(" ")
                 );
-                this.updateData();
-            },
-            setRowsPerPage() {
-                this.rowsPerPage = JSON.parse(
-                    localStorage.getItem("limit")
-                ) || conf.settings.limit || 20;
             },
             showJobsCatalog() {
                 this.catalogTitle = "Должности";
@@ -333,7 +332,7 @@
                 // whether filter is set. Perhaps list is empty because of
                 // the filter.
                 // TODO: Have to refactor this function
-                if (this.employees.length === 0) {
+                if (this.allEmployees.length === 0) {
                     if (this.filterQueries.length > 0) {
                         this.filterModalVisible = true;
                     }
@@ -351,8 +350,8 @@
                 // whether filter is set. Perhaps list is empty because of
                 // the filter.
                 // TODO: Have to refactor this function
-                if (this.employees.length === 0) {
-                    if (this.filterQueries.length > 0) {
+                if (this.allEmployees.length === 0) {
+                    if (this.searchedText !== "") {
                         this.searchModalVisible = true;
                     }
                 } else {
@@ -360,52 +359,60 @@
                 }
             },
             sortByColumnName(columnName) {
-                // TODO: Have to refactor this function
-                if (this.sortedColumn === columnNames[columnName]) {
+                if (this.sortedColumn === columnName) {
                     this.invertSortDirection();
+                } else {
+                    this.sortedColumn = columnName;
                 }
-                this.sortedColumn = columnNames[columnName];
             },
             async updateData() {
-                const result = await database.listDocuments(
+                const filteredEmployees = await database.listDocuments(
                     conf.global.databaseID,
                     conf.collections.employees,
                     this.currentFilter
                 );
-                if (result.total === 0) {
+                this.allEmployees = filteredEmployees.documents;
+                if (this.allEmployees.length === 0) {
                     this.currentPage = 0;
                     this.selectedRow = -1;
                     this.pagesCount = 0;
                     this.offset = 0;
-                    this.employees = [];
                     return;  
                 }
-                this.employees = result.documents;
-                if (this.currentPage == 0) {
+                const allEmployees = await database.listDocuments(
+                    conf.global.databaseID,
+                    conf.collections.employees
+                );
+                const employeesCount = allEmployees.total;
+                if (this.currentPage === 0) {
                     this.currentPage = 1;
                 };
                 // Make first added row selected
-                if (this.selectedRow == -1) {
+                if (this.selectedRow === -1) {
                     this.selectedRow = 0;
                 };
                 // When rows per page value is changed and new value is
                 // less than previous one, last row has to be selected
-                if (this.selectedRow > this.employees.length - 1) {
-                    this.selectedRow = this.employees.length - 1;
+                if (this.selectedRow > this.allEmployees.length - 1) {
+                    this.selectedRow = this.allEmployees.length - 1;
                 };
-                this.pagesCount = parseInt(
-                    this.employees.length / this.rowsPerPage
-                );
-                if (this.employees.length % this.rowsPerPage > 0) {
-                    this.pagesCount++;
-                };
-                if (this.currentPage > this.pagesCount) {
-                    this.currentPage = this.pagesCount;
+                if (employeesCount > this.rowsPerPage) {
+                    this.pagesCount = parseInt(
+                        employeesCount / this.rowsPerPage
+                    );
+                    if (employeesCount % this.rowsPerPage > 0) {
+                        this.pagesCount++;
+                    };
+                } else {
+                    this.pagesCount = 1;
                 }
+                // if (this.currentPage > this.pagesCount) {
+                //     this.currentPage = this.pagesCount;
+                // }
                 this.offset = (this.currentPage - 1) * this.rowsPerPage;
             },
             workingEmployeeExists() {
-                return this.employees.filter((employee) => {
+                return this.allEmployees.filter((employee) => {
                     return employee.status === "Работает";
                 }).length > 0;
             }
@@ -425,8 +432,9 @@
                     this.loadSearch().split(" ")
                 );
             }
-            this.setRowsPerPage();
-            this.updateData();
+            this.rowsPerPage = JSON.parse(
+                localStorage.getItem("limit")
+            ) || conf.settings.limit || 20;
         }
     }
 </script>
@@ -448,7 +456,7 @@
             @show-settings="settingsModalVisible = true"/>
         <BaseTable
             :direction="sortDirection"
-            :employees="allEmployees"
+            :employees="employees"
             :selected-row="selectedRow"
             :sorted-column="sortedColumn"
             @row-click="selectedRow = $event"
@@ -460,11 +468,11 @@
             v-if="addModalVisible"
             @close-modal="addModalVisible = false"/>
         <EditModal
-            :document="employees[selectedRow]"
+            :document="currentEmployee"
             v-if="editModalVisible"
             @close-modal="editModalVisible = false"/>
         <DismissModal
-            :document="employees[selectedRow]"
+            :document="currentEmployee"
             v-if="dismissModalVisible"
             @close-modal="dismissModalVisible = false"/>
         <CatalogModal

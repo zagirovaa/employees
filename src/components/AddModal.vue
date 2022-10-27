@@ -23,8 +23,9 @@
         emits: ["close-modal"],
         methods: {
             async applyChanges() {
-                if (this.employee.full_name !== "" && this.employee.salary > 0) {
-                    const result = await database.createDocument(
+                if (this.employee.full_name !== "" &&
+                    this.employee.salary > 0) {
+                    await database.createDocument(
                         conf.global.databaseID,
                         conf.collections.employees,
                         "unique()",
@@ -38,12 +39,12 @@
                     );
                     this.$emit("close-modal");
                     this.$root.showNotify({
-                        text: "Добавлен новый сотрудник.",
+                        text: "Добавлен новый сотрудник",
                         type: "success"
                     });
                 } else {
                     this.$root.showNotify({
-                        text: "Не все обязательные поля заполнены.",
+                        text: "Не все обязательные поля заполнены",
                         type: "warning"
                     });
                 }

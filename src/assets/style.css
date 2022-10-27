@@ -34,10 +34,12 @@ table:not(#filter) tr {
 }
 
 .notification {
+    box-shadow: 0px 0px 15px 0px var(--shadow-color);
+    max-width: var(--notify-width);
     position: absolute !important;
     right: var(--notify-margin);
     top: var(--notify-margin);
-    width: var(--notify-width);
+    width: 100%;
     z-index: 100 !important;
 }
 

@@ -17,7 +17,7 @@
                     this.$emit("close-modal");
                 } else {
                     this.$root.showNotify({
-                        text: "Не задана искомая строка.",
+                        text: "Не задана искомая строка",
                         type: "warning"
                     });
                 }

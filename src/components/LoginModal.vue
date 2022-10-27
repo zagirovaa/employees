@@ -18,14 +18,14 @@
                 const self = this;
                 if (this.email === "") {
                     this.$root.showNotify({
-                        text: "Укажите адрес почтового ящика.",
+                        text: "Укажите адрес почтового ящика",
                         type: "warning"
                     });
                     return;
                 }
                 if (this.password === "") {
                     this.$root.showNotify({
-                        text: "Укажите пароль к учетной записи.",
+                        text: "Укажите пароль к учетной записи",
                         type: "warning"
                     });
                     return;
@@ -39,12 +39,12 @@
                     self.$root.currentRoute = "/";
                     history.pushState(null, "", self.$root.currentRoute);
                     self.$root.showNotify({
-                        text: "Авторизация прошла успешно.",
+                        text: "Авторизация прошла успешно",
                         type: "success"
                     });
                 }, (error) => {
                     self.$root.showNotify({
-                        text: "Неверные учетные данные.",
+                        text: "Неверные учетные данные",
                         type: "danger"
                     });
                 });
@@ -59,27 +59,33 @@
             :title="title"
             @close-modal="$emit('close-modal')">
             <template v-slot:body>
-                <section class="modal-card-body">
-                    <div class="field">
-                        <p class="control">
-                            <label class="label">Адрес электронной почты:</label>
-                            <input
-                                class="input"
-                                placeholder="sergeevav@gmail.com"
-                                type="email"
-                                v-model.trim="email">
-                        </p>
-                    </div>
-                    <div class="field">
-                        <p class="control">
-                            <label class="label">Пароль:</label>
-                            <input
-                                class="input"
-                                type="password"
-                                v-model.trim="password">
-                        </p>
-                    </div>
-                </section>
+                <form>
+                    <section class="modal-card-body">
+                        <div class="field">
+                            <p class="control">
+                                <label class="label">
+                                    Адрес электронной почты:
+                                </label>
+                                <input
+                                    autocomplete="email"
+                                    class="input"
+                                    placeholder="sergeevav@gmail.com"
+                                    type="email"
+                                    v-model.trim="email">
+                            </p>
+                        </div>
+                        <div class="field">
+                            <p class="control">
+                                <label class="label">Пароль:</label>
+                                <input
+                                    autocomplete="current-password"
+                                    class="input"
+                                    type="password"
+                                    v-model.trim="password">
+                            </p>
+                        </div>
+                    </section>
+                </form>
             </template>
             <template v-slot:footer>
                 <footer class="modal-card-foot">

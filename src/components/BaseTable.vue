@@ -38,7 +38,7 @@
                     :class="{ 'has-text-link': value === sortedColumn }"
                     :key="key"
                     v-for="(value, key) in columns"
-                    @click="$emit('sort-column', key)">
+                    @click="$emit('sort-column', value)">
                     <span>{{ key }}</span>
                     <template v-if="key !== '' && value === sortedColumn">
                         <span class="ml-2" v-if="direction === 'ASC'">⮟</span>

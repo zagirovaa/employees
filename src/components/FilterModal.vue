@@ -70,13 +70,13 @@
                         this.selectedValue = "";
                     } else {
                         this.$root.showNotify({
-                            text: "Обязательное поле не заполнено.",
+                            text: "Обязательное поле не заполнено",
                             type: "warning"
                         });
                     }
                 } else {
                     this.$root.showNotify({
-                        text: "Превышено максимальное количество фильтров.",
+                        text: "Превышено максимальное количество фильтров",
                         type: "warning"
                     });
                 }
@@ -87,7 +87,7 @@
                     this.$emit("close-modal");
                 } else {
                     this.$root.showNotify({
-                        text: "Не добавлены необходимые фильтры.",
+                        text: "Не добавлены необходимые фильтры",
                         type: "warning"
                     });
                 }
@@ -102,7 +102,7 @@
                     this.jobs = result.documents;
                 } else {
                     this.$root.showNotify({
-                        text: "Не удалось загрузить справочник должностей.",
+                        text: "Не удалось загрузить справочник должностей",
                         type: "warning"
                     });
                 }

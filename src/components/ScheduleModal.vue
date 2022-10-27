@@ -1,6 +1,6 @@
 <script>
     import { Query } from "appwrite";
-    import { database, getAllEmployees } from "../api.js";
+    import { database, getEmployees } from "../api.js";
     import conf from "../config.js";
     import {
         getCurrentYear, getCurrentMonthNumber, getDayNameByDate, getDaysCount,
@@ -138,7 +138,7 @@
                 }
             },
             async getEmployees() {
-                this.employees = await getAllEmployees(true);
+                this.employees = await getEmployees(true);
                 this.selectedName = this.employees[0].full_name;
                 this.getYears();
             },

@@ -25,7 +25,7 @@
                 localStorage.setItem("holidays", JSON.stringify(this.holidays));
                 this.$emit("close-modal");
                 this.$root.showNotify({
-                    text: "Настройки сохранены.",
+                    text: "Настройки сохранены",
                     type: "success"
                 });
             },

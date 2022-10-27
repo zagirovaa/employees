@@ -28,14 +28,14 @@
             async applyChanges() {
                 if (this.currentCatalog.name === "") {
                     this.$root.showNotify({
-                        text: "Обязательное поле не заполнено.",
+                        text: "Обязательное поле не заполнено",
                         type: "warning"
                     });
                     return;
                 }
                 if (await this.hasDublicateName()) {
                     this.$root.showNotify({
-                        text: "Элемент с подобным именем уже существует.",
+                        text: "Элемент с подобным именем уже существует",
                         type: "warning"
                     });
                     return;
@@ -49,7 +49,7 @@
                     );
                     this.$emit("close-modal");
                     this.$root.showNotify({
-                        text: "Добавлен элемент справочника.",
+                        text: "Добавлен элемент справочника",
                         type: "success"
                     });
                     return;
@@ -63,7 +63,7 @@
                     );
                     this.$emit("close-modal");
                     this.$root.showNotify({
-                        text: "Изменен элемент справочника.",
+                        text: "Изменен элемент справочника",
                         type: "success"
                     });
                     return;
