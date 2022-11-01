@@ -14,15 +14,22 @@ const routes = {
 
 const Router = {
     created () {
+        const self = this;
+        // When moving between pages from history
+        // currentRoute must be changed accordingly
         window.addEventListener("popstate", () => {
-            this.currentRoute = window.location.pathname
-        })
+            self.currentRoute = window.location.pathname;
+        });
     },
     computed: {
         currentComponent() {
             if (this.currentRoute in routes === false) return PageNotFound;
             if (this.userIsAuthorised === false) return LoginModal;
-            if (this.currentRoute === "/auth") return App;
+            if (this.currentRoute === "/auth") {
+                this.currentRoute = "/";
+                history.pushState(null, "", this.currentRoute);
+                return App;
+            }
             return routes[this.currentRoute];
         }
     },
