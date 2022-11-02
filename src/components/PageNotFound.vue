@@ -1,18 +1,26 @@
 <script>
     export default {
         methods: {
+            setHeight() {
+                const block =  document.querySelector(".columns.is-vcentered");
+                block.style.height = `${window.innerHeight}px`;
+            },
             goToHomePage() {
                 this.$root.currentRoute = "/";
                 history.pushState(null, "", this.$root.currentRoute);
             }
+        },
+        mounted() {
+            window.addEventListener("resize", this.setHeight);
+            this.setHeight();
         }
     }
 </script>
 
 <template>
-    <div class="columns">
-        <div class="column is-one-fifth"></div>
-        <div class="column is-three-fifth has-text-centered">
+    <div class="columns is-vcentered">
+        <div
+            class="column has-text-centered">
             <figure class="image is-inline-block">
                 <img src="/src/assets/error-404.png">
             </figure>
@@ -29,6 +37,6 @@
                 ПЕРЕЙТИ НА ГЛАВНУЮ СТРАНИЦУ
             </button>
         </div>
-        <div class="column is-one-fifth"></div>
     </div>
+    
 </template>
