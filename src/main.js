@@ -24,7 +24,11 @@ const Router = {
     computed: {
         currentComponent() {
             if (this.currentRoute in routes === false) return PageNotFound;
-            if (this.userIsAuthorised === false) return LoginModal;
+            if (this.userIsAuthorised === false) {
+                this.currentRoute = "/auth";
+                history.pushState(null, "", this.currentRoute);
+                return LoginModal;
+            }
             if (this.currentRoute === "/auth") {
                 this.currentRoute = "/";
                 history.pushState(null, "", this.currentRoute);

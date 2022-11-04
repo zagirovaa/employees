@@ -44,15 +44,13 @@
             currentFilter() {
                 const limit = Query.limit(this.rowsPerPage);
                 const offset = 	Query.offset(this.offset);
-                let query = [
+                const query = [
                     ...this.filterQueries,
                     this.order,
                     limit,
                     offset
                 ];
-                if (this.searchedText !== "") {
-                    query.push(this.searchedText);
-                }
+                if (this.searchedText !== "") query.push(this.searchedText);
                 return query;
             },
             employees() {
@@ -153,7 +151,7 @@
                 });
             },
             convertToQueries(filters) {
-                return filters.map(filter => {;
+                return filters.map(filter => {
                     if (filter.field === "Оклад") {
                         filter.value = Number(filter.value);
                     }

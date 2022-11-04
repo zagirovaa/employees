@@ -2,7 +2,7 @@
     export default {
         methods: {
             setHeight() {
-                const block =  document.querySelector(".columns.is-vcentered");
+                const block = document.querySelector(".content404");
                 block.style.height = `${window.innerHeight}px`;
             },
             goToHomePage() {
@@ -18,11 +18,10 @@
 </script>
 
 <template>
-    <div class="columns is-vcentered">
-        <div
-            class="column has-text-centered">
+    <div class="columns is-vcentered content404">
+        <div class="column has-text-centered">
             <figure class="image is-inline-block">
-                <img src="/src/assets/error-404.png">
+                <img src="/src/assets/404.png">
             </figure>
             <h1 class="title is-1">СТРАНИЦА НЕ НАЙДЕНА</h1>
             <h3 class="subtitle is-3">

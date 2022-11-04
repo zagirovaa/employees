@@ -13,6 +13,7 @@ Employee Database Application
 ### In Progress
 
 - [ ] Артефакты при сортировке по столбцам  
+- [ ] Артефакты при поиске и фильтрации  
 
 ### Done ✓
 
