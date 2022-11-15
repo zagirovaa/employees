@@ -8,10 +8,6 @@
     export default {
         components: { BaseActions, BaseModal },
         computed: {
-            catalogs() {
-                this.updateData();
-                return this.catalogTitles;
-            },
             catalogName() {
                 switch (this.type) {
                     case "jobs":
@@ -39,7 +35,7 @@
                 actionVisible: false,
                 catalog: {},
                 currentButton: 0,
-                catalogTitles: [],
+                catalogs: [],
                 selectedRow: -1
             }
         },
@@ -54,7 +50,7 @@
                 const query = [
                     Query.equal(
                         this.catalogName,
-                        this.catalogTitles[index].name
+                        this.catalogs[index].name
                     )
                 ];
                 const result = await database.listDocuments(
@@ -66,11 +62,10 @@
             },
             deleteAllCatalogs() {
                 const self = this;
-                if (this.catalogTitles.length > 0) {
-                    this.catalogTitles.forEach(async (title, index) => {
+                if (this.catalogs.length > 0) {
+                    this.catalogs.forEach(async (title, index) => {
                         await self.deleteCatalog(index);
                     });
-                    this.updateData();
                     this.$root.showNotify({
                         text: "Все элементы справочника удалены",
                         type: "success"
@@ -82,33 +77,31 @@
                     await database.deleteDocument(
                         conf.global.databaseID,
                         this.collection, 
-                        this.catalogTitles[index].$id
+                        this.catalogs[index].$id
                     );
+                    this.updateData();
                     return true;
                 }
                 return false;
             },
             editCatalog() {
                 if (this.selectedRow >= 0) {
-                    this.catalog = this.catalogTitles[this.selectedRow];
+                    this.catalog = this.catalogs[this.selectedRow];
                     this.actionTitle = "Изменить";
                     this.actionVisible = true;
                 }
             },
             async removeCatalog(index) {
-                if (this.selectedRow >= 0) {
-                    if (await this.deleteCatalog(index)) {
-                        this.updateData;
-                        this.$root.showNotify({
-                            text: "Элемент справочника удален",
-                            type: "success"
-                        });
-                    } else {
-                        this.$root.showNotify({
-                            text: "Элемент справочника привязан к сотруднику",
-                            type: "warning"
-                        });
-                    }
+                if (await this.deleteCatalog(index)) {
+                    this.$root.showNotify({
+                        text: "Элемент справочника удален",
+                        type: "success"
+                    });
+                } else {
+                    this.$root.showNotify({
+                        text: "Элемент справочника привязан к сотруднику",
+                        type: "warning"
+                    });
                 }
             },
             async updateData() {
@@ -117,22 +110,25 @@
                     this.collection,
                     [Query.orderAsc("name")]
                 );
-                this.catalogTitles = result.documents;
+                this.catalogs = result.documents;
                 // When adding first item it must be set active
                 // cause it is the only one in the list
-                if (this.catalogTitles.length > 0 && this.selectedRow === -1) {
+                if (this.catalogs.length > 0 && this.selectedRow === -1) {
                     this.selectedRow = 0;
                 }
                 // When item is deleted previous one
                 // has to become active if there is any
-                if (this.selectedRow > this.catalogTitles.length - 1) {
-                    this.selectedRow = this.catalogTitles.length - 1;
+                if (this.selectedRow > this.catalogs.length - 1) {
+                    this.selectedRow = this.catalogs.length - 1;
                 }
                 // When the last item is removed none is active
-                if (this.catalogTitles.length === 0) {
+                if (this.catalogs.length === 0) {
                     this.selectedRow = -1
                 }
             }
+        },
+        mounted() {
+            this.updateData();
         },
         props: {
             title: String,
@@ -196,7 +192,7 @@
                     </p>
                     <div class="tags">
                         <span class="tag is-large">
-                            Записей: {{ catalogTitles.length }}
+                            Записей: {{ catalogs.length }}
                         </span>
                     </div>
                 </div>

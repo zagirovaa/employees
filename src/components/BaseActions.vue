@@ -47,6 +47,7 @@
                         "unique()",
                         {name: this.currentCatalog.name}
                     );
+                    this.$parent.updateData()
                     this.$emit("close-modal");
                     this.$root.showNotify({
                         text: "Добавлен элемент справочника",
@@ -61,6 +62,7 @@
                         this.currentCatalog.$id,
                         {name: this.currentCatalog.name}
                     );
+                    this.$parent.updateData()
                     this.$emit("close-modal");
                     this.$root.showNotify({
                         text: "Изменен элемент справочника",
