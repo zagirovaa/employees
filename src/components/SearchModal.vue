@@ -14,6 +14,7 @@
             applyChanges() {
                 if (this.searchedText !== "") {
                     this.$emit("set-search", this.searchedText);
+                    this.$parent.updateData();
                     this.$emit("close-modal");
                 } else {
                     this.$root.showNotify({
@@ -24,6 +25,7 @@
             },
             resetSearch() {
                 this.$emit("reset-search");
+                this.$parent.updateData();
                 this.$emit("close-modal");
             }
         },

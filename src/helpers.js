@@ -1,3 +1,14 @@
+import { Query } from "appwrite";
+
+export const columnNames = {
+    "":             "",
+    "Дата приема":  "date_of_employment",
+    "ФИО":          "full_name",
+    "Должность":    "job_title",
+    "Оклад":        "salary",
+    "Статус":       "status"
+};
+
 const dayNames = [
     "Воскресение",
     "Понедельник",
@@ -23,17 +34,54 @@ const monthNames = [
     "Декабрь"
 ];
 
-export const columnNames = {
-    "":             "",
-    "Дата приема":  "date_of_employment",
-    "ФИО":          "full_name",
-    "Должность":    "job_title",
-    "Оклад":        "salary",
-    "Статус":       "status"
-};
-
 export function addPadForDigits(num) {
     return num.toString().padStart(2, "0");
+}
+
+export function convertToQueries(filters) {
+    return filters.map(filter => {
+        if (filter.field === "Оклад") {
+            filter.value = Number(filter.value);
+        }
+        switch (filter.condition) {
+            case "=":
+                return Query.equal(
+                    columnNames[filter.field],
+                    filter.value
+                )
+                break;
+            case "≠":
+                return Query.notEqual(
+                    columnNames[filter.field],
+                    filter.value
+                )
+                break;
+            case ">":
+                return Query.greaterThan(
+                    columnNames[filter.field],
+                    filter.value
+                )
+                break;
+            case "<":
+                return Query.lessThan(
+                    columnNames[filter.field],
+                    filter.value
+                )
+                break;
+            case "≥":
+                return Query.greaterThanEqual(
+                    columnNames[filter.field],
+                    filter.value
+                )
+                break;
+            case "≤":
+                return Query.lessThanEqual(
+                    columnNames[filter.field],
+                    filter.value
+                )
+                break;
+        }
+    });
 }
 
 export function getCurrentDate() {

@@ -2,11 +2,15 @@
     import { Query } from "appwrite";
     import {
         database,
+        deleteState,
         dismissReasonsExist,
+        getEmployees,
+        getEmployeesCount,
+        getFilteredEmployees,
         jobTitlesExist
     } from "./api.js";
     import conf from "./config.js";
-    import { columnNames } from "./helpers.js";
+    import { convertToQueries } from "./helpers.js";
     import AddModal from "./components/AddModal.vue";
     import BaseNavbar from "./components/BaseNavbar.vue";
     import BaseNotify from "./components/BaseNotify.vue";
@@ -38,7 +42,7 @@
         computed: {
             currentEmployee() {
                 if (this.selectedRow >= 0) {
-                    return this.allEmployees[this.selectedRow];
+                    return this.employees[this.selectedRow];
                 }
             },
             currentFilter() {
@@ -52,10 +56,6 @@
                 ];
                 if (this.searchedText !== "") query.push(this.searchedText);
                 return query;
-            },
-            employees() {
-                this.updateData();
-                return this.allEmployees;
             },
             filtered() {
                 return this.filterQueries.length > 0 &&
@@ -73,13 +73,13 @@
         data() {
             return {
                 addModalVisible: false,
-                allEmployees: [],
                 catalogModalVisible: false,
                 catalogTitle: "",
                 catalogType: "",
                 currentPage: 0,
                 dismissModalVisible: false,
                 editModalVisible: false,
+                employees: [],
                 filterModalVisible: false,
                 filterQueries: [],
                 helpModalVisible: false,
@@ -109,6 +109,7 @@
             async changeLimit(limit) {
                 localStorage.setItem("limit", JSON.stringify(limit));
                 this.rowsPerPage = limit;
+                this.updateData();
             },
             changePage(page) {
                 switch (page) {
@@ -129,74 +130,24 @@
                         this.currentPage = this.pagesCount;
                         break;
                 }
+                this.updateData();
             },
             async clearEmployees() {
                 const self = this;
-                const result = await database.listDocuments(
-                    conf.global.databaseID,
-                    conf.collections.employees
-                );
-                const employees = result.documents;
-                employees.forEach(employee => {
-                    self.deleteEmployee(employee.$id);
-                });
-                if (this.allEmployees.length === 0) {
-                    this.selectedRow = -1
+                const employees = await getEmployees();
+                if (employees.length > 0) {
+                    this.resetSearch();
+                    this.resetFilter();
+                    employees.forEach(async (employee) => {
+                        await self.deleteEmployee(employee.$id);
+                    });
+                    this.$root.showNotify({
+                        text: "Все сотрудники удалены",
+                        type: "success"
+                    });
                 }
-                this.resetSearch();
-                this.resetFilter();
-                this.$root.showNotify({
-                    text: "Все сотрудники удалены",
-                    type: "success"
-                });
-            },
-            convertToQueries(filters) {
-                return filters.map(filter => {
-                    if (filter.field === "Оклад") {
-                        filter.value = Number(filter.value);
-                    }
-                    switch (filter.condition) {
-                        case "=":
-                            return Query.equal(
-                                columnNames[filter.field],
-                                filter.value
-                            )
-                            break;
-                        case "≠":
-                            return Query.notEqual(
-                                columnNames[filter.field],
-                                filter.value
-                            )
-                            break;
-                        case ">":
-                            return Query.greaterThan(
-                                columnNames[filter.field],
-                                filter.value
-                            )
-                            break;
-                        case "<":
-                            return Query.lessThan(
-                                columnNames[filter.field],
-                                filter.value
-                            )
-                            break;
-                        case "≥":
-                            return Query.greaterThanEqual(
-                                columnNames[filter.field],
-                                filter.value
-                            )
-                            break;
-                        case "≤":
-                            return Query.lessThanEqual(
-                                columnNames[filter.field],
-                                filter.value
-                            )
-                            break;
-                    }
-                });
             },
             async deleteEmployee(employee_id) {
-                const self = this;
                 const query = [Query.equal("employee_id", employee_id)];
                 const result = await database.listDocuments(
                     conf.global.databaseID,
@@ -204,8 +155,8 @@
                     query
                 );
                 if (result.total > 0) {
-                    result.documents.forEach(document => {
-                        self.deleteState(document.$id);
+                    result.documents.forEach(async (document) => {
+                        await deleteState(document.$id);
                     })
                 }
                 await database.deleteDocument(
@@ -213,13 +164,7 @@
                     conf.collections.employees,
                     employee_id
                 );
-            },
-            async deleteState(state_id) {
-                await database.deleteDocument(
-                    conf.global.databaseID,
-                    conf.collections.states,
-                    state_id
-                );
+                this.updateData();
             },
             async dismissEmployee() {
                 if (this.currentEmployee.status !== "Работает") {
@@ -291,9 +236,6 @@
             },
             async removeEmployee() {
                 await this.deleteEmployee(this.currentEmployee.$id);
-                if (this.allEmployees.length === 0) {
-                    this.selectedRow = -1
-                }
                 this.$root.showNotify({
                     text: "Сотрудник удален",
                     type: "success"
@@ -311,7 +253,8 @@
             },
             setFilter(filters) {
                 localStorage.setItem("filter", JSON.stringify(filters));
-                this.filterQueries = this.convertToQueries(filters);
+                this.filterQueries = convertToQueries(filters);
+                this.updateData();
             },
             setSearch(searchedText) {
                 localStorage.setItem("search", JSON.stringify(searchedText));
@@ -319,6 +262,7 @@
                     "full_name",
                     searchedText.split(" ")
                 );
+                this.updateData();
             },
             showJobsCatalog() {
                 this.catalogTitle = "Должности";
@@ -330,7 +274,7 @@
                 // whether filter is set. Perhaps list is empty because of
                 // the filter.
                 // TODO: Have to refactor this function
-                if (this.allEmployees.length === 0) {
+                if (this.employees.length === 0) {
                     if (this.filterQueries.length > 0) {
                         this.filterModalVisible = true;
                     }
@@ -348,7 +292,7 @@
                 // whether filter is set. Perhaps list is empty because of
                 // the filter.
                 // TODO: Have to refactor this function
-                if (this.allEmployees.length === 0) {
+                if (this.employees.length === 0) {
                     if (this.searchedText !== "") {
                         this.searchModalVisible = true;
                     }
@@ -362,55 +306,47 @@
                 } else {
                     this.sortedColumn = columnName;
                 }
+                this.updateData();
             },
             async updateData() {
-                const filteredEmployees = await database.listDocuments(
-                    conf.global.databaseID,
-                    conf.collections.employees,
-                    this.currentFilter
-                );
-                this.allEmployees = filteredEmployees.documents;
-                if (this.allEmployees.length === 0) {
+                this.employees = await getFilteredEmployees(this.currentFilter);
+                if (this.employees.length === 0) {
                     this.currentPage = 0;
                     this.selectedRow = -1;
                     this.pagesCount = 0;
                     this.offset = 0;
                     return;  
                 }
-                const allEmployees = await database.listDocuments(
-                    conf.global.databaseID,
-                    conf.collections.employees
-                );
-                const employeesCount = allEmployees.total;
-                if (this.currentPage === 0) {
-                    this.currentPage = 1;
-                };
-                // Make first added row selected
-                if (this.selectedRow === -1) {
-                    this.selectedRow = 0;
-                };
-                // When rows per page value is changed and new value is
-                // less than previous one, last row has to be selected
-                if (this.selectedRow > this.allEmployees.length - 1) {
-                    this.selectedRow = this.allEmployees.length - 1;
-                };
+                const employeesCount = await getEmployeesCount();
                 if (employeesCount > this.rowsPerPage) {
                     this.pagesCount = parseInt(
                         employeesCount / this.rowsPerPage
                     );
                     if (employeesCount % this.rowsPerPage > 0) {
                         this.pagesCount++;
-                    };
+                    }
                 } else {
                     this.pagesCount = 1;
                 }
-                // if (this.currentPage > this.pagesCount) {
-                //     this.currentPage = this.pagesCount;
-                // }
+                if (this.currentPage === 0) {
+                    this.currentPage = 1;
+                }
+                if (this.currentPage > this.pagesCount) {
+                    this.currentPage = this.pagesCount;
+                }
+                // Make first added row selected
+                if (this.selectedRow === -1) {
+                    this.selectedRow = 0;
+                }
+                // When rows per page value is changed and new value is
+                // less than previous one, last row has to be selected
+                if (this.selectedRow > this.employees.length - 1) {
+                    this.selectedRow = this.employees.length - 1;
+                }
                 this.offset = (this.currentPage - 1) * this.rowsPerPage;
             },
             workingEmployeeExists() {
-                return this.allEmployees.filter((employee) => {
+                return this.employees.filter((employee) => {
                     return employee.status === "Работает";
                 }).length > 0;
             }
@@ -423,7 +359,7 @@
                     this.itemClick(`Alt + ${e.key.toUpperCase()}`);
                 }
             });
-            this.filterQueries = this.convertToQueries(this.loadFilter());
+            this.filterQueries = convertToQueries(this.loadFilter());
             if (this.loadSearch() !== "") {
                 this.searchedText = Query.search(
                     "full_name",
@@ -433,6 +369,7 @@
             this.rowsPerPage = JSON.parse(
                 localStorage.getItem("limit")
             ) || conf.settings.limit || 20;
+            this.updateData();
         }
     }
 </script>

@@ -84,6 +84,7 @@
             applyChanges() {
                 if (this.filters.length > 0) {
                     this.$emit("set-filter", this.filters);
+                    this.$parent.updateData();
                     this.$emit("close-modal");
                 } else {
                     this.$root.showNotify({
@@ -109,6 +110,7 @@
             },
             resetFilter() {
                 this.$emit("reset-filter");
+                this.$parent.updateData();
                 this.$emit("close-modal");
             }
         },

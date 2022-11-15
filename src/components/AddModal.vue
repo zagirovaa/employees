@@ -37,6 +37,7 @@
                             status: "Работает"
                         })
                     );
+                    this.$parent.updateData();
                     this.$emit("close-modal");
                     this.$root.showNotify({
                         text: "Добавлен новый сотрудник",
@@ -61,6 +62,7 @@
         },
         mounted() {
             this.getJobTitles();
+            this.$refs.name.focus();
         }
     }
 </script>
@@ -84,6 +86,7 @@
                         <label class="label">ФИО:</label>
                         <input
                             class="input is-fullwidth"
+                            ref="name"
                             type="text"
                             v-model.trim="employee.full_name">
                     </p>

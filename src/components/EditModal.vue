@@ -43,6 +43,7 @@
                             reason_for_dismissal: this.employee.reason_for_dismissal
                         })
                     );
+                    this.$parent.updateData();
                     this.$emit("close-modal");
                     this.$root.showNotify({
                         text: "Данные сотрудника изменены",
