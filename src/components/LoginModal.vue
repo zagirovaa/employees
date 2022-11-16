@@ -49,6 +49,9 @@
                     });
                 });
             }
+        },
+        mounted() {
+            this.$refs.name.focus();
         }
     }
 </script>
@@ -70,6 +73,7 @@
                                     autocomplete="email"
                                     class="input"
                                     placeholder="sergeevav@gmail.com"
+                                    ref="name"
                                     type="email"
                                     v-model.trim="email">
                             </p>
