@@ -1,11 +1,14 @@
 import { createApp, h } from "vue";
-import { account } from "./api.js";
-import conf from "./config.js";
 import "bulma";
 import "bulma-tooltip";
+
+import { account } from "./api.js";
+import conf from "./config.js";
+
 import App from "./App.vue";
 import LoginModal from "./components/LoginModal.vue";
 import PageNotFound from "./components/PageNotFound.vue";
+import BaseEmpty from "./components/BaseEmpty.vue";
 
 const routes = {
     "/": App,
@@ -24,6 +27,7 @@ const Router = {
     computed: {
         currentComponent() {
             if (this.currentRoute in routes === false) return PageNotFound;
+            if (this.userIsAuthorised === null) return BaseEmpty;
             if (this.userIsAuthorised === false) {
                 this.currentRoute = "/auth";
                 history.pushState(null, "", this.currentRoute);
@@ -46,7 +50,7 @@ const Router = {
                 type: "",
                 visible: false
             },
-            userIsAuthorised: false
+            userIsAuthorised: null
         }
     },
     methods: {
