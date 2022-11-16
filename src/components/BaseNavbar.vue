@@ -149,14 +149,14 @@
             </div>
             <div class="navbar-end">
                 <a
-                    class="navbar-item has-tooltip-left"
+                    class="navbar-item has-tooltip-bottom"
                     data-tooltip="Первая страница"
                     :class="{ 'is-disable': pagesCount === 0 }"
                     @click="$emit('change-page', 'first')">
                     <span class="material-icons">first_page</span>
                 </a>
                 <a
-                    class="navbar-item has-tooltip-left"
+                    class="navbar-item has-tooltip-bottom"
                     data-tooltip="Предыдущая страница"
                     :class="{ 'is-disable': pagesCount === 0 }"
                     @click="$emit('change-page', 'previous')">
@@ -168,36 +168,18 @@
                     {{ currentPage }} из {{ pagesCount }}
                 </a>
                 <a
-                    class="navbar-item has-tooltip-left"
+                    class="navbar-item has-tooltip-bottom"
                     data-tooltip="Следующая страница"
                     :class="{ 'is-disable': pagesCount === 0 }"
                     @click="$emit('change-page', 'next')">
                     <span class="material-icons">navigate_next</span>
                 </a>
                 <a
-                    class="navbar-item has-tooltip-left"
+                    class="navbar-item has-tooltip-bottom"
                     data-tooltip="Последняя страница"
                     :class="{ 'is-disable': pagesCount === 0 }"
                     @click="$emit('change-page', 'last')">
                     <span class="material-icons">last_page</span>
-                </a>
-                <a
-                    class="navbar-item has-tooltip-left"
-                    data-tooltip="Поиск"
-                    :class="{ 'is-disable': searchDisabled }"
-                    @click="$emit('show-search')">
-                    <span class="material-icons">
-                        {{ searchIconName }}
-                    </span>
-                </a>
-                <a
-                    class="navbar-item has-tooltip-left"
-                    data-tooltip="Фильтрация"
-                    :class="{ 'is-disable': filterDisabled }"
-                    @click="$emit('show-filter')">
-                    <span class="material-icons">
-                        {{ filterIconName }}
-                    </span>
                 </a>
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link">
@@ -218,6 +200,24 @@
                         </a>
                     </div>
                 </div>
+                <a
+                    class="navbar-item has-tooltip-left"
+                    data-tooltip="Поиск"
+                    :class="{ 'is-disable': searchDisabled }"
+                    @click="$emit('show-search')">
+                    <span class="material-icons">
+                        {{ searchIconName }}
+                    </span>
+                </a>
+                <a
+                    class="navbar-item has-tooltip-left"
+                    data-tooltip="Фильтрация"
+                    :class="{ 'is-disable': filterDisabled }"
+                    @click="$emit('show-filter')">
+                    <span class="material-icons">
+                        {{ filterIconName }}
+                    </span>
+                </a>
                 <a
                     class="navbar-item has-tooltip-left"
                     data-tooltip="Настройки программы"

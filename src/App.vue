@@ -109,6 +109,8 @@
             async changeLimit(limit) {
                 localStorage.setItem("limit", JSON.stringify(limit));
                 this.rowsPerPage = limit;
+                this.currentPage = 1;
+                this.setOffset();
                 this.updateData();
             },
             changePage(page) {
@@ -130,6 +132,7 @@
                         this.currentPage = this.pagesCount;
                         break;
                 }
+                this.setOffset();
                 this.updateData();
             },
             async clearEmployees() {
@@ -262,6 +265,9 @@
                 this.filterQueries = convertToQueries(filters);
                 this.updateData();
             },
+            setOffset() {
+                this.offset = (this.currentPage - 1) * this.rowsPerPage;
+            },
             setSearch(searchedText) {
                 localStorage.setItem("search", JSON.stringify(searchedText));
                 this.searchedText = Query.search(
@@ -343,7 +349,7 @@
                 if (this.selectedRow > this.employees.length - 1) {
                     this.selectedRow = this.employees.length - 1;
                 }
-                this.offset = (this.currentPage - 1) * this.rowsPerPage;
+                this.setOffset();
             },
             workingEmployeeExists() {
                 return this.employees.filter((employee) => {
