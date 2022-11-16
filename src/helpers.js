@@ -85,11 +85,11 @@ export function convertToQueries(filters) {
 }
 
 export function getCurrentDate() {
-    const date = new Date();
+    const currentDate = new Date();
     return [
-        date.getFullYear(),
-        addPadForDigits(date.getMonth() + 1),
-        addPadForDigits(date.getDate()),
+        currentDate.getFullYear(),
+        addPadForDigits(currentDate.getMonth() + 1),
+        addPadForDigits(currentDate.getDate()),
     ].join("-");
 }
 
@@ -98,18 +98,15 @@ export function getCurrentMonthName() {
 }
 
 export function getCurrentMonthNumber() {
-    const currDate = new Date();
-    return currDate.getMonth() + 1;
+    return new Date().getMonth() + 1;
 }
 
 export function getCurrentYear() {
-    const currDate = new Date();
-    return currDate.getFullYear();
+    return new Date().getFullYear();
 }
 
 export function getDayNameByDate(date) {
-    const currentDate = new Date(date);
-    return dayNames[currentDate.getDay()]
+    return dayNames[new Date(date).getDay()];
 }
 
 export function getDayNumberByName(dayName) {
@@ -120,15 +117,15 @@ export function getDaysCount(year, month) {
     return new Date(year, month, 0).getDate();
 }
 
-export function getListOfMonths(start, stop) {
+export function getMonthsRange(start, stop) {
     return monthNames.filter((element, index) => {
         return index >= start && index <= stop;
     }) 
 }
 
-export function getListOfYears(year) {
+export function getYearsRange(year) {
     const currentYear = getCurrentYear();
-    if (currentYear > year) return [...getRangeOfYears(year, currentYear)];
+    if (currentYear > year) return [...getNumbersRange(year, currentYear)];
     return currentYear;
 }
 
@@ -140,12 +137,10 @@ export function getMonthNumberByName(monthName) {
     return monthNames.indexOf(monthName) + 1;
 }
 
-function getRangeOfYears(start, stop) {
-    const listOfNumbers = [];
-    for (let val = start; val <= stop; val++) {
-        listOfNumbers.push(val);
-    }
-    return listOfNumbers;
+function getNumbersRange(start, stop) {
+    return new Array((stop + 1) - start).fill().map(
+        (item, index) => index + start
+    );
 }
 
 export function splitArray(array, size) {

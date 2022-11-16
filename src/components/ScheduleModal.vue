@@ -3,9 +3,9 @@
     import { database, getEmployees } from "../api.js";
     import conf from "../config.js";
     import {
-        getCurrentYear, getCurrentMonthNumber, getDayNameByDate, getDaysCount,
-        getListOfMonths, getListOfYears, getMonthNameByNumber,
-        getMonthNumberByName, addPadForDigits, splitArray
+        addPadForDigits,getCurrentYear, getCurrentMonthNumber, getDayNameByDate,
+        getDaysCount, getMonthsRange, getYearsRange, getMonthNameByNumber,
+        getMonthNumberByName, splitArray
     } from "../helpers.js";
     import BaseModal from "./BaseModal.vue";
 
@@ -173,19 +173,19 @@
                     this.currentMonth
                 );
                 if (this.currentYear == this.employYear) {
-                    this.months = getListOfMonths(
+                    this.months = getMonthsRange(
                         this.employMonth - 1, this.currentMonth - 1
                     );
                 } else if (this.selectedYear == this.employYear) {
-                    this.months = getListOfMonths(
+                    this.months = getMonthsRange(
                         this.employMonth - 1, 11
                     );
                 } else if (this.selectedYear == this.currentYear) {
-                    this.months = getListOfMonths(
+                    this.months = getMonthsRange(
                         0, this.currentMonth - 1
                     );
                 } else {
-                    this.months = getListOfMonths(0, 11);
+                    this.months = getMonthsRange(0, 11);
                 }
                 if (this.months.includes(monthName)) {
                     this.selectedMonthName = monthName;
@@ -242,7 +242,7 @@
             getYears() {
                 this.employYear = this.getEmployYear();
                 this.employMonth = this.getEmployMonth();
-                this.years = getListOfYears(this.employYear);
+                this.years = getYearsRange(this.employYear);
                 this.selectedYear = this.currentYear;
                 this.getMonths();
             },

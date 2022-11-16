@@ -23,6 +23,7 @@ const Router = {
         window.addEventListener("popstate", () => {
             self.currentRoute = window.location.pathname;
         });
+        this.checkAuthorisation();
     },
     computed: {
         currentComponent() {
@@ -55,24 +56,24 @@ const Router = {
     },
     methods: {
         checkAuthorisation() {
+            const self = this;
             const auth = account.get();
             auth.then(user => {
-                this.userIsAuthorised = true;
+                self.userIsAuthorised = true;
             }, error => {
-                this.userIsAuthorised = false;
+                self.userIsAuthorised = false;
+                console.log(error);
             });
         },
         showNotify(data) {
+            const self = this;
             this.notify.text = data.text;
             this.notify.type = data.type;
             this.notify.visible = true;
             setTimeout(() => {
-                this.notify.visible = false;
+                self.notify.visible = false;
             }, this.notify.timeout);
         }
-    },
-    mounted() {
-        this.checkAuthorisation();
     },
     render() {
         return h(this.currentComponent);
