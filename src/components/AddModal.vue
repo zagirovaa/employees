@@ -1,8 +1,10 @@
 <script>
     import { Query } from "appwrite";
+
     import { database } from "../api.js";
     import conf from "../config.js";
     import { getCurrentDate } from "../helpers.js";
+    
     import BaseModal from "./BaseModal.vue";
 
     export default {
@@ -34,7 +36,7 @@
                             full_name: this.employee.full_name,
                             job_title: this.employee.job_title,
                             salary: this.employee.salary,
-                            status: "Работает"
+                            status: this.employee.status
                         })
                     );
                     this.$parent.updateData();

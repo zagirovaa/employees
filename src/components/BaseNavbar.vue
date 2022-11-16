@@ -54,7 +54,7 @@
             logout() {
                 const self = this;
                 const session = account.deleteSession("current");
-                session.then(function () {
+                session.then(() => {
                     self.$root.userIsAuthorised = false;
                     self.$root.currentRoute = "/auth";
                     history.pushState(null, "", self.$root.currentRoute);
@@ -62,11 +62,26 @@
             }
         },
         props: {
-            currentPage: [Number, String],
-            filtered: Boolean,
-            pagesCount: [Number, String],
-            rowsPerPage: [Number, String],
-            searched: Boolean
+            currentPage: {
+                required: true,
+                type: [Number, String]
+            },
+            filtered: {
+                required: true,
+                type: Boolean
+            },
+            pagesCount: {
+                required: true,
+                type: [Number, String]
+            },
+            rowsPerPage: {
+                required: true,
+                type: [Number, String]
+            },
+            searched: {
+                required: true,
+                type: Boolean
+            }
         }
     }
 </script>

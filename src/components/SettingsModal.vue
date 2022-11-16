@@ -1,5 +1,6 @@
 <script>
     import conf from "../config.js";
+
     import BaseModal from "./BaseModal.vue";
 
     export default {
@@ -31,8 +32,7 @@
             },
             changeHoliday(day) {
                 if (this.holidays.includes(day)) {
-                    const index = this.holidays.indexOf(day);
-                    this.holidays.splice(index, 1);
+                    this.holidays.splice(this.holidays.indexOf(day), 1);
                 } else {
                     this.holidays.push(day);
                 }

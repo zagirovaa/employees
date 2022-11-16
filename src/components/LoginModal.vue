@@ -1,5 +1,6 @@
 <script>
     import { account } from "../api.js";
+
     import BaseModal from "./BaseModal.vue";
     import BaseNotify from "./BaseNotify.vue";
 
@@ -47,6 +48,7 @@
                         text: "Неверные учетные данные",
                         type: "danger"
                     });
+                    console.log(error);
                 });
             }
         },

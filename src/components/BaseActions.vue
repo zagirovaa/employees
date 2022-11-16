@@ -1,7 +1,9 @@
 <script>
     import { Query } from "appwrite";
+
     import { database } from "../api.js";
     import conf from "../config.js";
+    
     import BaseModal from "./BaseModal.vue";
 
     export default {

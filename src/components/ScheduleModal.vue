@@ -1,5 +1,6 @@
 <script>
     import { Query } from "appwrite";
+
     import { database, getEmployees } from "../api.js";
     import conf from "../config.js";
     import {
@@ -7,6 +8,7 @@
         getDaysCount, getMonthsRange, getYearsRange, getMonthNameByNumber,
         getMonthNumberByName, splitArray
     } from "../helpers.js";
+    
     import BaseModal from "./BaseModal.vue";
 
     export default {
@@ -62,14 +64,14 @@
             },
             async changeDayStatus(row, column) {
                 const cellNumber = this.getCellNumber(row, column);
-                if (cellNumber != "") {
+                if (cellNumber !== "") {
                     const holidays = this.getHolidays();
                     const selectedDate = this.getSelectedDate(cellNumber);
                     const dayName = getDayNameByDate(selectedDate);
                     const currentStates = await this.getStates();
                     if (!holidays.includes(dayName)) {
                         const state = currentStates.filter((state, index) => {
-                            return new Date(state.date).getDate() == cellNumber;
+                            return new Date(state.date).getDate() === cellNumber;
                         });
                         if (state.length > 0) {
                             switch (state[0].status) {
@@ -125,10 +127,9 @@
                 return this.table[row - 1][column - 1];
             },
             getCellByDayNumber(number) {
-                const cell = document.querySelector(
+                return document.querySelector(
                     `.modal-card table td[value="${number}"]`
                 );
-                return cell;
             },
             getCurrentEmployee() {
                 for (let item of this.employees) {
@@ -172,15 +173,15 @@
                 const monthName = getMonthNameByNumber(
                     this.currentMonth
                 );
-                if (this.currentYear == this.employYear) {
+                if (this.currentYear === this.employYear) {
                     this.months = getMonthsRange(
                         this.employMonth - 1, this.currentMonth - 1
                     );
-                } else if (this.selectedYear == this.employYear) {
+                } else if (this.selectedYear === this.employYear) {
                     this.months = getMonthsRange(
                         this.employMonth - 1, 11
                     );
-                } else if (this.selectedYear == this.currentYear) {
+                } else if (this.selectedYear === this.currentYear) {
                     this.months = getMonthsRange(
                         0, this.currentMonth - 1
                     );
@@ -220,7 +221,7 @@
             getTable() {
                 let dayNumber = new Date(this.getSelectedDate(1)).getDay();
                 // Week starts from Monday not Sunday
-                dayNumber = (dayNumber == 0) ? 7 : dayNumber;
+                dayNumber = (dayNumber === 0) ? 7 : dayNumber;
                 let tempTable = [];
                 if (dayNumber > 1) {
                     for (let i = 0; i < dayNumber - 1; i++) {
@@ -310,7 +311,7 @@
             rowIsVisible(row) {
                 if (row >= 0) {
                     for (let i = 0; i < this.table[row].length; i++) {
-                        if (this.table[row][i] != "") {
+                        if (this.table[row][i] !== "") {
                             return true;
                         }
                     }

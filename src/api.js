@@ -1,4 +1,5 @@
 import { Account, Client, Databases, Query } from "appwrite";
+
 import conf from "./config.js";
 
 const client = new Client();
@@ -6,11 +7,11 @@ client.setEndpoint(conf.global.endPoint).setProject(conf.global.projectID);
 export const account = new Account(client);
 export const database = new Databases(client, conf.global.databaseID);
 
-export async function deleteState(state_id) {
+export async function deleteState(stateId) {
     await database.deleteDocument(
         conf.global.databaseID,
         conf.collections.states,
-        state_id
+        stateId
     );
 }
 
@@ -22,10 +23,10 @@ export async function dismissReasonsExist() {
     return result.total > 0 ? true : false;
 }
 
-export async function getEmployees(workingOnly = false, sorted = false) {
+export async function getEmployees(workingOnly = false, sortedByName = false) {
     const query = [];
     if (workingOnly) query.push(Query.equal("status", "Работает"));
-    if (sorted) query.push(Query.orderAsc("full_name"));
+    if (sortedByName) query.push(Query.orderAsc("full_name"));
     const result = await database.listDocuments(
         conf.global.databaseID,
         conf.collections.employees,

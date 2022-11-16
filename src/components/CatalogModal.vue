@@ -1,7 +1,9 @@
 <script>
     import { Query } from "appwrite";
+
     import { database } from "../api.js";
     import conf from "../config.js";
+
     import BaseActions from "./BaseActions.vue";
     import BaseModal from "./BaseModal.vue";
 
@@ -85,11 +87,9 @@
                 return false;
             },
             editCatalog() {
-                if (this.selectedRow >= 0) {
-                    this.catalog = this.catalogs[this.selectedRow];
-                    this.actionTitle = "Изменить";
-                    this.actionVisible = true;
-                }
+                this.catalog = this.catalogs[this.selectedRow];
+                this.actionTitle = "Изменить";
+                this.actionVisible = true;
             },
             async removeCatalog(index) {
                 if (await this.deleteCatalog(index)) {
@@ -131,8 +131,14 @@
             this.updateData();
         },
         props: {
-            title: String,
-            type: String
+            title: {
+                required: true,
+                type: String
+            },
+            type: {
+                required: true,
+                type: String
+            }
         }
     }
 </script>

@@ -30,7 +30,8 @@
             }
         },
         mounted() {
-            this.searchedText = this.text
+            this.searchedText = this.text;
+            this.$refs.name.focus();
         },
         props: {
             text: {
@@ -54,6 +55,7 @@
                     </label>
                     <input
                         class="input"
+                        ref="name"
                         type="text"
                         v-model.trim="searchedText">
                 </p>

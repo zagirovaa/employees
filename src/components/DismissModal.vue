@@ -1,8 +1,10 @@
 <script>
     import { Query } from "appwrite";
+
     import { database } from "../api.js";
     import conf from "../config.js";
     import { getCurrentDate } from "../helpers.js"
+
     import BaseModal from "./BaseModal.vue"
 
     export default {
@@ -17,28 +19,22 @@
         emits: ["close-modal"],
         methods: {
             async applyChanges() {
-                if (this.employee.reason_for_dismissal !== "") {
-                    await database.updateDocument(
-                        conf.global.databaseID,
-                        conf.collections.employees,
-                        this.employee.$id,
-                        JSON.stringify({
-                            status: this.employee.status,
-                            date_of_dismissal: this.employee.date_of_dismissal,
-                            reason_for_dismissal: this.employee.reason_for_dismissal
-                        })
-                    );
-                    this.$emit("close-modal");
-                    this.$root.showNotify({
-                        text: "Сотрудник уволен",
-                        type: "success"
-                    });
-                } else {
-                    this.$root.showNotify({
-                        text: "Обязательное поле не заполнено",
-                        type: "warning"
-                    });
-                }
+                await database.updateDocument(
+                    conf.global.databaseID,
+                    conf.collections.employees,
+                    this.employee.$id,
+                    JSON.stringify({
+                        status: this.employee.status,
+                        date_of_dismissal: this.employee.date_of_dismissal,
+                        reason_for_dismissal: this.employee.reason_for_dismissal
+                    })
+                );
+                this.$parent.updateData();
+                this.$emit("close-modal");
+                this.$root.showNotify({
+                    text: "Сотрудник уволен",
+                    type: "success"
+                });
             },
             async getDismissReasons() {
                 const result = await database.listDocuments(
@@ -60,14 +56,17 @@
             }
         },
         mounted() {
-            this.employee = this.document;
+            this.employee = Object.assign({}, this.document);
             this.employee.date_of_dismissal = getCurrentDate();
             this.employee.reason_for_dismissal = "";
             this.employee.status = "Уволился";
             this.getDismissReasons();
         },
         props: {
-            document: Object
+            document: {
+                required: true,
+                type: Object
+            }
         }
     }
 </script>

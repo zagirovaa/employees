@@ -83,5 +83,6 @@ const Router = {
 const app = createApp(Router);
 app.config.unwrapInjectedRef = true;
 const vm = app.mount("#app");
+const APP_NAME = "Сотрудники";
 
-document.title = `${conf.organization.name} : Сотрудники`;
+document.title = `${conf.organization.name} : ${APP_NAME}`;

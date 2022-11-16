@@ -1,7 +1,9 @@
 <script>
     import { Query } from "appwrite";
+
     import { database } from "../api.js";
     import conf from "../config.js";
+
     import BaseModal from "./BaseModal.vue";
 
     const DIGIT_CONDITIONS = ["=", "≠", ">", "<", "≥", "≤"];
@@ -37,9 +39,7 @@
                 }
             },
             jobTitles() {
-                return this.jobs.map(job => {
-                    return job.name;
-                });
+                return this.jobs.map(job => job.name);
             },
             inputType() {
                 return this.selectedField === "Дата приема" ? "date" : "number";
@@ -99,14 +99,7 @@
                     conf.collections.jobs,
                     [Query.orderAsc("name")]
                 );
-                if (result.total > 0) {
-                    this.jobs = result.documents;
-                } else {
-                    this.$root.showNotify({
-                        text: "Не удалось загрузить справочник должностей",
-                        type: "warning"
-                    });
-                }
+                this.jobs = result.documents;
             },
             resetFilter() {
                 this.$emit("reset-filter");

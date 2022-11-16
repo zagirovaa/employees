@@ -1,14 +1,18 @@
 <script>
     import { Query } from "appwrite";
+
     import { database } from "../api.js";
     import conf from "../config.js";
+    
     import BaseModal from "./BaseModal.vue";
+
+    const DISMISS_VALUES = ["Уволен", "Уволился"];
 
     export default {
         components: { BaseModal },
         computed: {
             isDismissed() {
-                return ["Уволен", "Уволился"].includes(this.employee.status);
+                return DISMISS_VALUES.includes(this.employee.status);
             }
         },
         data() {
@@ -76,10 +80,13 @@
         mounted() {
             this.getJobTitles();
             this.getDismissReasons();
-            this.employee = this.document;
+            this.employee = Object.assign({}, this.document);
         },
         props: {
-            document: Object
+            document: {
+                required: true,
+                type: Object
+            }
         }
     }
 </script>

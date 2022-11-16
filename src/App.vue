@@ -1,5 +1,6 @@
 <script>
     import { Query } from "appwrite";
+
     import {
         database,
         deleteState,
@@ -11,6 +12,7 @@
     } from "./api.js";
     import conf from "./config.js";
     import { convertToQueries } from "./helpers.js";
+
     import AddModal from "./components/AddModal.vue";
     import BaseNavbar from "./components/BaseNavbar.vue";
     import BaseNotify from "./components/BaseNotify.vue";
@@ -41,9 +43,7 @@
         },
         computed: {
             currentEmployee() {
-                if (this.selectedRow >= 0) {
-                    return this.employees[this.selectedRow];
-                }
+                return this.employees[this.selectedRow];
             },
             currentFilter() {
                 const limit = Query.limit(this.rowsPerPage);
@@ -148,11 +148,10 @@
                 }
             },
             async deleteEmployee(employee_id) {
-                const query = [Query.equal("employee_id", employee_id)];
                 const result = await database.listDocuments(
                     conf.global.databaseID,
                     conf.collections.states,
-                    query
+                    [Query.equal("employee_id", employee_id)]
                 );
                 if (result.total > 0) {
                     result.documents.forEach(async (document) => {
@@ -177,6 +176,13 @@
                 if (!await dismissReasonsExist()) {
                     this.$root.showNotify({
                         text: "Справочник причин увольнения пуст",
+                        type: "warning"
+                    });
+                    return;   
+                }
+                if (!await jobTitlesExist()) {
+                    this.$root.showNotify({
+                        text: "Справочник должностей пуст",
                         type: "warning"
                     });
                     return;   
@@ -273,14 +279,11 @@
                 // Even if the list of employees is empty we have to check
                 // whether filter is set. Perhaps list is empty because of
                 // the filter.
-                // TODO: Have to refactor this function
-                if (this.employees.length === 0) {
-                    if (this.filterQueries.length > 0) {
-                        this.filterModalVisible = true;
-                    }
-                } else {
-                    this.filterModalVisible = true;
+                if (this.employees.length === 0 &&
+                    this.filterQueries.length === 0) {
+                    return;
                 }
+                this.filterModalVisible = true;
             },
             showReasonsCatalog() {
                 this.catalogTitle = "Причины увольнения";
@@ -291,14 +294,11 @@
                 // Even if the list of employees is empty we have to check
                 // whether filter is set. Perhaps list is empty because of
                 // the filter.
-                // TODO: Have to refactor this function
-                if (this.employees.length === 0) {
-                    if (this.searchedText !== "") {
-                        this.searchModalVisible = true;
-                    }
-                } else {
-                    this.searchModalVisible = true;
+                if (this.employees.length === 0 &&
+                    this.searchedText === "") {
+                    return;
                 }
+                this.searchModalVisible = true;
             },
             sortByColumnName(columnName) {
                 if (this.sortedColumn === columnName) {

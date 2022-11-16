@@ -17,7 +17,10 @@
         },
         emits: ["close-notify"],
         props: {
-            type: String
+            type: {
+                required: true,
+                type: String
+            }
         }
     }
 </script>
