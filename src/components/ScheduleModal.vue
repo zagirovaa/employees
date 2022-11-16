@@ -144,14 +144,14 @@
                 this.getYears();
             },
             getEmployMonth() {
-                return new Date(
+                return parseInt(new Date(
                     this.getCurrentEmployee().date_of_employment
-                ).getMonth() + 1;
+                ).getMonth() + 1);
             },
             getEmployYear() {
-                return new Date(
+                return parseInt(new Date(
                     this.getCurrentEmployee().date_of_employment
-                ).getFullYear();
+                ).getFullYear());
             },
             getDays() {
                 this.selectedMonthNumber = getMonthNumberByName(
@@ -173,15 +173,15 @@
                 const monthName = getMonthNameByNumber(
                     this.currentMonth
                 );
-                if (this.currentYear === this.employYear) {
+                if (this.currentYear == this.employYear) {
                     this.months = getMonthsRange(
                         this.employMonth - 1, this.currentMonth - 1
                     );
-                } else if (this.selectedYear === this.employYear) {
+                } else if (this.selectedYear == this.employYear) {
                     this.months = getMonthsRange(
                         this.employMonth - 1, 11
                     );
-                } else if (this.selectedYear === this.currentYear) {
+                } else if (this.selectedYear == this.currentYear) {
                     this.months = getMonthsRange(
                         0, this.currentMonth - 1
                     );

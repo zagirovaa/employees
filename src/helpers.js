@@ -126,7 +126,7 @@ export function getMonthsRange(start, stop) {
 export function getYearsRange(year) {
     const currentYear = getCurrentYear();
     if (currentYear > year) return [...getNumbersRange(year, currentYear)];
-    return currentYear;
+    return [currentYear];
 }
 
 export function getMonthNameByNumber(monthNumber) {
