@@ -212,9 +212,6 @@
                         :key="index"
                         @click="selectedRow = index"
                         v-for="(catalog, index) in catalogs">
-                        <span class="tag is-light is-link mr-4">
-                            {{ index + 1 }}
-                        </span>
                         {{ catalog.name }}
                     </a>
                 </nav>

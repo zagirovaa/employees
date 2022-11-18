@@ -86,7 +86,7 @@
                     </div>
                 </div>
                 <label class="label mt-5">
-                    Количество записей на странице:
+                    Количество записей:
                 </label>
                 <div class="field is-grouped">
                     <div

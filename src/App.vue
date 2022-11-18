@@ -308,6 +308,7 @@
                 this.searchModalVisible = true;
             },
             sortByColumnName(columnName) {
+                if (columnName === "") return;
                 if (this.sortedColumn === columnName) {
                     this.invertSortDirection();
                 } else {

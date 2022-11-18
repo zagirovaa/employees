@@ -20,8 +20,7 @@ export default {
     },
     organization: {
         name: "NETCON",
-        url: "https://netcon.pro",
-        tooltip: "Официальный сайт компании"
+        url: "https://netcon.pro"
     },
     settings: {
         // Number of records per page

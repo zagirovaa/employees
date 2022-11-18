@@ -1,7 +1,7 @@
 import { Query } from "appwrite";
 
 export const columnNames = {
-    "":                     "",
+    "N":                     "",
     "Дата приема":          "date_of_employment",
     "Фамилия Имя Отчество": "full_name",
     "Должность":            "job_title",

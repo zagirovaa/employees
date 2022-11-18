@@ -42,7 +42,7 @@
                     v-for="(value, key) in columns"
                     @click="$emit('sort-column', value)">
                     <span>{{ key }}</span>
-                    <template v-if="key !== '' && value === sortedColumn">
+                    <template v-if="key !== 'N' && value === sortedColumn">
                         <span class="ml-2" v-if="direction === 'ASC'">⮟</span>
                         <span class="ml-2" v-else>⮝</span>
                     </template>
@@ -59,12 +59,7 @@
                 :key="employee.$id"
                 v-for="(employee, index) in employees"
                 @click="$emit('row-click', index)">
-                <td
-                    class="has-text-weight-bold">
-                    <span class="tag is-light is-link">
-                        {{ index + 1 }}
-                    </span>
-                </td>
+                <td>{{ index + 1 }}</td>
                 <td>{{ employee.date_of_employment }}</td>
                 <td>{{ employee.full_name }}</td>
                 <td>{{ employee.job_title }}</td>

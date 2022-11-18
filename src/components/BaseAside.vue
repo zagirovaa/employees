@@ -22,19 +22,22 @@
         },
         data() {
             return {
-                directoriesHidden: false,
+                directoriesHidden: true,
                 directoryMenu: {
                     "0": ["Должности сотрудников", "Alt + J"],
                     "1": ["Причины увольнения",    "Alt + R"]
                 },
-                operationsHidden: false,
+                directoryTimeout: null,
+                menuHideTimeout: 3000,
+                operationsHidden: true,
                 operationsMenu: {
                     "0": ["Добавить",              "Alt + A"],
                     "1": ["Изменить",              "Alt + E"],
                     "2": ["Удалить",               "Alt + D"],
                     "3": ["Очистить",              "Alt + C"],
                     "5": ["Уволить",               "Alt + F"]
-                }
+                },
+                operationsTimeout: null
             }
         },
         emits: [
@@ -53,6 +56,28 @@
                     self.$root.currentRoute = "/auth";
                     history.pushState(null, "", self.$root.currentRoute);
                 });
+            },
+            toggleDirectoriesMenu() {
+                if (this.directoriesHidden) {
+                    this.directoriesHidden = false;
+                    this.directoryTimeout = setTimeout(() => {
+                        this.directoriesHidden = true;
+                    }, this.menuHideTimeout);
+                } else {
+                    this.directoriesHidden = true;
+                    clearTimeout(this.directoryTimeout);
+                }
+            },
+            toggleOperationsMenu() {
+                if (this.operationsHidden) {
+                    this.operationsHidden = false;
+                    this.operationsTimeout = setTimeout(() => {
+                        this.operationsHidden = true;
+                    }, this.menuHideTimeout);
+                } else {
+                    this.operationsHidden = true;
+                    clearTimeout(this.operationsTimeout);
+                }
             }
         },
         props: {
@@ -83,7 +108,7 @@
                     class="is-flex
                     is-align-items-center
                     is-justify-content-space-between has-text-black"
-                    @click="operationsHidden = !operationsHidden">
+                    @click="toggleOperationsMenu">
                     <span class="is-flex is-align-items-center">
                         <span class="material-icons mr-3">ballot</span>
                         <span>Сотрудники</span>
@@ -112,7 +137,7 @@
                     class="is-flex
                     is-align-items-center
                     is-justify-content-space-between has-text-black"
-                    @click="directoriesHidden = !directoriesHidden">
+                    @click="toggleDirectoriesMenu">
                     <span class="is-flex is-align-items-center">
                         <span class="material-icons mr-3">
                             folder
@@ -174,6 +199,20 @@
         <ul class="menu-list">
             <li>
                 <a
+                    class="is-flex is-align-items-center has-text-black">
+                    <span class="material-icons mr-3">file_upload</span>
+                    <span>Импорт</span>
+                </a>
+            </li>
+            <li>
+                <a
+                    class="is-flex is-align-items-center has-text-black">
+                    <span class="material-icons mr-3">file_download</span>
+                    <span>Экспорт</span>
+                </a>
+            </li>
+            <li>
+                <a
                     class="is-flex is-align-items-center has-text-black"
                     @click="$emit('show-settings')">
                     <span class="material-icons mr-3">settings</span>
@@ -192,9 +231,7 @@
                 <a
                     class="is-flex is-align-items-center has-text-black"
                     @click="logout">
-                    <span class="material-icons mr-3">
-                        meeting_room
-                    </span>
+                    <span class="material-icons mr-3">meeting_room</span>
                     <span>Выход</span>
                 </a>
             </li>
