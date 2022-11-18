@@ -1,6 +1,6 @@
 import { createApp, h } from "vue";
 import "bulma";
-import "bulma-tooltip";
+import "@cityssm/bulma-sticky-table/bulma-with-sticky-table.css";
 
 import { account } from "./api.js";
 import conf from "./config.js";

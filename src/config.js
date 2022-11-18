@@ -11,7 +11,7 @@ export default {
     },
     filters: {
         // Maximum number of allowed filters
-        count: 5
+        count: 7
     },
     global: {
         endPoint: "https://appwrite.netcon.pro/v1",
@@ -25,7 +25,7 @@ export default {
     },
     settings: {
         // Number of records per page
-        limit: 20,
+        records: 20,
         holidays: ["Суббота", "Воскресение"]
     }
 }

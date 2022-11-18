@@ -30,6 +30,14 @@
                         this.selectedCondition = DIGIT_CONDITIONS[0];
                         return DIGIT_CONDITIONS;
                         break;
+                    case "Телефон":
+                        this.selectedCondition = BOOL_CONDITIONS[0];
+                        return BOOL_CONDITIONS;
+                        break;
+                    case "Дата рождения":
+                        this.selectedCondition = DIGIT_CONDITIONS[0];
+                        return DIGIT_CONDITIONS;
+                        break;
                     case "Статус":
                         this.selectedCondition = BOOL_CONDITIONS[0];
                         this.selectValues = STATE_VALUES;
@@ -42,12 +50,21 @@
                 return this.jobs.map(job => job.name);
             },
             inputType() {
-                return this.selectedField === "Дата приема" ? "date" : "number";
+                return this.selectedField === "Дата приема" ||
+                       this.selectedField === "Дата рождения" ? 
+                       "date" : "number";
             }
         },
         data() {
             return {
-                fields: ["Дата приема", "Должность", "Оклад", "Статус"],
+                fields: [
+                    "Дата приема",
+                    "Должность",
+                    "Оклад",
+                    "Телефон",
+                    "Дата рождения",
+                    "Статус"
+                ],
                 filters: [],
                 jobs: [],
                 selectedField: "Дата приема",

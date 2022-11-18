@@ -14,6 +14,7 @@
     import { convertToQueries } from "./helpers.js";
 
     import AddModal from "./components/AddModal.vue";
+    import BaseAside from "./components/BaseAside.vue";
     import BaseNavbar from "./components/BaseNavbar.vue";
     import BaseNotify from "./components/BaseNotify.vue";
     import BaseTable from "./components/BaseTable.vue";
@@ -29,6 +30,7 @@
     export default {
         components: {
             AddModal,
+            BaseAside,
             BaseNavbar,
             BaseNotify,
             BaseTable,
@@ -107,7 +109,6 @@
                 }
             },
             async changeLimit(limit) {
-                localStorage.setItem("limit", JSON.stringify(limit));
                 this.rowsPerPage = limit;
                 this.currentPage = 1;
                 this.setOffset();
@@ -277,7 +278,7 @@
                 this.updateData();
             },
             showJobsCatalog() {
-                this.catalogTitle = "Должности";
+                this.catalogTitle = "Должности сотрудников";
                 this.catalogType = "jobs";
                 this.catalogModalVisible = true;
             },
@@ -373,8 +374,8 @@
                 );
             }
             this.rowsPerPage = JSON.parse(
-                localStorage.getItem("limit")
-            ) || conf.settings.limit || 20;
+                localStorage.getItem("records")
+            ) || conf.settings.records || 20;
             this.updateData();
         }
     }
@@ -382,63 +383,70 @@
 
 <template>
     <div>
-        <BaseNavbar
-            :current-page="currentPage"
-            :filtered="filtered"
-            :pages-count="pagesCount"
-            :rows-per-page="rowsPerPage"
-            :searched="searched"
-            @change-limit="changeLimit"
-            @change-page="changePage"
-            @item-click="itemClick"
-            @show-help="helpModalVisible = true"
-            @show-filter="showFilter"
-            @show-search="showSearch"
-            @show-settings="settingsModalVisible = true"/>
-        <BaseTable
-            :direction="sortDirection"
-            :employees="employees"
-            :selected-row="selectedRow"
-            :sorted-column="sortedColumn"
-            @row-click="selectedRow = $event"
-            @sort-column="sortByColumnName"/>
-        <HelpModal
-            v-if="helpModalVisible"
-            @close-modal="helpModalVisible = false"/>
-        <AddModal
-            v-if="addModalVisible"
-            @close-modal="addModalVisible = false"/>
-        <EditModal
-            :document="currentEmployee"
-            v-if="editModalVisible"
-            @close-modal="editModalVisible = false"/>
-        <DismissModal
-            :document="currentEmployee"
-            v-if="dismissModalVisible"
-            @close-modal="dismissModalVisible = false"/>
-        <CatalogModal
-            :title="catalogTitle"
-            :type="catalogType"
-            v-if="catalogModalVisible"
-            @close-modal="catalogModalVisible = false"/>
-        <ScheduleModal
-            v-if="scheduleModalVisible"
-            @close-modal="scheduleModalVisible = false"/>
-        <SearchModal
-            v-if="searchModalVisible"
-            :text="loadSearch()"
-            @close-modal="searchModalVisible = false"
-            @reset-search="resetSearch"
-            @set-search="setSearch"/>
-        <FilterModal
-            v-if="filterModalVisible"
-            :queries="loadFilter()"
-            @close-modal="filterModalVisible = false"
-            @reset-filter="resetFilter"
-            @set-filter="setFilter"/>
-        <SettingsModal
-            v-if="settingsModalVisible"
-            @close-modal="settingsModalVisible = false"/>
+        <div class="columns is-gapless">
+            <div class="column">
+                <BaseAside
+                    :filtered="filtered"
+                    :pages-count="pagesCount"
+                    :searched="searched"
+                    @item-click="itemClick"
+                    @show-help="helpModalVisible = true"
+                    @show-filter="showFilter"
+                    @show-search="showSearch"
+                    @show-settings="settingsModalVisible = true"/>
+            </div>
+            <div class="column is-content is-full">
+                <BaseNavbar
+                    :current-page="currentPage"
+                    :pages-count="pagesCount"
+                    @change-page="changePage"/>
+                <BaseTable
+                    :direction="sortDirection"
+                    :employees="employees"
+                    :selected-row="selectedRow"
+                    :sorted-column="sortedColumn"
+                    @row-click="selectedRow = $event"
+                    @sort-column="sortByColumnName"/>
+                <HelpModal
+                    v-if="helpModalVisible"
+                    @close-modal="helpModalVisible = false"/>
+                <AddModal
+                    v-if="addModalVisible"
+                    @close-modal="addModalVisible = false"/>
+                <EditModal
+                    :document="currentEmployee"
+                    v-if="editModalVisible"
+                    @close-modal="editModalVisible = false"/>
+                <DismissModal
+                    :document="currentEmployee"
+                    v-if="dismissModalVisible"
+                    @close-modal="dismissModalVisible = false"/>
+                <CatalogModal
+                    :title="catalogTitle"
+                    :type="catalogType"
+                    v-if="catalogModalVisible"
+                    @close-modal="catalogModalVisible = false"/>
+                <ScheduleModal
+                    v-if="scheduleModalVisible"
+                    @close-modal="scheduleModalVisible = false"/>
+                <SearchModal
+                    v-if="searchModalVisible"
+                    :text="loadSearch()"
+                    @close-modal="searchModalVisible = false"
+                    @reset-search="resetSearch"
+                    @set-search="setSearch"/>
+                <FilterModal
+                    v-if="filterModalVisible"
+                    :queries="loadFilter()"
+                    @close-modal="filterModalVisible = false"
+                    @reset-filter="resetFilter"
+                    @set-filter="setFilter"/>
+                <SettingsModal
+                    v-if="settingsModalVisible"
+                    @close-modal="settingsModalVisible = false"
+                    @change-limit="changeLimit"/>
+            </div>
+        </div>
         <BaseNotify
             :type="$root.notify.type"
             v-if="$root.notify.visible"

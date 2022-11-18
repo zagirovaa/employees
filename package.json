@@ -10,6 +10,7 @@
         "start": "node index.js"
     },
     "dependencies": {
+        "@cityssm/bulma-sticky-table": "^2.0.1",
         "appwrite": "^10.1.0",
         "bulma": "^0.9.4",
         "bulma-tooltip": "^3.0.2",

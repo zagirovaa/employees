@@ -30,11 +30,13 @@
 </script>
 
 <template>
-    <table class="table is-fullwidth is-bordered is-hoverable">
-        <thead class="has-background-light">
+    <table
+        class="table is-fullwidth is-bordered is-hoverable is-clickable
+                has-sticky-header">
+        <thead>
             <tr>
                 <th
-                    class="has-text-centered"
+                    class="has-text-centered has-background-light"
                     :class="{ 'has-text-link': value === sortedColumn }"
                     :key="key"
                     v-for="(value, key) in columns"
@@ -67,6 +69,8 @@
                 <td>{{ employee.full_name }}</td>
                 <td>{{ employee.job_title }}</td>
                 <td>{{ employee.salary }}</td>
+                <td>{{ employee.phone }}</td>
+                <td>{{ employee.date_of_birth }}</td>
                 <td>{{ employee.status }}</td>
             </tr>
         </tbody>

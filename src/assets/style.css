@@ -1,13 +1,15 @@
 html {
+    --aside-width: 300px;
     --border-color: rgb(240, 240, 240);
+    --link-color: hsl(229, 53%,  53%);
     --group-select-width: 428px;
+    --light-color: hsl(0, 0%, 96%);
     --modal-nav-height: 329px;
-    --nav-drop-margin: 10px;
+    --navbar-height: 50px;
     --notify-width: 450px;
     --notify-margin: 10px;
     --shadow-color: rgba(32, 64, 80, 0.2);
-    --light-color: hsl(0, 0%, 96%);
-
+    --white-color: hsl(0, 0%, 100%);
     scrollbar-width: none;
 }
 
@@ -20,9 +22,21 @@ html::-webkit-scrollbar {
 .md-36 { font-size: 36px; }
 .md-48 { font-size: 48px; }
 
-.navbar-dropdown hr {
-    margin-bottom: var(--nav-drop-margin) !important;
-    margin-top: var(--nav-drop-margin) !important;
+.navbar {
+    height: var(--navbar-height) !important;
+}
+
+aside {
+    position: fixed;
+    height: calc(100vh - var(--navbar-height)) !important;
+    top: var(--navbar-height);
+    width: var(--aside-width) !important;
+}
+
+aside li a:hover,
+aside li a:hover span {
+    background-color: var(--link-color) !important;
+    color: var(--white-color) !important;
 }
 
 table th, table td {
@@ -85,3 +99,17 @@ table:not(#filter) tr {
     pointer-events: none;
     opacity: .65;
 }
+
+.is-content {
+    width: calc(100vw - var(--aside-width)) !important;
+}
+
+.is-content table.has-sticky-header {
+    position: relative;
+    top: var(--navbar-height);
+}
+
+.menu-label.is-invisible {
+    line-height: 0px;
+}
+

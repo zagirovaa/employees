@@ -32,7 +32,7 @@
                 selectedYear: 0,
                 sickDays: 0,
                 table: [],
-                title: "Пропуски",
+                title: "График посещения",
                 vacationDays: 0,
                 years: [],
                 workingDays: 0
@@ -42,9 +42,9 @@
         methods: {
             changeCellColors(cellNumber) {
                 const cell = this.getCellByDayNumber(cellNumber);
-                if (cell.classList.contains("has-background-info")) {
+                if (cell.classList.contains("has-background-link")) {
                     cell.classList.replace(
-                        "has-background-info",
+                        "has-background-link",
                         "has-background-warning"
                     );
                     cell.classList.replace("has-text-white", "has-text-dark");
@@ -58,7 +58,7 @@
                     cell.classList.remove("has-background-danger");
                     cell.classList.remove("has-text-white");
                 } else {
-                    cell.classList.add("has-background-info");
+                    cell.classList.add("has-background-link");
                     cell.classList.add("has-text-white");
                 }
             },
@@ -259,7 +259,7 @@
                         this.getSelectedDate(day)
                     );
                     if (holidays.includes(dayName)) {
-                        currentCell.classList.add("has-background-info");
+                        currentCell.classList.add("has-background-link");
                         currentCell.classList.add("has-text-white");
                         this.offDays++;
                     } else {
@@ -274,7 +274,7 @@
                     switch (state.status) {
                         case "Выходной":
                             currentCell.classList.add(
-                                "has-background-info"
+                                "has-background-link"
                             );
                             currentCell.classList.add("has-text-white");
                             this.offDays++;
@@ -421,10 +421,10 @@
                     </div>
                     <div class="control">
                         <div class="tags has-addons">
-                            <span class="tag is-info border-info">
+                            <span class="tag is-link border-link">
                                 Выходной
                             </span>
-                            <span class="tag is-info is-light">
+                            <span class="tag is-link is-light">
                                 {{ offDays }}
                             </span>
                         </div>

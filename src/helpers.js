@@ -1,12 +1,14 @@
 import { Query } from "appwrite";
 
 export const columnNames = {
-    "":             "",
-    "Дата приема":  "date_of_employment",
-    "ФИО":          "full_name",
-    "Должность":    "job_title",
-    "Оклад":        "salary",
-    "Статус":       "status"
+    "":                     "",
+    "Дата приема":          "date_of_employment",
+    "Фамилия Имя Отчество": "full_name",
+    "Должность":            "job_title",
+    "Оклад":                "salary",
+    "Телефон":              "phone",
+    "Дата рождения":        "date_of_birth",
+    "Статус":               "status"
 };
 
 const dayNames = [
