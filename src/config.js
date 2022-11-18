@@ -11,7 +11,7 @@ export default {
     },
     filters: {
         // Maximum number of allowed filters
-        count: 7
+        count: 2
     },
     global: {
         endPoint: "https://appwrite.netcon.pro/v1",
