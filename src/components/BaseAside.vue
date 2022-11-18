@@ -101,7 +101,7 @@
         <p class="menu-label is-invisible m-0">
             ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
         </p>
-        <p class="menu-label mt-0">Основное</p>
+        <p class="menu-label mt-0">Данные</p>
         <ul class="menu-list">
             <li>
                 <a 
@@ -170,7 +170,7 @@
                 </a>
             </li>
         </ul>
-        <p class="menu-label">Дополнительное</p>
+        <p class="menu-label">Отбор</p>
         <ul class="menu-list">
             <li>
                 <a
@@ -195,7 +195,7 @@
                 </a>
             </li>
         </ul>
-        <p class="menu-label">Системное</p>
+        <p class="menu-label">Обмен</p>
         <ul class="menu-list">
             <li>
                 <a
@@ -211,6 +211,9 @@
                     <span>Экспорт</span>
                 </a>
             </li>
+        </ul>
+        <p class="menu-label">Система</p>
+        <ul class="menu-list">
             <li>
                 <a
                     class="is-flex is-align-items-center has-text-black"

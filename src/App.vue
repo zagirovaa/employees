@@ -384,6 +384,48 @@
 
 <template>
     <div>
+        <HelpModal
+            v-if="helpModalVisible"
+            @close-modal="helpModalVisible = false"/>
+        <AddModal
+            v-if="addModalVisible"
+            @close-modal="addModalVisible = false"/>
+        <EditModal
+            :document="currentEmployee"
+            v-if="editModalVisible"
+            @close-modal="editModalVisible = false"/>
+        <DismissModal
+            :document="currentEmployee"
+            v-if="dismissModalVisible"
+            @close-modal="dismissModalVisible = false"/>
+        <CatalogModal
+            :title="catalogTitle"
+            :type="catalogType"
+            v-if="catalogModalVisible"
+            @close-modal="catalogModalVisible = false"/>
+        <ScheduleModal
+            v-if="scheduleModalVisible"
+            @close-modal="scheduleModalVisible = false"/>
+        <SearchModal
+            v-if="searchModalVisible"
+            :text="loadSearch()"
+            @close-modal="searchModalVisible = false"
+            @reset-search="resetSearch"
+            @set-search="setSearch"/>
+        <FilterModal
+            v-if="filterModalVisible"
+            :queries="loadFilter()"
+            @close-modal="filterModalVisible = false"
+            @reset-filter="resetFilter"
+            @set-filter="setFilter"/>
+        <SettingsModal
+            v-if="settingsModalVisible"
+            @close-modal="settingsModalVisible = false"
+            @change-limit="changeLimit"/>
+        <BaseNavbar
+            :current-page="currentPage"
+            :pages-count="pagesCount"
+            @change-page="changePage"/>
         <div class="columns is-gapless">
             <div class="column">
                 <BaseAside
@@ -397,10 +439,6 @@
                     @show-settings="settingsModalVisible = true"/>
             </div>
             <div class="column is-content is-full">
-                <BaseNavbar
-                    :current-page="currentPage"
-                    :pages-count="pagesCount"
-                    @change-page="changePage"/>
                 <BaseTable
                     :direction="sortDirection"
                     :employees="employees"
@@ -408,44 +446,6 @@
                     :sorted-column="sortedColumn"
                     @row-click="selectedRow = $event"
                     @sort-column="sortByColumnName"/>
-                <HelpModal
-                    v-if="helpModalVisible"
-                    @close-modal="helpModalVisible = false"/>
-                <AddModal
-                    v-if="addModalVisible"
-                    @close-modal="addModalVisible = false"/>
-                <EditModal
-                    :document="currentEmployee"
-                    v-if="editModalVisible"
-                    @close-modal="editModalVisible = false"/>
-                <DismissModal
-                    :document="currentEmployee"
-                    v-if="dismissModalVisible"
-                    @close-modal="dismissModalVisible = false"/>
-                <CatalogModal
-                    :title="catalogTitle"
-                    :type="catalogType"
-                    v-if="catalogModalVisible"
-                    @close-modal="catalogModalVisible = false"/>
-                <ScheduleModal
-                    v-if="scheduleModalVisible"
-                    @close-modal="scheduleModalVisible = false"/>
-                <SearchModal
-                    v-if="searchModalVisible"
-                    :text="loadSearch()"
-                    @close-modal="searchModalVisible = false"
-                    @reset-search="resetSearch"
-                    @set-search="setSearch"/>
-                <FilterModal
-                    v-if="filterModalVisible"
-                    :queries="loadFilter()"
-                    @close-modal="filterModalVisible = false"
-                    @reset-filter="resetFilter"
-                    @set-filter="setFilter"/>
-                <SettingsModal
-                    v-if="settingsModalVisible"
-                    @close-modal="settingsModalVisible = false"
-                    @change-limit="changeLimit"/>
             </div>
         </div>
         <BaseNotify

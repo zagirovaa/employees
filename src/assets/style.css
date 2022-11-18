@@ -22,29 +22,9 @@ html::-webkit-scrollbar {
 .md-36 { font-size: 36px; }
 .md-48 { font-size: 48px; }
 
-.navbar {
-    height: var(--navbar-height) !important;
-}
-
-aside {
-    position: fixed;
-    height: calc(100vh - var(--navbar-height)) !important;
-    top: var(--navbar-height);
-    width: var(--aside-width) !important;
-}
-
-aside li a:hover,
-aside li a:hover span {
-    background-color: var(--link-color) !important;
-    color: var(--white-color) !important;
-}
-
-table th, table td {
-    vertical-align: middle !important;
-}
-
-table:not(#filter) tr {
-    cursor: pointer;
+.is-disable {
+    pointer-events: none;
+    opacity: .65;
 }
 
 .notification {
@@ -95,9 +75,26 @@ table:not(#filter) tr {
     border: 2px solid hsl(347, 90%, 96%);
 }
 
-.is-disable {
-    pointer-events: none;
-    opacity: .65;
+.navbar {
+    border-bottom: 1px solid var(--shadow-color);
+    height: var(--navbar-height) !important;
+}
+
+aside {
+    position: fixed;
+    height: calc(100vh - var(--navbar-height)) !important;
+    top: var(--navbar-height);
+    width: var(--aside-width) !important;
+}
+
+aside li a:hover,
+aside li a:hover span {
+    background-color: var(--link-color) !important;
+    color: var(--white-color) !important;
+}
+
+.menu-label.is-invisible {
+    line-height: 0px;
 }
 
 .is-content {
@@ -109,7 +106,10 @@ table:not(#filter) tr {
     top: var(--navbar-height);
 }
 
-.menu-label.is-invisible {
-    line-height: 0px;
+table th, table td {
+    vertical-align: middle !important;
 }
 
+table:not(#filter) tr {
+    cursor: pointer;
+}
