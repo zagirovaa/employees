@@ -36,7 +36,8 @@
         <thead>
             <tr>
                 <th
-                    class="has-text-centered has-background-light"
+                    class="has-text-centered has-background-light
+                    has-text-weight-semi-bold"
                     :class="{ 'has-text-link': value === sortedColumn }"
                     :key="key"
                     v-for="(value, key) in columns"

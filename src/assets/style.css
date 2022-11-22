@@ -1,3 +1,7 @@
+* {
+    font-family: "Roboto", sans-serif;
+}
+
 html {
     --aside-width: 300px;
     --border-color: rgb(240, 240, 240);
