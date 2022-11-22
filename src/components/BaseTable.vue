@@ -65,8 +65,6 @@
                 <td>{{ employee.full_name }}</td>
                 <td>{{ employee.job_title }}</td>
                 <td>{{ employee.salary }}</td>
-                <td>{{ employee.phone }}</td>
-                <td>{{ employee.date_of_birth }}</td>
                 <td>{{ employee.status }}</td>
             </tr>
         </tbody>

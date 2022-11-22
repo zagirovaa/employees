@@ -6,8 +6,6 @@ export const columnNames = {
     "Фамилия Имя Отчество": "full_name",
     "Должность":            "job_title",
     "Оклад":                "salary",
-    "Телефон":              "phone",
-    "Дата рождения":        "date_of_birth",
     "Статус":               "status"
 };
 
