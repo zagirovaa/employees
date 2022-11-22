@@ -27,11 +27,6 @@
 <template>
     <nav class="navbar is-fixed-top">
         <div class="navbar-brand">
-            <div class="navbar-item pr-0">
-                <a class="button is-small is-link px-1">
-                    <span class="material-icons">hive</span>
-                </a>
-            </div>
             <a
                 class="navbar-item"
                 target="_blank"

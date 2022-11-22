@@ -48,39 +48,33 @@ export function convertToQueries(filters) {
         switch (filter.condition) {
             case "=":
                 return Query.equal(
-                    columnNames[filter.field],
-                    filter.value
-                )
+                    columnNames[filter.field], filter.value
+                );
                 break;
             case "≠":
                 return Query.notEqual(
-                    columnNames[filter.field],
-                    filter.value
-                )
+                    columnNames[filter.field], filter.value
+                );
                 break;
             case ">":
                 return Query.greaterThan(
-                    columnNames[filter.field],
-                    filter.value
-                )
+                    columnNames[filter.field], filter.value
+                );
                 break;
             case "<":
                 return Query.lessThan(
-                    columnNames[filter.field],
-                    filter.value
-                )
+                    columnNames[filter.field], filter.value
+                );
                 break;
             case "≥":
                 return Query.greaterThanEqual(
-                    columnNames[filter.field],
-                    filter.value
-                )
+                    columnNames[filter.field], filter.value
+                );
                 break;
             case "≤":
                 return Query.lessThanEqual(
-                    columnNames[filter.field],
-                    filter.value
-                )
+                    columnNames[filter.field], filter.value
+                );
                 break;
         }
     });

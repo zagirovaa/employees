@@ -137,18 +137,23 @@
                 this.updateData();
             },
             async clearEmployees() {
-                const self = this;
                 const employees = await getEmployees();
                 if (employees.length > 0) {
-                    this.resetSearch();
-                    this.resetFilter();
-                    employees.forEach(async (employee) => {
-                        await self.deleteEmployee(employee.$id);
-                    });
-                    this.$root.showNotify({
-                        text: "Все сотрудники удалены",
-                        type: "success"
-                    });
+                    try {
+                        for (const employee of this.employees) {
+                            await this.deleteEmployee(employee.$id);
+                        }
+                        this.resetSearch();
+                        this.resetFilter();
+                        this.setOffset();
+                        this.updateData();
+                        this.$root.showNotify({
+                            text: "Все сотрудники удалены",
+                            type: "success"
+                        });
+                    } catch (error) {
+                        console.error(error);
+                    }
                 }
             },
             async deleteEmployee(employee_id) {
@@ -158,16 +163,15 @@
                     [Query.equal("employee_id", employee_id)]
                 );
                 if (result.total > 0) {
-                    result.documents.forEach(async (document) => {
+                    for (const document of result.documents) {
                         await deleteState(document.$id);
-                    })
+                    }
                 }
                 await database.deleteDocument(
                     conf.global.databaseID,
                     conf.collections.employees,
                     employee_id
                 );
-                this.updateData();
             },
             async dismissEmployee() {
                 if (this.currentEmployee.status !== "Работает") {
@@ -245,11 +249,17 @@
                 return JSON.parse(localStorage.getItem("search")) || "";
             },
             async removeEmployee() {
-                await this.deleteEmployee(this.currentEmployee.$id);
-                this.$root.showNotify({
-                    text: "Сотрудник удален",
-                    type: "success"
-                });
+                try {
+                    await this.deleteEmployee(this.currentEmployee.$id);
+                    this.setOffset();
+                    this.updateData();
+                    this.$root.showNotify({
+                        text: "Сотрудник удален",
+                        type: "success"
+                    });
+                } catch (error) {
+                    console.error(error);
+                }
             },
             resetFilter() {
                 localStorage.removeItem("filter");
@@ -264,7 +274,6 @@
             setFilter(filters) {
                 localStorage.setItem("filter", JSON.stringify(filters));
                 this.filterQueries = convertToQueries(filters);
-                this.updateData();
             },
             setOffset() {
                 this.offset = (this.currentPage - 1) * this.rowsPerPage;
@@ -275,7 +284,6 @@
                     "full_name",
                     searchedText.split(" ")
                 );
-                this.updateData();
             },
             showJobsCatalog() {
                 this.catalogTitle = "Должности сотрудников";
@@ -384,9 +392,12 @@
 
 <template>
     <div>
-        <HelpModal
-            v-if="helpModalVisible"
-            @close-modal="helpModalVisible = false"/>
+        <BaseNotify
+            :type="$root.notify.type"
+            v-if="$root.notify.visible"
+            @close-notify="$root.notify.visible = false">
+            {{ $root.notify.text }}
+        </BaseNotify>
         <AddModal
             v-if="addModalVisible"
             @close-modal="addModalVisible = false"/>
@@ -422,11 +433,14 @@
             v-if="settingsModalVisible"
             @close-modal="settingsModalVisible = false"
             @change-limit="changeLimit"/>
-        <BaseNavbar
-            :current-page="currentPage"
-            :pages-count="pagesCount"
-            @change-page="changePage"/>
+        <HelpModal
+            v-if="helpModalVisible"
+            @close-modal="helpModalVisible = false"/>
         <div class="columns is-gapless">
+            <BaseNavbar
+                :current-page="currentPage"
+                :pages-count="pagesCount"
+                @change-page="changePage"/>
             <div class="column">
                 <BaseAside
                     :filtered="filtered"
@@ -448,11 +462,5 @@
                     @sort-column="sortByColumnName"/>
             </div>
         </div>
-        <BaseNotify
-            :type="$root.notify.type"
-            v-if="$root.notify.visible"
-            @close-notify="$root.notify.visible = false">
-            {{ $root.notify.text }}
-        </BaseNotify>
     </div>
 </template>

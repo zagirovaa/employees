@@ -113,12 +113,13 @@
                         <span class="material-icons mr-3">ballot</span>
                         <span>Сотрудники</span>
                     </span>
-                    <span v-if="operationsHidden">⮟</span>
-                    <span v-else>⮝</span>
+                    <span class="material-icons" v-if="operationsHidden">
+                        chevron_right
+                    </span>
+                    <span class="material-icons" v-else>expand_more</span>
                 </a>
-                <ul>
+                <ul v-if="!operationsHidden">
                     <li
-                        :class="{ 'is-hidden': operationsHidden }"
                         :key="name"
                         v-for="(value, name) in operationsMenu">
                         <a
@@ -144,12 +145,13 @@
                         </span>
                         <span>Справочники</span>
                     </span>
-                    <span v-if="directoriesHidden">⮟</span>
-                    <span v-else>⮝</span>
+                    <span class="material-icons" v-if="directoriesHidden">
+                        chevron_right
+                    </span>
+                    <span class="material-icons" v-else>expand_more</span>
                 </a>
-                <ul>
+                <ul v-if="!directoriesHidden">
                     <li
-                        :class="{ 'is-hidden': directoriesHidden }"
                         :key="name"
                         v-for="(value, name) in directoryMenu">
                         <a @click="$emit('item-click', value[1])">
@@ -195,7 +197,7 @@
                 </a>
             </li>
         </ul>
-        <p class="menu-label">Обмен</p>
+        <!-- <p class="menu-label">Обмен</p>
         <ul class="menu-list">
             <li>
                 <a
@@ -211,7 +213,7 @@
                     <span>Экспорт</span>
                 </a>
             </li>
-        </ul>
+        </ul> -->
         <p class="menu-label">Система</p>
         <ul class="menu-list">
             <li>

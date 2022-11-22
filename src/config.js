@@ -1,7 +1,6 @@
 export default {
-    auth: {
-        email: "test@netcon.pro",
-        password: "11111111"
+    app: {
+        name: "Сотрудники"
     },
     collections: {
         employees: "63514aab6fe6753bfab9",
