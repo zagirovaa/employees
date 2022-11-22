@@ -43,12 +43,8 @@
                     @click="$emit('sort-column', value)">
                     <span>{{ key }}</span>
                     <template v-if="key !== 'N' && value === sortedColumn">
-                        <span
-                            class="material-icons"
-                            v-if="direction === 'ASC'">
-                            expand_more
-                        </span>
-                        <span class="material-icons" v-else>expand_less</span>
+                        <span class="ml-2" v-if="direction === 'ASC'">⮟</span>
+                        <span class="ml-2" v-else>⮝</span>
                     </template>
                 </th>
             </tr>
