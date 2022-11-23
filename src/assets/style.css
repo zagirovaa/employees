@@ -49,7 +49,8 @@ html::-webkit-scrollbar {
     scrollbar-width: none;
 }
 
-.modal nav::-webkit-scrollbar {
+.modal nav::-webkit-scrollbar,
+aside::-webkit-scrollbar {
     display: none;
 }
 
@@ -87,6 +88,8 @@ html::-webkit-scrollbar {
 aside {
     position: fixed;
     height: calc(100vh - var(--navbar-height)) !important;
+    overflow: auto;
+    scrollbar-width: none;
     top: var(--navbar-height);
     width: var(--aside-width) !important;
 }

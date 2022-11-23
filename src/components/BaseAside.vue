@@ -197,23 +197,23 @@
                 </a>
             </li>
         </ul>
-        <!-- <p class="menu-label">Обмен</p>
+        <p class="menu-label">Обмен</p>
         <ul class="menu-list">
             <li>
                 <a
                     class="is-flex is-align-items-center has-text-black">
-                    <span class="material-icons mr-3">file_upload</span>
+                    <span class="material-icons mr-3">file_download</span>
                     <span>Импорт</span>
                 </a>
             </li>
             <li>
                 <a
                     class="is-flex is-align-items-center has-text-black">
-                    <span class="material-icons mr-3">file_download</span>
+                    <span class="material-icons mr-3">file_upload</span>
                     <span>Экспорт</span>
                 </a>
             </li>
-        </ul> -->
+        </ul>
         <p class="menu-label">Система</p>
         <ul class="menu-list">
             <li>
