@@ -107,7 +107,7 @@
                 <a 
                     class="is-flex
                     is-align-items-center
-                    is-justify-content-space-between has-text-black"
+                    is-justify-content-space-between has-text-black pr-2"
                     @click="toggleOperationsMenu">
                     <span class="is-flex is-align-items-center">
                         <span class="material-icons mr-3">ballot</span>
@@ -137,7 +137,7 @@
                 <a
                     class="is-flex
                     is-align-items-center
-                    is-justify-content-space-between has-text-black"
+                    is-justify-content-space-between has-text-black pr-2"
                     @click="toggleDirectoriesMenu">
                     <span class="is-flex is-align-items-center">
                         <span class="material-icons mr-3">

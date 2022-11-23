@@ -1,8 +1,4 @@
-* {
-    font-family: "Roboto", sans-serif;
-}
-
-html {
+:root {
     --aside-width: 300px;
     --border-color: rgb(240, 240, 240);
     --link-color: hsl(229, 53%,  53%);
@@ -14,6 +10,13 @@ html {
     --notify-margin: 10px;
     --shadow-color: rgba(32, 64, 80, 0.2);
     --white-color: hsl(0, 0%, 100%);
+}
+
+* {
+    font-family: "Roboto", sans-serif;
+}
+
+html {
     scrollbar-width: none;
 }
 
@@ -86,9 +89,10 @@ aside::-webkit-scrollbar {
 }
 
 aside {
-    position: fixed;
+    border-right: 1px solid var(--shadow-color);
     height: calc(100vh - var(--navbar-height)) !important;
     overflow: auto;
+    position: fixed;
     scrollbar-width: none;
     top: var(--navbar-height);
     width: var(--aside-width) !important;
@@ -111,6 +115,9 @@ aside li a:hover span {
 .is-content table.has-sticky-header {
     position: relative;
     top: var(--navbar-height);
+}
+table {
+    border-left: none !important;
 }
 
 table th, table td {
