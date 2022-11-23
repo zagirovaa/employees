@@ -197,7 +197,7 @@
                 </a>
             </li>
         </ul>
-        <p class="menu-label">Обмен</p>
+        <!-- <p class="menu-label">Обмен</p>
         <ul class="menu-list">
             <li>
                 <a
@@ -213,7 +213,7 @@
                     <span>Экспорт</span>
                 </a>
             </li>
-        </ul>
+        </ul> -->
         <p class="menu-label">Система</p>
         <ul class="menu-list">
             <li>
