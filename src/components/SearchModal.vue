@@ -12,16 +12,9 @@
         emits: ["close-modal", "reset-search", "set-search"],
         methods: {
             applyChanges() {
-                if (this.searchedText !== "") {
-                    this.$emit("set-search", this.searchedText);
-                    this.$parent.updateData();
-                    this.$emit("close-modal");
-                } else {
-                    this.$root.showNotify({
-                        text: "Не задана искомая строка",
-                        type: "warning"
-                    });
-                }
+                this.$emit("set-search", this.searchedText);
+                this.$parent.updateData();
+                this.$emit("close-modal");
             },
             resetSearch() {
                 this.$emit("reset-search");

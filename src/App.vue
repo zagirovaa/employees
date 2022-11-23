@@ -140,7 +140,7 @@
                 const employees = await getEmployees();
                 if (employees.length > 0) {
                     try {
-                        for (const employee of this.employees) {
+                        for (const employee of employees) {
                             await this.deleteEmployee(employee.$id);
                         }
                         this.resetSearch();
