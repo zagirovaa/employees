@@ -86,7 +86,7 @@
             }
         },
         mounted() {
-            this.currentCatalog = this.catalog;
+            this.currentCatalog = Object.assign({}, this.catalog);
             this.$refs.name.focus();
         },
         props: {
