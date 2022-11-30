@@ -6,7 +6,6 @@ Employee Database Application
 
 ### Todo
 
-- [ ] Экспорт / Импорт структуры базы данных  
 - [ ] Документация к проекту  
 
 ### In Progress

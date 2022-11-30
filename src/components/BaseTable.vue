@@ -38,14 +38,27 @@
                 <th
                     class="has-text-centered has-background-light
                     has-text-weight-semi-bold"
-                    :class="{ 'has-text-link': value === sortedColumn }"
+                    :class="{
+                        'has-text-link': value === sortedColumn,
+                        'is-flex': key !== 'N' && value === sortedColumn,
+                        'is-justify-content-center':
+                            key !== 'N' &&
+                            value === sortedColumn
+                    }"
                     :key="key"
                     v-for="(value, key) in columns"
                     @click="$emit('sort-column', value)">
                     <span>{{ key }}</span>
-                    <template v-if="key !== 'N' && value === sortedColumn">
-                        <span class="ml-2" v-if="direction === 'ASC'">⮟</span>
-                        <span class="ml-2" v-else>⮝</span>
+                    <template
+                        v-if="key !== 'N' && value === sortedColumn">
+                        <span
+                            class="material-icons"
+                            v-if="direction === 'ASC'">
+                            expand_more
+                        </span>
+                        <span class="material-icons" v-else>
+                            expand_less
+                        </span>
                     </template>
                 </th>
             </tr>

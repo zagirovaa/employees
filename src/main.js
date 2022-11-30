@@ -17,11 +17,10 @@ const routes = {
 
 const Router = {
     created () {
-        const self = this;
         // When moving between pages from history
         // currentRoute must be changed accordingly
         window.addEventListener("popstate", () => {
-            self.currentRoute = window.location.pathname;
+            this.currentRoute = window.location.pathname;
         });
         this.checkAuthorisation();
     },
@@ -55,23 +54,21 @@ const Router = {
         }
     },
     methods: {
-        checkAuthorisation() {
-            const self = this;
+        async checkAuthorisation() {
             const auth = account.get();
             auth.then(user => {
-                self.userIsAuthorised = true;
+                this.userIsAuthorised = true;
             }, error => {
-                self.userIsAuthorised = false;
+                this.userIsAuthorised = false;
                 console.log(error);
             });
         },
         showNotify(data) {
-            const self = this;
             this.notify.text = data.text;
             this.notify.type = data.type;
             this.notify.visible = true;
             setTimeout(() => {
-                self.notify.visible = false;
+                this.notify.visible = false;
             }, this.notify.timeout);
         }
     },
