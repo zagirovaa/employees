@@ -1,7 +1,8 @@
 import { createApp, h } from "vue";
 import "bulma";
 import "@cityssm/bulma-sticky-table/bulma-with-sticky-table.css";
-
+import "material-icons/iconfont/material-icons.css";
+import "../src/assets/style.css";
 import { account } from "./api.js";
 import conf from "./config.js";
 
